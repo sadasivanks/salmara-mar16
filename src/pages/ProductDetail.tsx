@@ -6,6 +6,7 @@ import { ArrowLeft, ShoppingCart, Loader2, Leaf } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
+  const navigate = useNavigate();
   const { handle } = useParams<{ handle: string }>();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
