@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { fetchProductByHandle } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { ArrowLeft, ShoppingCart, Loader2, Leaf } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
+  const navigate = useNavigate();
   const { handle } = useParams<{ handle: string }>();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -60,10 +61,19 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Sticky back button */}
+      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
+        <div className="container mx-auto px-4 py-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-sm font-sans-clean text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back
+          </button>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm font-sans-clean text-muted-foreground hover:text-primary mb-8 transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back to Home
-        </Link>
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {/* Images */}
