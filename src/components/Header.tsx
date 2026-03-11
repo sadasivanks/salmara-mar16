@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ShoppingCart, Search, User, Package, Menu, X, Phone, Leaf } from "lucide-react";
+import { Search, User, Package, Menu, X, Phone, Leaf } from "lucide-react";
+import { CartDrawer } from "@/components/CartDrawer";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
@@ -71,12 +72,7 @@ const Header = () => {
             >
               <Search className="h-5 w-5" />
             </button>
-            <a href="#" className="p-2 text-foreground/70 hover:text-primary transition-colors relative" aria-label="Cart">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground text-[10px] font-sans-clean font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                0
-              </span>
-            </a>
+            <CartDrawer />
             <a href="#" className="p-2 text-foreground/70 hover:text-primary transition-colors hidden sm:block" aria-label="Account">
               <User className="h-5 w-5" />
             </a>
