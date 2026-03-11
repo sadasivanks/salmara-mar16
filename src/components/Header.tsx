@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { Search, User, Package, Menu, X, Phone, Leaf } from "lucide-react";
+import { Search, User, Menu, X, Phone, Leaf, Package } from "lucide-react";
 import { CartDrawer } from "@/components/CartDrawer";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { label: "Home", href: "#" },
   { label: "About Us", href: "#about" },
   { label: "Shop Now", href: "#products" },
-  { label: "Clinics & Treatments", href: "#consultation" },
-  { label: "Certifications", href: "#" },
+  { label: "Clinics", href: "#consultation" },
+  { label: "Awards", href: "#" },
   { label: "Blog", href: "#blog" },
   { label: "Book Appointment", href: "#consultation" },
   { label: "Contact Us", href: "#" },
@@ -30,8 +29,8 @@ const Header = () => {
   return (
     <>
       {/* Promo Bar */}
-      <div className="bg-primary text-primary-foreground text-center py-2 text-sm font-sans-clean tracking-wide">
-        🌿 Free Shipping Above ₹999 — Use Code <span className="font-semibold text-gold-light">WELLNESS10</span> for 10% Off
+      <div className="bg-primary text-primary-foreground text-center py-2 text-xs sm:text-sm font-sans-clean tracking-[0.2em] uppercase">
+        Free Shipping Above ₹999
       </div>
 
       {/* Main Header */}
@@ -41,15 +40,11 @@ const Header = () => {
           <a href="#" className="flex items-center gap-2 shrink-0">
             <Leaf className="h-8 w-8 text-primary" />
             <div>
-              <span className="text-xl font-display font-bold text-foreground tracking-tight">Salmara</span>
-              <span className="text-xl font-display font-light text-primary ml-1">Herbals</span>
-              <p className="text-[10px] font-sans-clean text-muted-foreground leading-none hidden sm:block">
-                Rediscover Wellness Through Authentic Ayurveda
-              </p>
+              <span className="text-xl font-display font-bold text-foreground tracking-tight italic">Salmara</span>
             </div>
           </a>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav - centered */}
           <nav className="hidden xl:flex items-center gap-1">
             {navItems.map((item) => (
               <a
@@ -63,7 +58,7 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Icons */}
+          {/* Right Icons */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -73,11 +68,9 @@ const Header = () => {
               <Search className="h-5 w-5" />
             </button>
             <CartDrawer />
-            <a href="#" className="p-2 text-foreground/70 hover:text-primary transition-colors hidden sm:block" aria-label="Account">
+            <a href="#" className="hidden sm:flex items-center gap-1.5 p-2 text-foreground/70 hover:text-primary transition-colors" aria-label="Login">
               <User className="h-5 w-5" />
-            </a>
-            <a href="#" className="p-2 text-foreground/70 hover:text-primary transition-colors hidden sm:block" aria-label="Track Order">
-              <Package className="h-5 w-5" />
+              <span className="text-sm font-sans-clean">Login</span>
             </a>
             <button
               onClick={() => setMobileOpen(true)}
@@ -166,7 +159,7 @@ const Header = () => {
               </div>
               <div className="p-4 border-t border-border space-y-2">
                 <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary">
-                  <User className="h-4 w-4" /> My Account
+                  <User className="h-4 w-4" /> Login
                 </a>
                 <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary">
                   <Package className="h-4 w-4" /> Track Order
