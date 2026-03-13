@@ -293,6 +293,86 @@ const CUSTOMER_UPDATE_MUTATION = `
   }
 `;
 
+const CUSTOMER_ACCESS_TOKEN_RENEW_MUTATION = `
+  mutation customerAccessTokenRenew($customerAccessToken: String!) {
+    customerAccessTokenRenew(customerAccessToken: $customerAccessToken) {
+      customerAccessToken { accessToken expiresAt }
+      userErrors { field message }
+    }
+  }
+`;
+
+// ── Session helpers ──
+
+export function getStoredSession() {
+  try {
+    const raw = localStorage.getItem('salmara_session');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveSession(session: any) {
+  localStorage.setItem('salmara_session', JSON.stringify(session));
+  window.dispatchEvent(new Event('auth-status-change'));
+}
+
+export function clearSession() {
+  localStorage.removeItem('salmara_session');
+  window.dispatchEvent(new Event('auth-status-change'));
+}
+
+function isTokenExpired(session: any): boolean {
+  if (!session?.expires) return true;
+  // Consider expired if less than 5 minutes remaining
+  return Date.now() > session.expires - 5 * 60 * 1000;
+}
+
+// Attempt to renew a customer access token
+async function renewCustomerToken(currentToken: string): Promise<{ accessToken: string; expiresAt: string } | null> {
+  try {
+    const data = await storefrontApiRequest(CUSTOMER_ACCESS_TOKEN_RENEW_MUTATION, {
+      customerAccessToken: currentToken
+    });
+    const renewed = data?.data?.customerAccessTokenRenew?.customerAccessToken;
+    if (!renewed) return null;
+    return renewed;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Returns a valid customer access token, auto-renewing if expired.
+ * If renewal fails, clears the session and returns null.
+ */
+export async function getValidCustomerToken(): Promise<string | null> {
+  const session = getStoredSession();
+  if (!session?.accessToken) return null;
+
+  if (!isTokenExpired(session)) {
+    return session.accessToken;
+  }
+
+  // Token expired – try to renew
+  const renewed = await renewCustomerToken(session.accessToken);
+  if (renewed) {
+    const updatedSession = {
+      ...session,
+      accessToken: renewed.accessToken,
+      expires: new Date(renewed.expiresAt).getTime()
+    };
+    saveSession(updatedSession);
+    return renewed.accessToken;
+  }
+
+  // Renewal failed – session is invalid
+  clearSession();
+  return null;
+}
+
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
