@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { Stethoscope, Calendar, Video, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -71,12 +72,12 @@ const ConsultationSection = () => {
               ))}
             </div>
 
-            <a
-              href="#"
+            <Link
+              to="/book-appointment"
               className="inline-flex items-center gap-2 bg-accent hover:bg-gold text-accent-foreground px-8 py-3.5 rounded-lg font-sans-clean font-semibold text-sm transition-all duration-300 hover:shadow-lg"
             >
               <Calendar className="h-4 w-4" /> Book Appointment
-            </a>
+            </Link>
           </motion.div>
 
           <motion.div

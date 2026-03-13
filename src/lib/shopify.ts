@@ -1,9 +1,9 @@
 import { toast } from "sonner";
 
-const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = 'salveo-aya-forge-rt8fh.myshopify.com';
+const SHOPIFY_API_VERSION = import.meta.env.VITE_SHOPIFY_API_VERSION || '2025-07';
+const SHOPIFY_STORE_PERMANENT_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || 'salveo-aya-forge-rt8fh.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-const SHOPIFY_STOREFRONT_TOKEN = '90998efe73886b30801f7074707bc883';
+const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '90998efe73886b30801f7074707bc883';
 
 export interface ShopifyProduct {
   node: {
@@ -46,6 +46,8 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    productType: string;
+    tags: string[];
   };
 }
 
@@ -72,7 +74,18 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
 
   const data = await response.json();
   if (data.errors) {
-    throw new Error(`Shopify error: ${data.errors.map((e: { message: string }) => e.message).join(', ')}`);
+    const errorMessages = data.errors.map((e: { message: string }) => e.message).join(', ');
+    
+    // Specifically handle the scope permission error to guide the user
+    if (errorMessages.includes('unauthenticated_write_customers') || errorMessages.includes('ACCESS_DENIED')) {
+      console.error('CRITICAL: Shopify Storefront API Access Denied.', {
+        error: errorMessages,
+        solution: 'Go to Shopify Admin -> Apps -> [Your App] -> Configuration -> Storefront API -> Edit -> Enable "unauthenticated_write_customers" scope.'
+      });
+      // We don't throw yet, let the caller handle success: false
+    }
+    
+    return data; // Return full data so success: false can be determined by callers
   }
   return data;
 }
@@ -122,6 +135,8 @@ const PRODUCTS_QUERY = `
             name
             values
           }
+          productType
+          tags
         }
       }
     }
@@ -134,6 +149,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
       id
       title
       description
+      descriptionHtml
       handle
       priceRange {
         minVariantPrice {
@@ -170,6 +186,8 @@ const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      productType
+      tags
     }
   }
 `;
@@ -230,6 +248,47 @@ const CART_LINES_REMOVE_MUTATION = `
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart { id }
       userErrors { field message }
+    }
+  }
+`;
+
+// Customer Mutations & Queries
+const CUSTOMER_CREATE_MUTATION = `
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer { id email }
+      customerUserErrors { field message }
+    }
+  }
+`;
+
+const CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION = `
+  mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+    customerAccessTokenCreate(input: $input) {
+      customerAccessToken { accessToken expiresAt }
+      customerUserErrors { field message }
+    }
+  }
+`;
+
+const CUSTOMER_QUERY = `
+  query getCustomer($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+      id
+      firstName
+      lastName
+      displayName
+      email
+      phone
+    }
+  }
+`;
+
+const CUSTOMER_UPDATE_MUTATION = `
+  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
+    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
+      customer { id firstName lastName email phone }
+      customerUserErrors { field message }
     }
   }
 `;
@@ -304,4 +363,38 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
   if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
   if (userErrors.length > 0) return { success: false };
   return { success: true };
+}
+
+export async function createShopifyCustomer(input: any) {
+  const data = await storefrontApiRequest(CUSTOMER_CREATE_MUTATION, { input });
+  if (data?.errors) return { success: false, errors: data.errors };
+  const errors = data?.data?.customerCreate?.customerUserErrors || [];
+  if (errors.length > 0) return { success: false, errors };
+  return { success: true, customer: data.data.customerCreate.customer };
+}
+
+export async function loginShopifyCustomer(email: string, password: string) {
+  const data = await storefrontApiRequest(CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION, {
+    input: { email, password }
+  });
+  if (data?.errors) return { success: false, errors: data.errors };
+  const errors = data?.data?.customerAccessTokenCreate?.customerUserErrors || [];
+  if (errors.length > 0) return { success: false, errors };
+  return { success: true, token: data.data.customerAccessTokenCreate.customerAccessToken };
+}
+
+export async function fetchShopifyCustomer(token: string) {
+  const data = await storefrontApiRequest(CUSTOMER_QUERY, { customerAccessToken: token });
+  return data?.data?.customer || null;
+}
+
+export async function updateShopifyCustomer(token: string, customerInput: any) {
+  const data = await storefrontApiRequest(CUSTOMER_UPDATE_MUTATION, {
+    customerAccessToken: token,
+    customer: customerInput
+  });
+  if (data?.errors) return { success: false, errors: data.errors };
+  const errors = data?.data?.customerUpdate?.customerUserErrors || [];
+  if (errors.length > 0) return { success: false, errors };
+  return { success: true, customer: data.data.customerUpdate.customer };
 }

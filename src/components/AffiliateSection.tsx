@@ -7,44 +7,32 @@ const AffiliateSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="affiliate" className="py-20 bg-gradient-to-br from-herbal-dark via-primary to-herbal-dark relative overflow-hidden" ref={ref}>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--gold)/0.12),transparent_50%)]" />
-      
+    <section id="affiliate" className="py-24 bg-[#5A7A5C]" ref={ref}>
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center max-w-2xl mx-auto"
+          className="text-center max-w-3xl mx-auto"
         >
-          <p className="text-gold-light font-sans-clean text-sm uppercase tracking-[0.2em] mb-4">Partner With Us</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-primary-foreground mb-4">
-            Share Ayurveda <span className="italic text-gold-light">&</span> Earn
+          {/* Central Users Icon */}
+          <div className="flex justify-center mb-10">
+            <Users className="h-16 w-16 text-[#C5A059]" strokeWidth={1.5} />
+          </div>
+
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-medium text-white mb-6">
+            Share Ayurveda and Earn
           </h2>
-          <p className="text-primary-foreground/70 font-body text-lg mb-10">
+          
+          <p className="text-white/80 font-body text-base md:text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
             Join the Salmara Affiliate Program and grow with India's trusted Ayurvedic brand.
           </p>
 
-          <div className="flex justify-center gap-8 mb-10">
-            {[
-              { icon: Users, label: "Refer Friends" },
-              { icon: TrendingUp, label: "Track Sales" },
-              { icon: Banknote, label: "Earn Commission" },
-            ].map((item) => (
-              <div key={item.label} className="text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-2">
-                  <item.icon className="h-6 w-6 text-gold-light" />
-                </div>
-                <p className="text-xs font-sans-clean text-primary-foreground/60">{item.label}</p>
-              </div>
-            ))}
-          </div>
-
           <a
             href="#"
-            className="inline-flex items-center gap-2 bg-accent hover:bg-gold text-accent-foreground px-10 py-4 rounded-lg font-sans-clean font-bold text-sm tracking-wide transition-all duration-300 hover:shadow-lg hover:shadow-accent/30"
+            className="inline-block bg-[#C5A059] hover:bg-[#B48F48] text-white px-12 py-4 rounded-lg font-sans-clean font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:shadow-xl shadow-lg"
           >
-            Become an Affiliate →
+            Become an Affiliate
           </a>
         </motion.div>
       </div>

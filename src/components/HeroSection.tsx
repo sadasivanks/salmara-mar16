@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import heroHerbs from "@/assets/hero-herbs.jpg";
-import heroConsultation from "@/assets/hero-consultation.jpg";
-import heroProduct from "@/assets/hero-product.jpg";
+import { Link } from "react-router-dom";
+import heroHerbs from "@/assets/hero-ayurveda.jpg";
+import heroConsultation from "@/assets/consultation.jpg";
+import heroProduct from "@/assets/skincare-wellness.png";
 
 const badges = [
   "GMP\nCERTIFIED",
@@ -12,98 +13,104 @@ const badges = [
 ];
 
 const HeroSection = () => (
-  <section className="relative min-h-[85vh] flex items-end overflow-hidden bg-herbal-dark">
+  <section className="relative min-h-screen flex items-center overflow-hidden bg-[#1A2E35]">
     {/* 3-panel background images */}
     <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-3">
-      <div className="relative overflow-hidden">
-        <img src={heroHerbs} alt="Ayurvedic herbs and mortar" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-herbal-dark/50" />
+      {/* Panel 1 */}
+      <div className="relative overflow-hidden border-r border-white/5">
+        <img 
+          src={heroHerbs} 
+          alt="Ayurvedic herbs" 
+          className="absolute inset-0 w-full h-full object-cover grayscale-[20%] brightness-[0.8]" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/80 via-[#1A2E35]/20 to-transparent" />
       </div>
-      <div className="relative overflow-hidden hidden md:block">
-        <img src={heroConsultation} alt="Ayurvedic doctor consultation" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-herbal-dark/30" />
+      {/* Panel 2 */}
+      <div className="relative overflow-hidden border-r border-white/5 hidden md:block">
+        <img 
+          src={heroConsultation} 
+          alt="Consultation" 
+          className="absolute inset-0 w-full h-full object-cover grayscale-[10%] brightness-[0.8]" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/80 via-[#1A2E35]/20 to-transparent" />
       </div>
+      {/* Panel 3 */}
       <div className="relative overflow-hidden hidden md:block">
-        <img src={heroProduct} alt="Woman using herbal product" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-herbal-dark/30" />
+        <img 
+          src={heroProduct} 
+          alt="Product experience" 
+          className="absolute inset-0 w-full h-full object-cover brightness-[0.85]" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/80 via-[#1A2E35]/20 to-transparent" />
       </div>
     </div>
 
-    {/* Gradient overlay for text readability */}
-    <div className="absolute inset-0 bg-gradient-to-t from-herbal-dark/80 via-herbal-dark/20 to-transparent" />
-    <div className="absolute inset-0 bg-gradient-to-r from-herbal-dark/60 via-transparent to-transparent" />
+    {/* Global Dark Overlay for consistent text contrast */}
+    <div className="absolute inset-0 bg-black/30 z-0 pointer-events-none" />
 
-    {/* Trust badges - top right */}
+    {/* Badges Overlay (Outside panels to avoid clipping) */}
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8, delay: 0.8 }}
-      className="absolute top-6 right-6 md:top-10 md:right-10 z-20 flex gap-3"
+      className="absolute top-20 right-4 md:right-12 z-20 flex flex-nowrap justify-end gap-3 md:gap-5"
     >
       {badges.map((badge) => (
         <div
           key={badge}
-          className="hidden sm:flex w-16 h-16 md:w-20 md:h-20 rounded-full border border-primary-foreground/40 items-center justify-center text-center backdrop-blur-sm bg-primary-foreground/5 hover:bg-primary-foreground/10 transition-colors"
+          className="w-16 h-16 md:w-28 md:h-28 rounded-full border border-white/20 bg-black/40 backdrop-blur-md flex items-center justify-center text-center p-3"
         >
-          <span className="text-[8px] md:text-[9px] font-sans-clean font-semibold text-primary-foreground/90 leading-tight whitespace-pre-line tracking-wide">
+          <span className="text-[7px] md:text-[10px] font-sans-clean font-bold text-white uppercase tracking-widest leading-tight whitespace-pre-line">
             {badge}
           </span>
         </div>
       ))}
     </motion.div>
 
-    {/* Main content */}
-    <div className="container mx-auto px-4 relative z-10 pb-20 pt-32 md:pt-40">
-      <div className="max-w-3xl">
-        <motion.h1
+    {/* Main Content Overlay */}
+    <div className="container mx-auto px-4 relative z-10 pt-20">
+      <div className="max-w-7xl">
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-primary-foreground leading-[1.1] mb-6"
+          transition={{ duration: 1, delay: 0.2 }}
         >
-          Rooted in Ayurveda.
-          <br />
-          <span className="italic text-gold-light">Refined by Science.</span>
-        </motion.h1>
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[80px] xl:text-[95px] font-display font-medium text-white leading-tight mb-8 drop-shadow-lg">
+            <span className="inline-block whitespace-nowrap">Rooted in Ayurveda.</span>
+            <br />
+            <span className="italic inline-block whitespace-nowrap">Refined by Science.</span>
+          </h1>
+          
+          <p className="text-white/90 text-lg md:text-2xl font-body leading-relaxed mb-12 max-w-2xl drop-shadow-md">
+            From pure herbs to certified formulations – crafted in Karnataka 
+            for today's wellness seekers.
+          </p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-primary-foreground/80 text-base sm:text-lg md:text-xl font-body leading-relaxed mb-10 max-w-xl"
-        >
-          From pure herbs to certified formulations – crafted in Karnataka for today's wellness seekers.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-wrap gap-4"
-        >
-          <a
-            href="#products"
-            className="bg-primary-foreground text-herbal-dark px-8 py-3.5 font-sans-clean font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:bg-gold-light hover:text-herbal-dark"
-          >
-            Shop Now
-          </a>
-          <a
-            href="#consultation"
-            className="border-2 border-primary-foreground/60 text-primary-foreground px-8 py-3.5 font-sans-clean font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:bg-primary-foreground/10 hover:border-primary-foreground"
-          >
-            Book Consultation
-          </a>
+          <div className="flex flex-wrap gap-6 items-center">
+            <Link
+              to="/shop"
+              className="bg-white text-[#1A2E35] px-10 py-4 font-sans-clean font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#F2EDE4]"
+            >
+              Shop Now
+            </Link>
+            <Link
+              to="/book-appointment"
+              className="border border-white/60 text-white px-10 py-4 font-sans-clean font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white/10 hover:border-white"
+            >
+              Book Consultation
+            </Link>
+          </div>
         </motion.div>
       </div>
     </div>
 
     {/* Scroll indicator */}
     <motion.div
-      animate={{ y: [0, 10, 0] }}
+      animate={{ y: [0, 8, 0] }}
       transition={{ duration: 2, repeat: Infinity }}
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10"
+      className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
     >
-      <ChevronDown className="h-6 w-6 text-primary-foreground/50" />
+      <ChevronDown className="h-8 w-8 text-white/50" />
     </motion.div>
   </section>
 );

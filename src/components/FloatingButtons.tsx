@@ -2,9 +2,9 @@ import { MessageCircle, Phone, Users, MessageSquare } from "lucide-react";
 
 const buttons = [
   { icon: MessageCircle, label: "WhatsApp", color: "bg-green-600 hover:bg-green-700", href: "https://wa.me/919999999999" },
-  { icon: Phone, label: "Call", color: "bg-primary hover:bg-herbal-dark", href: "tel:+919999999999" },
-  { icon: Users, label: "Affiliate", color: "bg-accent hover:bg-gold", href: "#affiliate" },
-  { icon: MessageSquare, label: "Feedback", color: "bg-herbal-light hover:bg-primary", href: "#" },
+  { icon: Phone, label: "+91 9876543210", color: "bg-[#5A7A5C] hover:bg-[#4A634C]", href: "tel:+919876543210" },
+  { icon: Users, label: "Affiliate", color: "bg-[#C5A059] hover:bg-[#B48F48]", href: "#affiliate" },
+  { icon: MessageSquare, label: "Feedback", color: "bg-[#8E9196] hover:bg-[#71717A]", href: "#" },
 ];
 
 const FloatingButtons = () => (

@@ -1,31 +1,30 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import tulsi from "@/assets/tulsi_dark.png";
+import guggul from "@/assets/guggul_dark.png";
+import triphala from "@/assets/triphala_dark.png";
+import ashwagandha from "@/assets/ashwagandha_dark.png";
 
 const ingredients = [
   {
     name: "Tulsi",
-    benefit: "Strengthens immunity and respiratory health.",
-    color: "from-green-800/80 to-green-600/60",
+    benefit: "Strengthens Immunity.",
+    image: tulsi,
   },
   {
     name: "Guggul",
-    benefit: "Supports joint flexibility and cholesterol balance.",
-    color: "from-amber-800/80 to-amber-600/60",
+    benefit: "Supports joint flexibility.",
+    image: guggul,
   },
   {
     name: "Triphala",
-    benefit: "Enhances digestion and natural detoxification.",
-    color: "from-emerald-800/80 to-emerald-600/60",
+    benefit: "Enhances digestion.",
+    image: triphala,
   },
   {
     name: "Ashwagandha",
     benefit: "Reduces stress and improves vitality.",
-    color: "from-orange-900/80 to-orange-700/60",
-  },
-  {
-    name: "Brahmi",
-    benefit: "Boosts memory and cognitive clarity.",
-    color: "from-teal-800/80 to-teal-600/60",
+    image: ashwagandha,
   },
 ];
 
@@ -34,7 +33,7 @@ const IngredientHighlights = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 bg-card" ref={ref}>
+    <section className="py-24 bg-white" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -42,28 +41,38 @@ const IngredientHighlights = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-accent font-sans-clean text-sm uppercase tracking-[0.2em] mb-3">Nature's Pharmacy</p>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground">
+          <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] mb-4">Pure Ingredients</p>
+          <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35]">
             The Science of Nature
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 max-w-6xl mx-auto">
           {ingredients.map((item, i) => (
             <motion.div
               key={item.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`relative rounded-2xl aspect-[3/4] overflow-hidden bg-gradient-to-br ${item.color} group cursor-default`}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+              className="flex flex-col items-center text-center group"
             >
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <span className="text-2xl">🌿</span>
+              <div className="relative mb-6">
+                {/* Circular Image Container */}
+                <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full overflow-hidden border border-[#C5A059]/40 shadow-sm transition-all duration-500 group-hover:border-[#C5A059] group-hover:shadow-md">
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  />
                 </div>
-                <h3 className="font-display font-bold text-white text-xl mb-2">{item.name}</h3>
-                <p className="text-white/70 text-xs font-sans-clean leading-relaxed">{item.benefit}</p>
               </div>
+
+              <h3 className="font-display font-medium text-[#1A2E35] text-xl mb-1">
+                {item.name}
+              </h3>
+              <p className="text-[#1A2E35]/60 text-sm font-body leading-relaxed max-w-[180px]">
+                {item.benefit}.
+              </p>
             </motion.div>
           ))}
         </div>

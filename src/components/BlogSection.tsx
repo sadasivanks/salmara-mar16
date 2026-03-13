@@ -1,25 +1,25 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { ArrowRight, Clock, Leaf } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import tulsiImg from "@/assets/tulsi_dark.png";
+import ashwagandhaImg from "@/assets/ashwagandha_dark.png";
+import triphalaImg from "@/assets/triphala_dark.png";
 
 const posts = [
   {
-    title: "5 Ayurvedic Herbs for Daily Immunity",
-    snippet: "Discover how Tulsi, Ashwagandha, and Giloy can transform your immune response naturally.",
-    readTime: "4 min",
-    category: "Wellness",
+    title: "5 Ways Tulsi Boosts Your Immunity Naturally",
+    snippet: "Discover how the queen of herbs protects against seasonal infections.",
+    image: tulsiImg,
   },
   {
-    title: "Understanding Your Dosha: A Beginner's Guide",
-    snippet: "Learn about Vata, Pitta, and Kapha — and find the perfect Ayurvedic routine for your body type.",
-    readTime: "6 min",
-    category: "Education",
+    title: "Ashwagandha: The Ancient Stress Buster",
+    snippet: "Learn why this adaptogen is gaining global recognition in wellness circles.",
+    image: ashwagandhaImg,
   },
   {
-    title: "The Power of Panchakarma Detox",
-    snippet: "How this ancient five-step cleansing therapy can reset your body and mind.",
-    readTime: "5 min",
-    category: "Treatments",
+    title: "Triphala for Digestive Wellness",
+    snippet: "A complete guide to using this traditional formula for gut health.",
+    image: triphalaImg,
   },
 ];
 
@@ -28,7 +28,7 @@ const BlogSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="blog" className="py-24 bg-card" ref={ref}>
+    <section id="blog" className="py-24 bg-[#F2EDE4]/50" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -36,41 +36,40 @@ const BlogSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-accent font-sans-clean text-sm uppercase tracking-[0.2em] mb-3">Knowledge</p>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground">
+          <p className="text-[#C5A059] font-sans-clean text-xs sm:text-sm uppercase tracking-[0.3em] font-bold mb-4">KNOWLEDGE</p>
+          <h2 className="text-4xl sm:text-5xl font-display font-medium text-[#1A2E35]">
             Learn the Ayurvedic Way
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {posts.map((post, i) => (
             <motion.article
               key={post.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="group cursor-pointer"
+              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
             >
-              <div className="aspect-[16/10] rounded-2xl bg-gradient-to-br from-secondary to-sand-warm flex items-center justify-center mb-5 overflow-hidden group-hover:shadow-lg transition-shadow">
-                <Leaf className="h-12 w-12 text-primary/20 group-hover:scale-110 transition-transform duration-500" />
+              <div className="aspect-[16/9] overflow-hidden">
+                <img 
+                  src={post.image} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
               </div>
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-xs font-sans-clean font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
-                  {post.category}
-                </span>
-                <span className="text-xs font-sans-clean text-muted-foreground flex items-center gap-1">
-                  <Clock className="h-3 w-3" /> {post.readTime}
-                </span>
+              <div className="p-8">
+                <h3 className="font-display font-bold text-[#1A2E35] text-xl mb-4 leading-tight group-hover:text-[#5A7A5C] transition-colors">
+                  {post.title}
+                </h3>
+                <p className="text-[#4A5568] font-body text-sm leading-relaxed mb-6 line-clamp-2">
+                  {post.snippet}
+                </p>
+                <div className="flex items-center gap-1.5 text-[#5A7A5C] font-sans-clean text-xs font-bold uppercase tracking-wider group/link">
+                  <span>Read More</span>
+                  <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
+                </div>
               </div>
-              <h3 className="font-display font-semibold text-foreground text-lg mb-2 group-hover:text-primary transition-colors">
-                {post.title}
-              </h3>
-              <p className="text-muted-foreground font-body text-sm leading-relaxed mb-3">
-                {post.snippet}
-              </p>
-              <span className="text-primary font-sans-clean text-sm font-semibold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                Read More <ArrowRight className="h-3.5 w-3.5" />
-              </span>
             </motion.article>
           ))}
         </div>
@@ -79,9 +78,12 @@ const BlogSection = () => {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.6 }}
-          className="text-center mt-12"
+          className="text-center mt-16"
         >
-          <a href="#" className="border-2 border-primary/30 hover:border-primary text-foreground px-8 py-3 rounded-lg font-sans-clean font-semibold text-sm transition-all duration-300 inline-block">
+          <a 
+            href="#" 
+            className="inline-block border border-[#1A2E35]/20 hover:border-[#1A2E35] text-[#1A2E35] px-10 py-4 rounded-lg font-sans-clean font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300"
+          >
             Explore All Articles
           </a>
         </motion.div>

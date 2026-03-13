@@ -59,6 +59,24 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- **Shopify Storefront API** (for Commerce & Authentication)
+
+## Shopify Configuration
+
+This project uses the Shopify Storefront API. Configuration is handled via environment variables in your `.env` file:
+
+```env
+VITE_SHOPIFY_STOREFRONT_TOKEN=your_token
+VITE_SHOPIFY_STORE_DOMAIN=your_store.myshopify.com
+VITE_SHOPIFY_API_VERSION=2025-07
+```
+
+> [!IMPORTANT]
+> To enable Login and Registration, ensure the `unauthenticated_write_customers` scope is enabled in your Shopify App configuration.
+
+## Project History
+
+For a detailed list of recent changes and feature implementations, see the [CHANGELOG.md](file:///g:/Salmara-mar11-lovABLE/salveo-aya-forge/CHANGELOG.md).
 
 ## How can I deploy this project?
 

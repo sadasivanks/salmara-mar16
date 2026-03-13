@@ -1,22 +1,23 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { ShieldCheck, Stethoscope, ThumbsUp } from "lucide-react";
+import { ShieldCheck, Stethoscope, ThumbsUp, Leaf } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const features = [
   {
-    icon: ShieldCheck,
+    icon: Leaf,
     title: "Certified Herbs",
-    desc: "Sourced ethically, lab tested for purity and potency. Every batch meets pharmaceutical-grade standards.",
+    desc: "Sourced ethically, lab tested for purity and potency.",
   },
   {
     icon: Stethoscope,
     title: "Expert Doctors",
-    desc: "Led by experienced Ayurvedic practitioners with decades of clinical expertise in traditional medicine.",
+    desc: "Led by experienced Ayurvedic practitioners with decades of trust.",
   },
   {
     icon: ThumbsUp,
     title: "Proven Results",
-    desc: "Thousands of satisfied clients across India trust our formulations for lasting wellness outcomes.",
+    desc: "Thousands of satisfied clients across India and beyond.",
   },
 ];
 
@@ -25,7 +26,7 @@ const WhyChooseUs = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 bg-card" ref={ref}>
+    <section className="py-24 bg-white" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -33,26 +34,26 @@ const WhyChooseUs = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-accent font-sans-clean text-sm uppercase tracking-[0.2em] mb-3">Our Promise</p>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground">
-            Why Choose Salmara?
+          <p className="text-[#C5A059] font-sans-clean text-xs sm:text-sm uppercase tracking-[0.3em] font-bold mb-4">WHY SALMARA</p>
+          <h2 className="text-3xl sm:text-4xl font-display font-medium text-[#1A2E35]">
+            Why Choose Us
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: i * 0.15 }}
-              className="text-center group"
+              className="bg-[#FDFBF7] border border-[#F2EDE4] p-10 rounded-xl text-center shadow-sm hover:shadow-md transition-all duration-300"
             >
-              <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/10 transition-colors duration-300">
-                <feature.icon className="h-8 w-8 text-primary" />
+              <div className="w-16 h-16 rounded-full bg-white border border-[#F2EDE4] flex items-center justify-center mx-auto mb-8 shadow-sm">
+                <feature.icon className="h-6 w-6 text-[#5A7A5C]" />
               </div>
-              <h3 className="font-display text-xl font-semibold text-foreground mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground font-body text-sm leading-relaxed max-w-xs mx-auto">
+              <h3 className="font-display text-[22px] font-semibold text-[#1A2E35] mb-4">{feature.title}</h3>
+              <p className="text-[#4A5568] font-body text-sm leading-relaxed max-w-[240px] mx-auto">
                 {feature.desc}
               </p>
             </motion.div>
@@ -63,20 +64,20 @@ const WhyChooseUs = () => {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-4 mt-14"
+          className="flex flex-wrap items-center justify-center gap-4 mt-16"
         >
-          <a
-            href="#consultation"
-            className="bg-primary hover:bg-herbal-dark text-primary-foreground px-8 py-3 rounded-lg font-sans-clean font-semibold text-sm transition-all duration-300"
+          <Link
+            to="/book-appointment"
+            className="bg-[#5A7A5C] hover:bg-[#4A634B] text-white px-10 py-4 rounded-lg shadow-lg font-sans-clean font-bold text-sm transition-all duration-300 transform hover:-translate-y-1"
           >
             Book Appointment
-          </a>
-          <a
-            href="#products"
-            className="border-2 border-primary/30 hover:border-primary text-foreground px-8 py-3 rounded-lg font-sans-clean font-semibold text-sm transition-all duration-300"
+          </Link>
+          <Link
+            to="/shop"
+            className="border-2 border-[#5A7A5C]/20 hover:border-[#5A7A5C] text-[#5A7A5C] px-10 py-4 rounded-lg font-sans-clean font-bold text-sm transition-all duration-300"
           >
             Shop Now
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

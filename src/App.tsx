@@ -6,7 +6,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCartSync } from "@/hooks/useCartSync";
 import Index from "./pages/Index.tsx";
 import ProductDetail from "./pages/ProductDetail.tsx";
+import DashboardPage from "./pages/DashboardPage.tsx";
+import AboutUsPage from "./pages/AboutUsPage.tsx";
+import ClinicsPage from "./pages/ClinicsPage.tsx";
+import ShopPage from "./pages/ShopPage.tsx";
+import BookAppointmentPage from "./pages/BookAppointmentPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -21,9 +27,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <CartSyncProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/about" element={<AboutUsPage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/clinics" element={<ClinicsPage />} />
+            <Route path="/book-appointment" element={<BookAppointmentPage />} />
             <Route path="/product/:handle" element={<ProductDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

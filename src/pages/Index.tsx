@@ -7,6 +7,7 @@ import IngredientHighlights from "@/components/IngredientHighlights";
 import ConsultationSection from "@/components/ConsultationSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import BlogSection from "@/components/BlogSection";
+import DailyTipsSection from "@/components/DailyTipsSection";
 import AffiliateSection from "@/components/AffiliateSection";
 import NewsletterSection from "@/components/NewsletterSection";
 import Footer from "@/components/Footer";
@@ -21,9 +22,10 @@ const Index = () => (
       <WhyChooseUs />
       <FeaturedProducts />
       <IngredientHighlights />
-      <ConsultationSection />
       <TestimonialsSection />
       <BlogSection />
+      <DailyTipsSection />
+      <ConsultationSection />
       <AffiliateSection />
       <NewsletterSection />
     </main>
