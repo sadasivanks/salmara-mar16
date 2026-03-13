@@ -10,7 +10,7 @@ import {
   UserCircle,
   ArrowLeft
 } from "lucide-react";
-import { fetchShopifyCustomer, updateShopifyCustomer } from "@/lib/shopify";
+import { fetchShopifyCustomer, updateShopifyCustomer, getValidCustomerToken, getStoredSession, clearSession, saveSession } from "@/lib/shopify";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,18 +39,15 @@ const Dashboard = () => {
 
   const fetchProfile = async () => {
     try {
-      const savedSession = localStorage.getItem('salmara_session');
-      if (!savedSession) {
+      const token = await getValidCustomerToken();
+      if (!token) {
         navigate("/");
         return;
       }
 
-      const session = JSON.parse(savedSession);
-      const customer = await fetchShopifyCustomer(session.accessToken);
-
+      const customer = await fetchShopifyCustomer(token);
       if (!customer) {
-        // Token might be expired
-        localStorage.removeItem('salmara_session');
+        clearSession();
         navigate("/");
         return;
       }
@@ -70,8 +67,7 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('salmara_session');
-    window.dispatchEvent(new Event('auth-status-change'));
+    clearSession();
     navigate("/");
     toast.success("Logged out successfully");
   };
@@ -80,11 +76,10 @@ const Dashboard = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const savedSession = localStorage.getItem('salmara_session');
-      if (!savedSession) throw new Error("Session expired");
+      const token = await getValidCustomerToken();
+      if (!token) throw new Error("Session expired. Please log in again.");
 
-      const session = JSON.parse(savedSession);
-      const response = await updateShopifyCustomer(session.accessToken, {
+      const response = await updateShopifyCustomer(token, {
         firstName: formData.firstName,
         lastName: formData.lastName,
         phone: formData.phone || undefined
@@ -94,10 +89,12 @@ const Dashboard = () => {
         throw new Error(response.errors?.[0]?.message || "Update failed");
       }
       
-      // Update local storage name if needed
-      session.user.name = `${formData.firstName} ${formData.lastName}`.trim();
-      localStorage.setItem('salmara_session', JSON.stringify(session));
-      window.dispatchEvent(new Event('auth-status-change'));
+      // Update stored session
+      const session = getStoredSession();
+      if (session) {
+        session.user.name = `${formData.firstName} ${formData.lastName}`.trim();
+        saveSession(session);
+      }
 
       toast.success("Profile updated successfully!");
     } catch (error: any) {

@@ -1,14 +1,13 @@
 import Dashboard from "@/components/Dashboard";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getStoredSession } from "@/lib/shopify";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Basic auth check
-    const savedSession = localStorage.getItem('salmara_session');
-    if (!savedSession) {
+    if (!getStoredSession()) {
       navigate("/");
     }
   }, [navigate]);
