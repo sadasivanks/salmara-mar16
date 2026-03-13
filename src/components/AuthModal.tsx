@@ -40,26 +40,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
         throw new Error(errorMsg || "Invalid email or password.");
       }
 
-      const { accessToken, expiresAt } = response.token;
-      const customer = await fetchShopifyCustomer(accessToken);
-
-      const sessionData = {
-        accessToken,
-        user: {
-          id: customer?.id || "",
-          email: customer?.email || email,
-          name: customer ? `${customer.firstName} ${customer.lastName}`.trim() : email.split('@')[0],
-          firstName: customer?.firstName,
-          lastName: customer?.lastName,
-          phone: customer?.phone
-        },
-        expires: new Date(expiresAt).getTime()
-      };
-      
-      localStorage.setItem('salmara_session', JSON.stringify(sessionData));
-      window.dispatchEvent(new Event('auth-status-change'));
-
-      toast.success(`Welcome back, ${sessionData.user.name}!`);
+      // Session is already saved by loginShopifyCustomer
+      toast.success(`Welcome back, ${response.user?.name || 'User'}!`);
       onClose();
     } catch (error: any) {
       toast.error("Login failed", { description: error.message });
