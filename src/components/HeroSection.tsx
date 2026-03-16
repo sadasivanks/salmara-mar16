@@ -93,12 +93,14 @@ const HeroSection = () => (
             >
               Shop Now
             </Link>
-            <Link
-              to="/book-appointment"
-              className="border border-white/60 text-white px-10 py-4 font-sans-clean font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white/10 hover:border-white"
+            <a 
+              href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-white/60 text-white px-10 py-4 font-sans-clean font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white/10 hover:border-white block w-fit"
             >
               Book Consultation
-            </Link>
+            </a>
           </div>
         </motion.div>
       </div>

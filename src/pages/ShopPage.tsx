@@ -6,8 +6,6 @@ import {
   Search, 
   Filter, 
   ChevronDown, 
-  Star, 
-  Heart, 
   ShoppingCart, 
   ShieldCheck, 
   CheckCircle2, 
@@ -19,7 +17,7 @@ import {
   Check
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
+import { fetchProducts, createShopifyCart, type ShopifyProduct } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import {
@@ -55,6 +53,7 @@ const ShopPage = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [addingId, setAddingId] = useState<string | null>(null);
+  const [buyingId, setBuyingId] = useState<string | null>(null);
   
   // Filter & Sort State
   const [selectedConcern, setSelectedConcern] = useState<string | null>(null);
@@ -154,6 +153,30 @@ const ShopPage = () => {
     }
   };
 
+  const handleBuyNow = async (product: ShopifyProduct) => {
+    const variant = product.node.variants.edges[0]?.node;
+    if (!variant) return;
+    
+    setBuyingId(product.node.id);
+    try {
+      const cartData = await createShopifyCart({
+        variantId: variant.id,
+        quantity: 1
+      });
+      
+      if (cartData?.checkoutUrl) {
+        window.location.href = cartData.checkoutUrl;
+      } else {
+        toast.error("Checkout failed", { description: "Could not generate checkout link. Please try adding to cart." });
+      }
+    } catch (error) {
+      console.error("Buy Now Error:", error);
+      toast.error("Something went wrong", { description: "Please try again or use standard Add to Cart." });
+    } finally {
+      setBuyingId(null);
+    }
+  };
+
   const clearFilters = () => {
     setSelectedConcern(null);
     setSelectedCategory("All Categories");
@@ -169,14 +192,7 @@ const ShopPage = () => {
       <main>
         {/* 1) Hero Section */}
         <section className="relative h-[60vh] flex items-center justify-center bg-[#1A2E35] overflow-hidden">
-          <div className="absolute inset-0 opacity-40">
-            <img 
-              src="https://images.unsplash.com/photo-1615485290382-441e4d019cb5?q=80&w=2070&auto=format&fit=crop" 
-              alt="Ayurvedic flatlay" 
-              className="w-full h-full object-cover grayscale-[30%]"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35] via-[#1A2E35]/90 to-[#1A2E35]/80" />
           
           <div className="container px-4 relative z-10 text-center max-w-4xl">
             <motion.div
@@ -391,85 +407,61 @@ const ShopPage = () => {
                   return (
                     <motion.div
                       key={product.node.id}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 30 }}
                       animate={isGridInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ duration: 0.5, delay: i * 0.05 }}
-                      className="group bg-white border border-[#F2EDE4] rounded-[32px] overflow-hidden flex flex-col hover:border-[#5A7A5C] transition-all duration-500 hover:shadow-2xl hover:shadow-[#5A7A5C]/5"
+                      className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 group"
                     >
-                      <div className="relative aspect-square overflow-hidden bg-[#FDFBF7]">
-                        <Link to={`/product/${product.node.handle}`}>
+                      <Link to={`/product/${product.node.handle}`}>
+                        <div className="relative aspect-square bg-gradient-to-br from-secondary to-sand-warm flex items-center justify-center overflow-hidden">
                           {image ? (
-                            <img 
-                              src={image.url} 
-                              alt={image.altText || product.node.title} 
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                            />
+                            <img src={image.url} alt={image.altText || product.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-secondary">
-                              <Leaf className="h-12 w-12 text-[#1A2E35]/10" />
-                            </div>
+                            <Leaf className="h-16 w-16 text-primary/20" />
                           )}
-                        </Link>
-                        
-                        {/* Wishlist Toggle */}
-                        <button className="absolute top-6 right-6 h-10 w-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-[#1A2E35]/20 hover:text-red-500 transition-colors shadow-sm">
-                          <Heart className="h-4 w-4" />
-                        </button>
-                        
-                        {/* Status Badge */}
-                        {!variant?.availableForSale ? (
-                           <div className="absolute top-6 left-6 bg-red-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-[0.2em] shadow-lg">
-                            Sold Out
-                          </div>
-                        ) : (
-                          <div className="absolute top-6 left-6 bg-[#C5A059] text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-[0.2em] shadow-lg">
-                            Premium Choice
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="p-8 flex-1 flex flex-col">
-                        <div className="flex items-center gap-1.5 mb-4">
-                          <div className="flex items-center">
-                            {[1, 2, 3, 4, 5].map((s) => (
-                              <Star key={s} className="h-3 w-3 fill-[#C5A059] text-[#C5A059]" />
-                            ))}
-                          </div>
-                          <span className="text-[10px] font-bold text-[#1A2E35]">4.8</span>
                         </div>
+                      </Link>
 
-                        <Link to={`/product/${product.node.handle}`} className="group/details">
-                          <h3 className="font-display text-xl font-medium text-[#1A2E35] mb-1 line-clamp-2 leading-tight hover:text-[#5A7A5C] transition-colors">
+                      <div className="p-5">
+                        <Link to={`/product/${product.node.handle}`}>
+                          <h3 className="font-display font-semibold text-foreground text-lg mb-1 hover:text-primary transition-colors">
                             {product.node.title}
                           </h3>
-                          <p className="text-[9px] font-bold text-[#5A7A5C]/60 uppercase tracking-widest mb-2 group-hover/details:translate-x-1 transition-transform">View Details</p>
                         </Link>
-                        
-                        <div className="flex flex-wrap gap-2 mb-4">
-                           <span className="text-[9px] font-bold text-[#5A7A5C] uppercase tracking-widest bg-[#5A7A5C]/5 px-2 py-1 rounded-md">{product.node.productType || "Wellness"}</span>
-                        </div>
-                        
-                        <p className="text-sm text-[#1A2E35]/50 font-sans-clean line-clamp-2 mb-6 leading-relaxed">
-                          {product.node.description}
-                        </p>
+                        <p className="text-muted-foreground font-body text-sm mb-3 line-clamp-2">{product.node.description}</p>
 
-                        <div className="mt-auto pt-6 border-t border-[#F2EDE4] flex items-center justify-between">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-[#1A2E35]/30 line-through">₹{((parseFloat(price?.amount || "0") * 1.1)).toFixed(0)}</span>
-                            <span className="text-lg font-display font-bold text-[#1A2E35]">
-                              {price?.currencyCode === 'INR' ? '₹' : price?.currencyCode} {parseFloat(price?.amount || "0").toFixed(0)}
+                        {price && (
+                          <div className="flex items-baseline gap-2 mb-4">
+                            <span className="text-xl font-sans-clean font-bold text-foreground">
+                              {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
                             </span>
                           </div>
-                          <button 
-                            onClick={() => handleAddToCart(product)}
-                            disabled={!variant?.availableForSale || addingId === product.node.id}
-                            className="h-12 w-12 bg-[#5A7A5C] rounded-2xl flex items-center justify-center text-white hover:bg-[#4A634B] transition-all shadow-xl shadow-[#5A7A5C]/20 disabled:opacity-50 group"
+                        )}
+
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleAddToCart(product)}
+                              disabled={!variant?.availableForSale || addingId === product.node.id || buyingId === product.node.id}
+                              className="flex-1 bg-[#5A7A5C] hover:bg-[#4A634B] text-white py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                            >
+                              {addingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</>}
+                            </button>
+                            <Link
+                              to={`/product/${product.node.handle}`}
+                              title="Opens the full product page"
+                              className="px-4 py-2.5 rounded-lg border border-[#5A7A5C] text-[#5A7A5C] font-sans-clean text-xs font-semibold hover:bg-[#5A7A5C] hover:text-white transition-all flex items-center justify-center whitespace-nowrap"
+                            >
+                              Details
+                            </Link>
+                          </div>
+                          <button
+                            onClick={() => handleBuyNow(product)}
+                            disabled={!variant?.availableForSale || addingId === product.node.id || buyingId === product.node.id}
+                            className="w-full border-2 border-[#1A2E35] text-[#1A2E35] py-2.5 rounded-lg font-sans-clean text-[10px] font-bold uppercase tracking-wider hover:bg-[#1A2E35] hover:text-white transition-all disabled:opacity-50 flex items-center justify-center"
                           >
-                            {addingId === product.node.id ? (
-                               <Loader2 className="h-5 w-5 animate-spin" />
-                            ) : (
-                              <ShoppingCart className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            )}
+                            {buyingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
+                            {buyingId === product.node.id ? "Preparing..." : "Buy Now Direct"}
                           </button>
                         </div>
                       </div>

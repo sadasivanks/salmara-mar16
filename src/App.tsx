@@ -10,6 +10,7 @@ import DashboardPage from "./pages/DashboardPage.tsx";
 import AboutUsPage from "./pages/AboutUsPage.tsx";
 import ClinicsPage from "./pages/ClinicsPage.tsx";
 import ShopPage from "./pages/ShopPage.tsx";
+import ContactPage from "./pages/ContactPage.tsx";
 import BookAppointmentPage from "./pages/BookAppointmentPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
@@ -35,7 +36,8 @@ const App = () => (
             <Route path="/about" element={<AboutUsPage />} />
             <Route path="/shop" element={<ShopPage />} />
             <Route path="/clinics" element={<ClinicsPage />} />
-            <Route path="/book-appointment" element={<BookAppointmentPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            {/* <Route path="/book-appointment" element={<BookAppointmentPage />} /> */}
             <Route path="/product/:handle" element={<ProductDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

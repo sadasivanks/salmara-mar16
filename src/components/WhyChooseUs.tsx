@@ -66,12 +66,14 @@ const WhyChooseUs = () => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex flex-wrap items-center justify-center gap-4 mt-16"
         >
-          <Link
-            to="/book-appointment"
-            className="bg-[#5A7A5C] hover:bg-[#4A634B] text-white px-10 py-4 rounded-lg shadow-lg font-sans-clean font-bold text-sm transition-all duration-300 transform hover:-translate-y-1"
+          <a 
+            href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#5A7A5C] hover:bg-[#4A634B] text-white px-10 py-4 rounded-lg shadow-lg font-sans-clean font-bold text-sm transition-all duration-300 transform hover:-translate-y-1 block w-fit"
           >
             Book Appointment
-          </Link>
+          </a>
           <Link
             to="/shop"
             className="border-2 border-[#5A7A5C]/20 hover:border-[#5A7A5C] text-[#5A7A5C] px-10 py-4 rounded-lg font-sans-clean font-bold text-sm transition-all duration-300"

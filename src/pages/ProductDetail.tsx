@@ -178,9 +178,9 @@ const ProductDetail = () => {
                 <div className="flex items-end gap-3">
                   <span className="text-3xl font-display font-medium text-[#1A2E35]">
                     {selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode}{' '}
-                    {parseFloat(selectedVariant?.price.amount || "0").toFixed(0)}
+                    {parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
                   </span>
-                  <span className="text-lg text-[#1A2E35]/30 line-through mb-1">₹{((parseFloat(selectedVariant?.price.amount || "0") * 1.15)).toFixed(0)}</span>
+                  <span className="text-lg text-[#1A2E35]/30 line-through mb-1">₹ {((parseFloat(selectedVariant?.price.amount || "0") * 1.15)).toFixed(2)}</span>
                   <span className="bg-[#5A7A5C]/5 text-[#5A7A5C] text-[10px] font-bold px-2 py-1 rounded-md mb-1 uppercase tracking-widest">Inclusive of Taxes</span>
                 </div>
                 

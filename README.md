@@ -72,7 +72,8 @@ VITE_SHOPIFY_API_VERSION=2025-07
 ```
 
 > [!IMPORTANT]
-> To enable Login and Registration, ensure the `unauthenticated_write_customers` scope is enabled in your Shopify App configuration.
+> **Storefront API Permissions Required**:
+> To enable Login and Registration flow, you MUST check the **`unauthenticated_write_customers`** scope in your Shopify App configuration under the **Storefront API** section (not Admin API).
 
 ## Project History
 

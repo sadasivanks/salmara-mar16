@@ -8,7 +8,9 @@ import {
   addLineToShopifyCart,
   updateShopifyCartLine,
   removeLineFromShopifyCart,
+  getStoredSession,
 } from '@/lib/shopify';
+import { updateCustomerCartId } from '@/lib/shopifyAdmin';
 
 export interface CartItem {
   lineId: string | null;
@@ -30,6 +32,7 @@ interface CartStore {
   updateQuantity: (variantId: string, quantity: number) => Promise<void>;
   removeItem: (variantId: string) => Promise<void>;
   clearCart: () => void;
+  setCartId: (id: string | null) => void;
   syncCart: () => Promise<void>;
   getCheckoutUrl: () => string | null;
 }
@@ -57,6 +60,13 @@ export const useCartStore = create<CartStore>()(
                 checkoutUrl: result.checkoutUrl,
                 items: [{ ...item, lineId: result.lineId }],
               });
+
+              // If user is logged in, save this cart ID to their Shopify profile immediately
+              const session = getStoredSession();
+              if (session?.user?.id) {
+                console.log("Saving newly created cart to logged-in user:", session.user.id);
+                await updateCustomerCartId(session.user.id, result.cartId);
+              }
             }
           } else if (existingItem) {
             const newQuantity = existingItem.quantity + item.quantity;
@@ -127,9 +137,17 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      clearCart: () => set({ items: [], cartId: null, checkoutUrl: null }),
+      clearCart: () => {
+        set({ items: [], cartId: null, checkoutUrl: null });
+        // Forces a clean state in the persistence layer
+        if (typeof window !== 'undefined') {
+          // No need to manually clear localStorage as persist middleware does it on set
+          console.log("Cart store cleared");
+        }
+      },
       getCheckoutUrl: () => get().checkoutUrl,
-
+      setCartId: (id: string | null) => set({ cartId: id }),
+      
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();
         if (!cartId || isSyncing) return;
@@ -137,9 +155,40 @@ export const useCartStore = create<CartStore>()(
         set({ isSyncing: true });
         try {
           const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
-          if (!data) return;
-          const cart = data?.data?.cart;
-          if (!cart || cart.totalQuantity === 0) clearCart();
+          if (!data?.data?.cart) {
+            clearCart();
+            return;
+          }
+          
+          const cart = data.data.cart;
+          const newItems: CartItem[] = cart.lines.edges.map((edge: any) => {
+            const node = edge.node;
+            const variant = node.merchandise;
+            const product = variant.product;
+            
+            return {
+              lineId: node.id,
+              variantId: variant.id,
+              variantTitle: variant.title,
+              quantity: node.quantity,
+              price: variant.price,
+              selectedOptions: [], // Can be extracted if needed
+              product: {
+                node: {
+                  ...product,
+                  images: product.images,
+                  variants: product.variants,
+                  priceRange: { minVariantPrice: variant.price },
+                  options: [] // Simplified
+                }
+              }
+            };
+          });
+
+          set({ 
+            items: newItems,
+            checkoutUrl: cart.checkoutUrl
+          });
         } catch (error) {
           console.error('Failed to sync cart:', error);
         } finally {

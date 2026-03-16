@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import aboutLab from "@/assets/about-lab.jpg";
 
 const timeline = [
@@ -15,9 +16,9 @@ const AboutSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-24 bg-[#F2EDE4]" ref={ref}>
+    <section id="about" className="py-12 bg-[#F2EDE4]" ref={ref}>
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center mb-10">
           {/* Main Image with Badge */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -71,8 +72,8 @@ const AboutSection = () => {
               whileHover={{ x: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <a 
-                href="/about" 
+              <Link 
+                to="/about" 
                 className="inline-flex items-center gap-2 text-sm font-sans-clean font-bold text-[#5A7A5C] hover:text-[#4a654c] transition-colors group"
               >
                 Read More 
@@ -92,7 +93,7 @@ const AboutSection = () => {
                     <path d="m12 5 7 7-7 7" />
                   </svg>
                 </span>
-              </a>
+              </Link>
             </motion.div>
           </motion.div>
         </div>
@@ -102,7 +103,7 @@ const AboutSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="max-w-4xl mx-auto mt-20"
+          className="max-w-4xl mx-auto mt-10"
         >
           <div className="flex justify-between items-center gap-4">
             {timeline.map((item, i) => (

@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { ShoppingCart, Leaf, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { fetchProducts, type ShopifyProduct } from "@/lib/shopify";
+import { fetchProducts, createShopifyCart, type ShopifyProduct } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ const FeaturedProducts = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [addingId, setAddingId] = useState<string | null>(null);
+  const [buyingId, setBuyingId] = useState<string | null>(null);
   const { addItem, isLoading: isCartStoreLoading } = useCartStore();
 
   useEffect(() => {
@@ -38,6 +39,30 @@ const FeaturedProducts = () => {
       toast.success("Added to cart", { description: product.node.title, position: "top-center" });
     } finally {
       setAddingId(null);
+    }
+  };
+
+  const handleBuyNow = async (product: ShopifyProduct) => {
+    const variant = product.node.variants.edges[0]?.node;
+    if (!variant) return;
+    
+    setBuyingId(product.node.id);
+    try {
+      const cartData = await createShopifyCart({
+        variantId: variant.id,
+        quantity: 1
+      });
+      console.log(cartData,'cartDatacartData')
+      if (cartData?.checkoutUrl) {
+        window.location.href = cartData.checkoutUrl;
+      } else {
+        toast.error("Checkout failed", { description: "Could not generate checkout link. Please try adding to cart." });
+      }
+    } catch (error) {
+      console.error("Buy Now Error:", error);
+      toast.error("Something went wrong", { description: "Please try again or use standard Add to Cart." });
+    } finally {
+      setBuyingId(null);
     }
   };
   const [showAll, setShowAll] = useState(false);
@@ -110,21 +135,31 @@ const FeaturedProducts = () => {
                         </div>
                       )}
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            disabled={!variant?.availableForSale || addingId === product.node.id || buyingId === product.node.id}
+                            className="flex-1 bg-[#5A7A5C] hover:bg-[#4A634B] text-white py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                          >
+                            {addingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</>}
+                          </button>
+                          <Link
+                            to={`/product/${product.node.handle}`}
+                            title="Opens the full product page"
+                            className="px-4 py-2.5 rounded-lg border border-[#5A7A5C] text-[#5A7A5C] font-sans-clean text-xs font-semibold hover:bg-[#5A7A5C] hover:text-white transition-all flex items-center justify-center whitespace-nowrap"
+                          >
+                            Details
+                          </Link>
+                        </div>
                         <button
-                          onClick={() => handleAddToCart(product)}
-                          disabled={!variant?.availableForSale || addingId === product.node.id}
-                          className="flex-1 bg-[#5A7A5C] hover:bg-[#4A634B] text-white py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                          onClick={() => handleBuyNow(product)}
+                          disabled={!variant?.availableForSale || addingId === product.node.id || buyingId === product.node.id}
+                          className="w-full border-2 border-[#1A2E35] text-[#1A2E35] py-2.5 rounded-lg font-sans-clean text-[10px] font-bold uppercase tracking-wider hover:bg-[#1A2E35] hover:text-white transition-all disabled:opacity-50 flex items-center justify-center"
                         >
-                          {addingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</>}
+                          {buyingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
+                          {buyingId === product.node.id ? "Preparing..." : "Buy Now Direct"}
                         </button>
-                        <Link
-                          to={`/product/${product.node.handle}`}
-                          title="Opens the full product page"
-                          className="px-4 py-2.5 rounded-lg border border-[#5A7A5C] text-[#5A7A5C] font-sans-clean text-xs font-semibold hover:bg-[#5A7A5C] hover:text-white transition-all flex items-center justify-center whitespace-nowrap"
-                        >
-                          View Details
-                        </Link>
                       </div>
                     </div>
                   </motion.div>

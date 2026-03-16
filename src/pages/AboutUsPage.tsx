@@ -3,7 +3,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, CheckCircle2, Award, ShieldCheck, Microscope, FlaskConical, MapPin, ArrowRight } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Award, ShieldCheck, Microscope, FlaskConical, MapPin, ArrowRight, ChevronRight } from "lucide-react";
+
+// Award Images
+import awardIMG7913 from "@/awards/IMG_7913.JPG";
+import awardIMG7915 from "@/awards/IMG_7915.JPG";
+import awardIMG7916 from "@/awards/IMG_7916.JPG";
+
+// Assets
+import aboutLab from "@/assets/about-lab.jpg";
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
@@ -54,8 +62,8 @@ const AboutUsPage = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/#products" className="w-full sm:w-auto px-8 py-4 bg-[#5A7A5C] text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-black/20">
-                  Explore Our Products
+                <Link to="/shop" className="w-full sm:w-auto px-8 py-4 bg-[#5A7A5C] text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-black/20">
+                  Explore Products
                 </Link>
                 <a href="#consultation" className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-white/20 transition-all">
                   Discover Our Clinics
@@ -66,29 +74,26 @@ const AboutUsPage = () => {
         </section>
 
         {/* 2) Founder’s Message */}
-        <section className="py-24 md:py-32 container px-4">
-          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-16">
-            <div className="w-full md:w-1/2">
+        <section className="py-12 md:py-16 container px-4">
+          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            <div className="w-full md:w-1/3">
               <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1974&auto=format&fit=crop" 
                   alt="Founder" 
-                  className="rounded-2xl grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl"
+                  className="rounded-2xl grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl w-full max-w-[280px] mx-auto md:max-w-none"
                 />
-                <div className="absolute -bottom-8 -right-8 w-48 h-48 bg-[#5A7A5C] rounded-2xl -z-10 opacity-10" />
+                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[#5A7A5C] rounded-2xl -z-10 opacity-10" />
               </div>
             </div>
-            <div className="w-full md:w-1/2 space-y-8">
+            <div className="w-full md:w-2/3 space-y-6">
               <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35]">A Promise Born in Karnataka</h2>
-              <div className="space-y-6 text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg">
+              <div className="text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg lg:text-xl">
                 <p>
-                  "For generations, Ayurveda has been more than just medicine in Karnataka — it has been our way of life. However, I noticed a growing gap between ancient wisdom and the modern demand for transparency."
-                </p>
-                <p>
-                  "Salmara was founded to bridge that gap. We believe that restoring Ayurveda’s credibility requires something that feels traditional yet proven. Every bottle that leaves our facility is a testament to that — tested, verified, and crafted with uncompromising standards."
-                </p>
-                <p>
-                  "My promise to you is simple: Ayurveda that doesn't just work in theory, but is guided by evidence and integrity."
+                  When we began Salmara, it was never just about herbal formulations — it was about restoring the 
+                  credibility of Ayurveda. We wanted people to experience something that feels traditional, yet proven. 
+                  Every bottle carries our promise — tested, verified, and made with respect for the science that nature 
+                  already perfected.
                 </p>
               </div>
               <div className="pt-4">
@@ -100,7 +105,7 @@ const AboutUsPage = () => {
         </section>
 
         {/* 3) Philosophy */}
-        <section className="py-24 bg-[#F8F9FA]">
+        <section className="py-12 bg-[#F8F9FA]">
           <div className="container px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35] mb-4">Purity. Precision. Proof.</h2>
@@ -142,7 +147,7 @@ const AboutUsPage = () => {
         </section>
 
         {/* 4) Certification Gallery */}
-        <section className="py-24 md:py-32 container px-4">
+        <section className="py-12 md:py-16 container px-4">
           <div className="max-w-3xl mx-auto text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35] mb-6">Approved by Standards That Matter</h2>
             <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
@@ -176,7 +181,7 @@ const AboutUsPage = () => {
         </section>
 
         {/* 5) Our Journey */}
-        <section className="py-24 bg-[#1A2E35] text-white">
+        <section className="py-12 bg-[#1A2E35] text-white">
           <div className="container px-4">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-5xl font-display font-medium mb-4">From Karnataka to the World</h2>
@@ -192,95 +197,216 @@ const AboutUsPage = () => {
                 { step: "3", year: "2024", title: "Excellence in GMP Compliance", desc: "Karnataka Herbal Manufacturers' Association" },
                 { step: "4", year: "2024", title: "Ayurveda for Modern Life", desc: "National Wellness Innovation Forum" }
               ].map((milestone, idx) => (
-                <div key={idx} className={`flex flex-col md:flex-row items-start md:items-center gap-8 ${idx % 2 === 0 ? '' : 'md:flex-row-reverse'}`}>
-                  <div className="w-full md:w-1/2 flex flex-col md:items-end md:text-right px-4">
-                    {idx % 2 === 0 ? (
-                      <div className="space-y-4">
-                        <span className="text-4xl font-display text-[#C5A059]">{milestone.year}</span>
-                        <h4 className="text-xl font-bold leading-snug">{milestone.title}</h4>
-                        <p className="text-white/40 text-xs uppercase tracking-widest font-bold">{milestone.desc}</p>
-                      </div>
-                    ) : null}
+                <motion.div 
+                  key={idx} 
+                  initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                  className={`flex flex-col md:flex-row items-center gap-4 md:gap-0 relative`}
+                >
+                  {/* Left Column (Desktop - Step 1, 3) */}
+                  <div className={`w-full md:w-1/2 flex flex-col px-8 ${idx % 2 === 0 ? 'md:items-end md:text-right' : 'opacity-0 pointer-events-none hidden md:flex'}`}>
+                    <div className="space-y-3">
+                      <span className="text-3xl md:text-5xl font-display text-[#C5A059] block mb-2">{milestone.year}</span>
+                      <h4 className="text-lg md:text-2xl font-bold leading-tight text-white mb-1">{milestone.title}</h4>
+                      <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold">{milestone.desc}</p>
+                    </div>
                   </div>
                   
-                  <div className="h-16 w-16 rounded-full bg-[#5A7A5C] border-4 border-[#1A2E35] flex items-center justify-center shrink-0 z-10 mx-auto md:mx-0 shadow-lg shadow-[#5A7A5C]/20">
-                    <span className="text-white text-sm font-bold">{milestone.step}</span>
+                  {/* Center Dot */}
+                  <div className="h-14 w-14 md:h-20 md:w-20 rounded-full bg-[#5A7A5C] border-4 border-[#1A2E35] flex items-center justify-center shrink-0 z-20 shadow-2xl shadow-black group hover:scale-110 transition-transform">
+                    <span className="text-white text-base md:text-xl font-display font-medium">{milestone.step}</span>
                   </div>
                   
-                  <div className="w-full md:w-1/2 px-4">
-                    {idx % 2 !== 0 ? (
-                      <div className="space-y-4">
-                        <span className="text-4xl font-display text-[#C5A059]">{milestone.year}</span>
-                        <h4 className="text-xl font-bold leading-snug">{milestone.title}</h4>
-                        <p className="text-white/40 text-xs uppercase tracking-widest font-bold">{milestone.desc}</p>
-                      </div>
-                    ) : null}
+                  {/* Right Column (Desktop - Step 2, 4) */}
+                  <div className={`w-full md:w-1/2 flex flex-col px-8 ${idx % 2 !== 0 ? 'md:items-start md:text-left' : 'opacity-0 pointer-events-none hidden md:flex'}`}>
+                    <div className="space-y-3">
+                      <span className="text-3xl md:text-5xl font-display text-[#C5A059] block mb-2">{milestone.year}</span>
+                      <h4 className="text-lg md:text-2xl font-bold leading-tight text-white mb-1">{milestone.title}</h4>
+                      <p className="text-white/40 text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold">{milestone.desc}</p>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
         </section>
 
         {/* 6) Awards & Recognitions */}
-        <section className="py-24 md:py-32 container px-4">
+        <section className="py-12 md:py-16 container px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35] mb-4">Honoured for Our Integrity</h2>
             <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">Building trust with the community and industry peers.</p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="p-10 bg-white border border-[#F2EDE4] rounded-2xl flex flex-col items-center justify-center text-center group hover:border-[#5A7A5C] transition-all">
-                <Award className="h-8 w-8 text-[#5A7A5C]/20 group-hover:text-[#5A7A5C] transition-colors mb-4" />
-                <h5 className="font-bold text-[#1A2E35] text-sm">Industry Recognition</h5>
-                <p className="text-[10px] text-[#1A2E35]/40 mt-1 uppercase tracking-widest">202{i+1} Award</p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              { 
+                img: awardIMG7916, 
+                title: "Excellence in Ayurveda", 
+                subtitle: "Honouring integrity and traditional wisdom in modern wellness.",
+                year: "2024" 
+              },
+              { 
+                img: awardIMG7915, 
+                title: "Quality Leadership Award", 
+                subtitle: "Recognized for uncompromising standards in herbal manufacturing.",
+                year: "2024" 
+              },
+              { 
+                img: awardIMG7913, 
+                title: "Herbal Innovation Award", 
+                subtitle: "For pioneering scientific research in plant-based healing.",
+                year: "2023" 
+              }
+            ].map((award, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white border border-[#F2EDE4] rounded-3xl overflow-hidden group hover:border-[#C5A059] transition-all duration-500 shadow-sm hover:shadow-xl"
+              >
+                <div className="aspect-[4/5] relative overflow-hidden bg-[#F8F9FA]">
+                  <img 
+                    src={award.img} 
+                    alt={award.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                    <div className="bg-white/90 backdrop-blur-md p-4 rounded-full shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-500 delay-100">
+                      <Award className="h-6 w-6 text-[#C5A059]" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-8 text-center border-t border-[#F2EDE4]">
+                  <div className="flex justify-center mb-4">
+                    <Award className="h-5 w-5 text-[#C5A059] opacity-50 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  <h5 className="font-display font-bold text-[#1A2E35] text-lg mb-2">{award.title}</h5>
+                  <p className="text-sm text-[#1A2E35]/50 font-sans-clean leading-relaxed">{award.subtitle}</p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
-        {/* 7) The Process */}
-        <section className="py-24 bg-[#F8F9FA]">
+        {/* 7) The Process - Science Behind Every Drop */}
+        <section className="py-12 md:py-16 bg-[#F8F9FA] overflow-hidden">
           <div className="container px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35] mb-6">Science Behind Every Drop</h2>
-                <p className="text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg italic">
-                  "Traditional Ayurveda provides the map; modern science provides the verification. Our process ensures that every product delivers on the wisdom of the ancients."
-                </p>
+            <div className="flex flex-col lg:flex-row items-center gap-16 mb-24">
+              {/* Left visuals */}
+              <div className="w-full lg:w-1/2 relative">
+                <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl">
+                  <img 
+                    src={aboutLab || "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?q=80&w=2070&auto=format&fit=crop"} 
+                    alt="Salmara Labs" 
+                    className="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/40 to-transparent" />
+                </div>
+                {/* Decorative element */}
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#C5A059]/10 rounded-full blur-3xl -z-10" />
+                <div className="absolute -top-6 -right-6 w-48 h-48 bg-[#5A7A5C]/5 rounded-full blur-3xl -z-10" />
               </div>
-              
-              <div className="grid md:grid-cols-2 gap-12">
+
+              {/* Right copy */}
+              <div className="w-full lg:w-1/2 space-y-8">
+                <div className="space-y-4">
+                  <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">Science Behind <br /> Every Drop</h2>
+                  <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed text-lg">
+                    Behind-the-scenes view of Salmara's labs and processes — transparent, factual, and elegant.
+                  </p>
+                </div>
+                
+                <div className="relative pl-8 border-l-2 border-[#C5A059]/30 py-4">
+                  <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed text-lg">
+                    "Every Salmara product follows a path of precision — from sourcing verified herbs to controlled formulation and purity testing. Every batch is standardized, GMP-audited, and produced under the supervision of experts."
+                  </p>
+                </div>
+
+                <div className="pt-4">
+                  <Link to="/shop" className="inline-flex items-center gap-3 px-10 py-4 bg-[#5A7A5C] text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-lg shadow-[#5A7A5C]/20 group">
+                    Explore Our Products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* 4-Step Horizontal Infographic */}
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-0">
                 {[
-                  { title: "Raw Material Verification", desc: "Every herb is DNA-authenticated and tested for heavy metals and pesticides before entry.", icon: <Leaf className="h-6 w-6" /> },
-                  { title: "Quality Testing & Formulation", desc: "Batch-controlled extraction ensures consistent phyto-actives, verified through HPLC analysis.", icon: <Microscope className="h-6 w-6" /> },
-                  { title: "Packaging & Labelling", desc: "Controlled environment packaging to prevent oxidative damage and maintain bio-potency.", icon: <ShieldCheck className="h-6 w-6" /> },
-                  { title: "Distribution & Feedback", desc: "Direct distribution with full QR traceability and transparent feedback integration.", icon: <CheckCircle2 className="h-6 w-6" /> }
-                ].map((step, i) => (
-                  <div key={i} className="flex gap-6">
-                    <div className="h-12 w-12 rounded-xl bg-white border border-[#F2EDE4] flex items-center justify-center shrink-0 text-[#5A7A5C] shadow-sm">
-                      {step.icon}
+                  { 
+                    title: "Raw Material Verification", 
+                    desc: "Herbs sourced from trusted Ayurvedic farms, authenticated by lab reports.",
+                    icon: <Leaf className="h-6 w-6" />,
+                    step: "01"
+                  },
+                  { 
+                    title: "Quality Testing & Formulation", 
+                    desc: "Active ingredients measured under strict GMP protocols.",
+                    icon: <Microscope className="h-6 w-6" />,
+                    step: "02"
+                  },
+                  { 
+                    title: "Packaging & Labelling", 
+                    desc: "Hygienic bottling, compliant with ISO & AYUSH standards.",
+                    icon: <FlaskConical className="h-6 w-6" />,
+                    step: "03"
+                  },
+                  { 
+                    title: "Distribution & Feedback", 
+                    desc: "Each batch traceable by QR code, ensuring transparency from production to customer.",
+                    icon: <ShieldCheck className="h-6 w-6" />,
+                    step: "04"
+                  }
+                ].map((item, i, arr) => (
+                  <div key={i} className="relative group p-8 lg:p-12 bg-white lg:bg-transparent hover:bg-white lg:hover:bg-white/50 transition-all duration-500 rounded-3xl lg:rounded-none lg:first:rounded-l-3xl lg:last:rounded-r-3xl border border-[#F2EDE4] lg:border-r-0 lg:last:border-r">
+                    <div className="space-y-8">
+                      {/* Step Visual */}
+                      <div className="relative">
+                        <div className="h-20 w-44 bg-[#F2EDE4] clip-chevron flex items-center justify-center text-[#5A7A5C] group-hover:bg-[#C5A059]/10 transition-colors">
+                          <div className="transform -translate-x-2">
+                            {item.icon}
+                          </div>
+                        </div>
+                        <span className="absolute top-0 right-8 text-4xl font-display text-[#1A2E35]/5 font-bold group-hover:text-[#C5A059]/20 transition-colors">
+                          {item.step}
+                        </span>
+                      </div>
+
+                      {/* Content */}
+                      <div className="space-y-3">
+                        <h4 className="font-display font-bold text-[#1A2E35] text-lg leading-tight group-hover:text-[#5A7A5C] transition-colors">{item.title}</h4>
+                        <p className="text-sm text-[#1A2E35]/60 font-sans-clean leading-relaxed">{item.desc}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-display font-bold text-[#1A2E35] mb-2">{step.title}</h4>
-                      <p className="text-sm text-[#1A2E35]/60 font-sans-clean leading-relaxed">{step.desc}</p>
-                    </div>
+                    
+                    {/* Horizontal Arrow (Desktop Only) */}
+                    {i < arr.length - 1 && (
+                      <div className="absolute top-1/2 -right-4 -translate-y-1/2 z-20 hidden lg:block">
+                        <div className="h-8 w-8 bg-white border border-[#F2EDE4] rounded-full flex items-center justify-center text-[#C5A059] shadow-sm">
+                          <ChevronRight className="h-4 w-4" />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
-              
-              <div className="mt-20 text-center">
-                <Link to="/#products" className="inline-flex items-center gap-3 px-10 py-4 bg-[#5A7A5C] text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all">
-                  Explore Our Products <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
             </div>
           </div>
+          <style dangerouslySetInnerHTML={{ __html: `
+            .clip-chevron {
+              clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%);
+            }
+          `}} />
         </section>
 
         {/* Testimonials */}
-        <section className="py-24 container px-4 overflow-hidden">
+        <section className="py-12 container px-4 overflow-hidden">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">Trust in Every Word</h2>
           </div>
@@ -316,7 +442,7 @@ const AboutUsPage = () => {
         </section>
 
         {/* 8) Closing Section */}
-        <section className="py-24 md:py-32 bg-[#FDFBF7] border-t border-[#F2EDE4]">
+        <section className="py-12 md:py-16 bg-[#FDFBF7] border-t border-[#F2EDE4]">
           <div className="container px-4 text-center max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35] mb-8">A Legacy of Trust</h2>
             <div className="space-y-6 text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg mb-12">
@@ -327,7 +453,7 @@ const AboutUsPage = () => {
                 At Salmara, we are building a space where faith meets evidence and healing meets honesty. Thank you for being a part of our story.
               </p>
             </div>
-            <Link to="/#products" className="inline-block px-12 py-5 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-2xl shadow-[#5A7A5C]/30 transform hover:-translate-y-1">
+            <Link to="/shop" className="inline-block px-12 py-5 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-2xl shadow-[#5A7A5C]/30 transform hover:-translate-y-1">
               Explore Our Products
             </Link>
           </div>

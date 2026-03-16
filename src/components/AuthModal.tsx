@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
-import { 
-  createShopifyCustomer, 
-  loginShopifyCustomer
-} from "@/lib/shopify";
+import { saveSession } from "@/lib/shopify";
+import { createCustomerViaAdmin, loginViaProxy, updateCustomerCartId } from "@/lib/shopifyAdmin";
+import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
 interface AuthModalProps {
@@ -16,6 +15,7 @@ interface AuthModalProps {
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = "login" }) => {
   const [view, setView] = useState<"login" | "register">(initialView);
   const [loading, setLoading] = useState(false);
+  const { cartId, setCartId, syncCart, clearCart } = useCartStore();
   
   // Form states
   const [email, setEmail] = useState("");
@@ -30,18 +30,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await loginShopifyCustomer(email, password);
+      const result = await loginViaProxy(email, password);
 
-      if (!response.success) {
-        const errorMsg = response.errors?.[0]?.message || "";
-        if (errorMsg.includes("unauthenticated_write_customers") || errorMsg.includes("Access denied")) {
-          throw new Error("Shopify API permissions missing. Please enable 'unauthenticated_write_customers' in your Shopify Storefront API settings.");
-        }
-        throw new Error(errorMsg || "Invalid email or password.");
+      if (!result.success) {
+        const errorMsg = result.errors?.[0]?.message || "Invalid email or password.";
+        throw new Error(errorMsg);
       }
 
-      // Session is already saved by loginShopifyCustomer
-      toast.success(`Welcome back, ${response.user?.name || 'User'}!`);
+      // Explicitly clear local cart state before restoring the user's specific cart
+      const currentCartId = cartId;
+      clearCart();
+
+      // 1. Restore Cart from Shopify if available
+      if (result.user?.shopifyCartId) {
+        console.log("Found Shopify Cart ID, restoring:", result.user.shopifyCartId);
+        setCartId(result.user.shopifyCartId);
+        // Wait a bit for state to propagate
+        setTimeout(async () => {
+          await syncCart();
+          console.log("Cart restoration complete");
+        }, 500);
+      } else if (currentCartId) {
+        // 2. Save current local cart to new account if Shopify had none
+        console.log("Saving local cart to Shopify account:", currentCartId);
+        await updateCustomerCartId(result.user.id, currentCartId);
+        // Restore local id
+        setCartId(currentCartId);
+      }
+
+      // Sync with standard session
+      saveSession({
+        accessToken: "admin_proxy_mode",
+        user: result.user,
+        expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+      });
+
+      toast.success(`Welcome back, ${result.user?.name}!`);
       onClose();
     } catch (error: any) {
       toast.error("Login failed", { description: error.message });
@@ -54,21 +78,49 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await createShopifyCustomer({
+      // 1. Create Shopify customer via Admin API proxy
+      const shopifyResult = await createCustomerViaAdmin({
         firstName,
         lastName,
         email,
         password,
         phone: phone || undefined,
-        acceptsMarketing: true
       });
 
-      if (!response.success) {
-        throw new Error(response.errors?.[0]?.message || "Registration failed. Please check your details.");
+      if (!shopifyResult.success) {
+        const errorMsg = shopifyResult.errors?.[0]?.message || "Could not create account.";
+        throw new Error(errorMsg);
       }
 
-      toast.success("Account created! Please log in.");
-      setView("login");
+      const customer = shopifyResult.customer;
+
+      // 2. Save current local cart to the new account
+      const currentCartId = cartId;
+      clearCart();
+
+      if (customer?.id && currentCartId) {
+        console.log("Saving guest cart to new account:", currentCartId);
+        await updateCustomerCartId(customer.id, currentCartId);
+        setCartId(currentCartId);
+      }
+
+      // Account created! Automagically log them in
+      saveSession({
+        accessToken: "admin_proxy_mode",
+        user: {
+          id: customer?.id,
+          email: customer?.email,
+          name: `${customer?.firstName} ${customer?.lastName}`.trim(),
+          firstName: customer?.firstName,
+          lastName: customer?.lastName,
+          phone: customer?.phone
+        },
+        expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      });
+
+      toast.success(`Welcome, ${firstName}! Your account is ready.`);
+      onClose();
+      
     } catch (error: any) {
       toast.error("Registration failed", { description: error.message });
     } finally {
@@ -110,6 +162,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
+                <img src="/salamara_icon.png" alt="Salmara" className="h-12 w-auto mb-6" />
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Access</span>
@@ -139,7 +192,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                 <div className="flex items-center gap-2 mb-2">
+                <img src="/salamara_icon.png" alt="Salmara" className="h-12 w-auto mb-6" />
+                <div className="flex items-center gap-2 mb-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Join Salmara</span>
                 </div>

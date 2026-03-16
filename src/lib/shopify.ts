@@ -75,17 +75,8 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   const data = await response.json();
   if (data.errors) {
     const errorMessages = data.errors.map((e: { message: string }) => e.message).join(', ');
-    
-    // Specifically handle the scope permission error to guide the user
-    if (errorMessages.includes('unauthenticated_write_customers') || errorMessages.includes('ACCESS_DENIED')) {
-      console.error('CRITICAL: Shopify Storefront API Access Denied.', {
-        error: errorMessages,
-        solution: 'Go to Shopify Admin -> Apps -> [Your App] -> Configuration -> Storefront API -> Edit -> Enable "unauthenticated_write_customers" scope.'
-      });
-      // We don't throw yet, let the caller handle success: false
-    }
-    
-    return data; // Return full data so success: false can be determined by callers
+    console.error('Shopify Storefront API Error:', errorMessages);
+    return data;
   }
   return data;
 }
@@ -192,6 +183,54 @@ const PRODUCT_BY_HANDLE_QUERY = `
   }
 `;
 
+const CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION = `
+  mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+    customerAccessTokenCreate(input: $input) {
+      customerAccessToken { accessToken expiresAt }
+      customerUserErrors { field message }
+    }
+  }
+`;
+
+const CUSTOMER_QUERY = `
+  query getCustomer($customerAccessToken: String!) {
+    customer(customerAccessToken: $customerAccessToken) {
+      id
+      firstName
+      lastName
+      displayName
+      email
+      phone
+    }
+  }
+`;
+
+const CUSTOMER_ACCESS_TOKEN_RENEW_MUTATION = `
+  mutation customerAccessTokenRenew($customerAccessToken: String!) {
+    customerAccessTokenRenew(customerAccessToken: $customerAccessToken) {
+      customerAccessToken { accessToken expiresAt }
+      userErrors { field message }
+    }
+  }
+`;
+
+const CUSTOMER_CREATE_MUTATION = `
+  mutation customerCreate($input: CustomerCreateInput!) {
+    customerCreate(input: $input) {
+      customer { id email }
+      customerUserErrors { field message }
+    }
+  }
+`;
+
+export async function createShopifyCustomer(input: any) {
+  const data = await storefrontApiRequest(CUSTOMER_CREATE_MUTATION, { input });
+  if (data?.errors) return { success: false, errors: data.errors };
+  const errors = data?.data?.customerCreate?.customerUserErrors || [];
+  if (errors.length > 0) return { success: false, errors };
+  return { success: true, customer: data.data.customerCreate.customer };
+}
+
 export async function fetchProducts(first = 20): Promise<ShopifyProduct[]> {
   const data = await storefrontApiRequest(PRODUCTS_QUERY, { first });
   return data?.data?.products?.edges || [];
@@ -205,7 +244,55 @@ export async function fetchProductByHandle(handle: string) {
 // Cart mutations
 export const CART_QUERY = `
   query cart($id: ID!) {
-    cart(id: $id) { id totalQuantity }
+    cart(id: $id) {
+      id
+      checkoutUrl
+      totalQuantity
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                product {
+                  id
+                  title
+                  handle
+                  description
+                  images(first: 1) {
+                    edges {
+                      node {
+                        url
+                        altText
+                      }
+                    }
+                  }
+                  variants(first: 10) {
+                    edges {
+                      node {
+                        id
+                        title
+                        price {
+                          amount
+                          currencyCode
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -252,56 +339,6 @@ const CART_LINES_REMOVE_MUTATION = `
   }
 `;
 
-// Customer Mutations & Queries
-const CUSTOMER_CREATE_MUTATION = `
-  mutation customerCreate($input: CustomerCreateInput!) {
-    customerCreate(input: $input) {
-      customer { id email }
-      customerUserErrors { field message }
-    }
-  }
-`;
-
-const CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION = `
-  mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
-    customerAccessTokenCreate(input: $input) {
-      customerAccessToken { accessToken expiresAt }
-      customerUserErrors { field message }
-    }
-  }
-`;
-
-const CUSTOMER_QUERY = `
-  query getCustomer($customerAccessToken: String!) {
-    customer(customerAccessToken: $customerAccessToken) {
-      id
-      firstName
-      lastName
-      displayName
-      email
-      phone
-    }
-  }
-`;
-
-const CUSTOMER_UPDATE_MUTATION = `
-  mutation customerUpdate($customerAccessToken: String!, $customer: CustomerUpdateInput!) {
-    customerUpdate(customerAccessToken: $customerAccessToken, customer: $customer) {
-      customer { id firstName lastName email phone }
-      customerUserErrors { field message }
-    }
-  }
-`;
-
-const CUSTOMER_ACCESS_TOKEN_RENEW_MUTATION = `
-  mutation customerAccessTokenRenew($customerAccessToken: String!) {
-    customerAccessTokenRenew(customerAccessToken: $customerAccessToken) {
-      customerAccessToken { accessToken expiresAt }
-      userErrors { field message }
-    }
-  }
-`;
-
 // ── Session helpers ──
 
 export function getStoredSession() {
@@ -326,11 +363,9 @@ export function clearSession() {
 
 function isTokenExpired(session: any): boolean {
   if (!session?.expires) return true;
-  // Consider expired if less than 5 minutes remaining
   return Date.now() > session.expires - 5 * 60 * 1000;
 }
 
-// Attempt to renew a customer access token
 async function renewCustomerToken(currentToken: string): Promise<{ accessToken: string; expiresAt: string } | null> {
   try {
     const data = await storefrontApiRequest(CUSTOMER_ACCESS_TOKEN_RENEW_MUTATION, {
@@ -344,10 +379,6 @@ async function renewCustomerToken(currentToken: string): Promise<{ accessToken: 
   }
 }
 
-/**
- * Returns a valid customer access token, auto-renewing if expired.
- * If renewal fails, clears the session and returns null.
- */
 export async function getValidCustomerToken(): Promise<string | null> {
   const session = getStoredSession();
   if (!session?.accessToken) return null;
@@ -356,7 +387,6 @@ export async function getValidCustomerToken(): Promise<string | null> {
     return session.accessToken;
   }
 
-  // Token expired – try to renew
   const renewed = await renewCustomerToken(session.accessToken);
   if (renewed) {
     const updatedSession = {
@@ -368,14 +398,53 @@ export async function getValidCustomerToken(): Promise<string | null> {
     return renewed.accessToken;
   }
 
-  // Renewal failed – session is invalid
   clearSession();
   return null;
 }
 
-function formatCheckoutUrl(checkoutUrl: string): string {
+export async function loginShopifyCustomer(email: string, password: string) {
+  const data = await storefrontApiRequest(CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION, {
+    input: { email, password }
+  });
+  
+  if (data?.errors) return { success: false, errors: data.errors };
+  
+  const errors = data?.data?.customerAccessTokenCreate?.customerUserErrors || [];
+  if (errors.length > 0) return { success: false, errors };
+  
+  const tokenData = data.data.customerAccessTokenCreate.customerAccessToken;
+  
+  // Fetch customer details
+  const customerData = await storefrontApiRequest(CUSTOMER_QUERY, { 
+    customerAccessToken: tokenData.accessToken 
+  });
+  const customer = customerData?.data?.customer;
+
+  const session = {
+    accessToken: tokenData.accessToken,
+    user: {
+      id: customer?.id || "",
+      email: customer?.email || email,
+      name: customer ? `${customer.firstName} ${customer.lastName}`.trim() : email.split('@')[0],
+      firstName: customer?.firstName,
+      lastName: customer?.lastName,
+      phone: customer?.phone
+    },
+    expires: new Date(tokenData.expiresAt).getTime()
+  };
+  
+  saveSession(session);
+  return { success: true, token: tokenData, user: session.user };
+}
+
+export function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
+    // Replace any non-Shopify domain (e.g. lovable.app) with the actual store domain
+    const storeDomain = SHOPIFY_STORE_PERMANENT_DOMAIN;
+    if (!url.hostname.endsWith('.myshopify.com')) {
+      url.hostname = storeDomain;
+    }
     url.searchParams.set('channel', 'online_store');
     return url.toString();
   } catch {
@@ -443,57 +512,4 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
   if (isCartNotFoundError(userErrors)) return { success: false, cartNotFound: true };
   if (userErrors.length > 0) return { success: false };
   return { success: true };
-}
-
-export async function createShopifyCustomer(input: any) {
-  const data = await storefrontApiRequest(CUSTOMER_CREATE_MUTATION, { input });
-  if (data?.errors) return { success: false, errors: data.errors };
-  const errors = data?.data?.customerCreate?.customerUserErrors || [];
-  if (errors.length > 0) return { success: false, errors };
-  return { success: true, customer: data.data.customerCreate.customer };
-}
-
-export async function loginShopifyCustomer(email: string, password: string) {
-  const data = await storefrontApiRequest(CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION, {
-    input: { email, password }
-  });
-  if (data?.errors) return { success: false, errors: data.errors };
-  const errors = data?.data?.customerAccessTokenCreate?.customerUserErrors || [];
-  if (errors.length > 0) return { success: false, errors };
-  
-  const tokenData = data.data.customerAccessTokenCreate.customerAccessToken;
-  
-  // Fetch customer details and save session immediately
-  const customer = await fetchShopifyCustomer(tokenData.accessToken);
-  const session = {
-    accessToken: tokenData.accessToken,
-    user: {
-      id: customer?.id || "",
-      email: customer?.email || email,
-      name: customer ? `${customer.firstName} ${customer.lastName}`.trim() : email.split('@')[0],
-      firstName: customer?.firstName,
-      lastName: customer?.lastName,
-      phone: customer?.phone
-    },
-    expires: new Date(tokenData.expiresAt).getTime()
-  };
-  saveSession(session);
-  
-  return { success: true, token: tokenData, user: session.user };
-}
-
-export async function fetchShopifyCustomer(token: string) {
-  const data = await storefrontApiRequest(CUSTOMER_QUERY, { customerAccessToken: token });
-  return data?.data?.customer || null;
-}
-
-export async function updateShopifyCustomer(token: string, customerInput: any) {
-  const data = await storefrontApiRequest(CUSTOMER_UPDATE_MUTATION, {
-    customerAccessToken: token,
-    customer: customerInput
-  });
-  if (data?.errors) return { success: false, errors: data.errors };
-  const errors = data?.data?.customerUpdate?.customerUserErrors || [];
-  if (errors.length > 0) return { success: false, errors };
-  return { success: true, customer: data.data.customerUpdate.customer };
 }

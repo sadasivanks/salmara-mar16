@@ -5,7 +5,8 @@ import { AuthModal } from "@/components/AuthModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
-import { getStoredSession, getValidCustomerToken, clearSession } from "@/lib/shopify";
+import { getStoredSession, clearSession, getValidCustomerToken } from "@/lib/shopify";
+import { useCartStore } from "@/stores/cartStore";
 
 const logo = "/salamara_icon.png";
 
@@ -14,8 +15,8 @@ const navItems = [
   { label: "Shop Now", href: "/shop" },
   { label: "Clinics", href: "/clinics" },
   { label: "Blog", href: "/#blog" },
-  { label: "Book Appointment", href: "/book-appointment" },
-  { label: "Contact Us", href: "#footer" },
+  { label: "Book Appointment", href: "https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.", external: true },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 const shopByConcern = [
@@ -28,6 +29,7 @@ const shopByConcern = [
 ];
 
 const Header = () => {
+  const { clearCart } = useCartStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -55,12 +57,10 @@ const Header = () => {
     }
   };
 
-  // Global scroll listener for hashes on route change
   useEffect(() => {
     const handleHashScroll = () => {
       const hash = window.location.hash;
       if (hash) {
-        // Wait a bit for the page to render
         setTimeout(() => {
           scrollToSection(null, hash);
         }, 100);
@@ -74,16 +74,12 @@ const Header = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const session = getStoredSession();
-      if (!session) {
-        setUser(null);
-        return;
-      }
+      // Use Shopify-only token validation
       const token = await getValidCustomerToken();
-      if (token) {
-        // Re-read session in case it was renewed
-        const updated = getStoredSession();
-        setUser(updated?.user || null);
+      const session = getStoredSession();
+      
+      if (token && session?.user) {
+        setUser(session.user);
       } else {
         setUser(null);
       }
@@ -91,13 +87,21 @@ const Header = () => {
 
     checkSession();
     window.addEventListener('auth-status-change', checkSession);
-    return () => window.removeEventListener('auth-status-change', checkSession);
+
+    return () => {
+      window.removeEventListener('auth-status-change', checkSession);
+    };
   }, []);
 
   const handleLogout = () => {
     clearSession();
+    clearCart();
     setUser(null);
     toast.success("Logged out successfully");
+    // Force a full reload to ensure all states are clean
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 500);
   };
 
   return (
@@ -122,26 +126,37 @@ const Header = () => {
           {/* Desktop Nav - centered */}
           <nav className="hidden xl:flex items-center gap-1">
             {navItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.href}
-                onClick={(e) => {
-                  const isHomePage = window.location.pathname === "/";
-                  const hrefHasHash = item.href.includes("#");
-                  const targetIsHomeHash = item.href.startsWith("/#");
-                  
-                  if (hrefHasHash && (isHomePage || !targetIsHomeHash)) {
-                    // If target is a hash on current page, scroll
-                    // Or if target is a simple #hash
-                    const hash = item.href.split("#")[1];
-                    scrollToSection(e as any, `#${hash}`);
-                  }
-                }}
-                className="px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary transition-colors duration-200 relative group"
-              >
-                {item.label}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4 rounded-full" />
-              </Link>
+              item.external ? (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary transition-colors duration-200 relative group"
+                >
+                  {item.label}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4 rounded-full" />
+                </a>
+              ) : (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  onClick={(e) => {
+                    const isHomePage = window.location.pathname === "/";
+                    const hrefHasHash = item.href.includes("#");
+                    const targetIsHomeHash = item.href.startsWith("/#");
+                    
+                    if (hrefHasHash && (isHomePage || !targetIsHomeHash)) {
+                      const hash = item.href.split("#")[1];
+                      scrollToSection(e as any, `#${hash}`);
+                    }
+                  }}
+                  className="px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary transition-colors duration-200 relative group"
+                >
+                  {item.label}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4 rounded-full" />
+                </Link>
+              )
             ))}
           </nav>
 
@@ -253,25 +268,37 @@ const Header = () => {
               </div>
               <nav className="p-4 space-y-1">
                 {navItems.map((item) => (
-                  <Link
-                    key={item.label}
-                    to={item.href}
-                    onClick={(e) => {
-                      const isHomePage = window.location.pathname === "/";
-                      const hrefHasHash = item.href.includes("#");
-                      const targetIsHomeHash = item.href.startsWith("/#");
+                  item.external ? (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={item.label}
+                      to={item.href}
+                      onClick={(e) => {
+                        const isHomePage = window.location.pathname === "/";
+                        const hrefHasHash = item.href.includes("#");
+                        const targetIsHomeHash = item.href.startsWith("/#");
 
-                      if (hrefHasHash && (isHomePage || !targetIsHomeHash)) {
-                        const hash = item.href.split("#")[1];
-                        scrollToSection(e as any, `#${hash}`);
-                      } else {
-                        setMobileOpen(false);
-                      }
-                    }}
-                    className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
-                  >
-                    {item.label}
-                  </Link>
+                        if (hrefHasHash && (isHomePage || !targetIsHomeHash)) {
+                          const hash = item.href.split("#")[1];
+                          scrollToSection(e as any, `#${hash}`);
+                        } else {
+                          setMobileOpen(false);
+                        }
+                      }}
+                      className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  )
                 ))}
               </nav>
               <div className="p-4 border-t border-border">
