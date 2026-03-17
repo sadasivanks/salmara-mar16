@@ -9,7 +9,7 @@ const Footer = () => (
         {/* Brand Column */}
         <div className="max-w-xs">
           <img src={logo} alt="Salmara" className="h-8 mb-10 brightness-0 invert" />
-          <p className="text-white/70 font-body text-base leading-relaxed">
+          <p className="text-white/90 font-body text-base leading-relaxed">
             Rediscover Wellness Through Authentic Ayurveda. Rooted in Karnataka, trusted globally.
           </p>
         </div>
@@ -30,11 +30,11 @@ const Footer = () => (
               return (
                 <li key={label}>
                   {isExternal ? (
-                    <a href={href} className="text-white/70 hover:text-white transition-colors text-base font-body">
+                    <a href={href} className="text-white/90 hover:text-white transition-colors text-base font-body">
                       {label}
                     </a>
                   ) : (
-                    <Link to={href} className="text-white/70 hover:text-white transition-colors text-base font-body">
+                    <Link to={href} className="text-white/90 hover:text-white transition-colors text-base font-body">
                       {label}
                     </Link>
                   )}
@@ -50,7 +50,7 @@ const Footer = () => (
           <ul className="space-y-4">
             {["Terms & Conditions", "Privacy Policy", "Shipping Policy", "Refund Policy"].map((link) => (
               <li key={link}>
-                <a href="#" className="text-white/70 hover:text-white transition-colors text-base font-body">
+                <a href="#" className="text-white/90 hover:text-white transition-colors text-base font-body">
                   {link}
                 </a>
               </li>
@@ -83,20 +83,20 @@ const Footer = () => (
 
       {/* Bottom Bar */}
       <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-        <p className="text-white/40 text-sm font-body">
+        <p className="text-white/80 text-sm font-body">
           © 2025 Salmara Ayurveda. All Rights Reserved.
         </p>
         
         <div className="flex flex-wrap items-center gap-6 md:gap-8">
-          <div className="flex items-center gap-2 text-white/40">
+          <div className="flex items-center gap-2 text-white/80">
             <Lock className="h-4 w-4 text-[#C5A059]" />
             <span className="text-[10px] uppercase tracking-widest font-bold">Secure Payments</span>
           </div>
-          <div className="flex items-center gap-2 text-white/40">
+          <div className="flex items-center gap-2 text-white/80">
             <Wallet className="h-4 w-4 text-[#C5A059]" />
             <span className="text-[10px] uppercase tracking-widest font-bold">COD Available</span>
           </div>
-          <div className="flex items-center gap-2 text-white/40">
+          <div className="flex items-center gap-2 text-white/80">
             <BadgeCheck className="h-4 w-4 text-[#C5A059]" />
             <span className="text-[10px] uppercase tracking-widest font-bold">GMP Certified</span>
           </div>
