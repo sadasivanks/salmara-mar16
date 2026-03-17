@@ -45,7 +45,7 @@ const TestimonialsSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 bg-white" ref={ref}>
+    <section className="pt-10 md:pt-16 pb-24 bg-white" ref={ref}>
       <div className="container mx-auto px-4 overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -62,9 +62,9 @@ const TestimonialsSection = () => {
         </motion.div>
 
         <div className="relative group/marquee overflow-hidden">
-          {/* Subtle gradient overlays for fade effect */}
-          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
+          {/* Subtle gradient overlays for fade effect - Hidden on Mobile */}
+          <div className="hidden md:block absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
+          <div className="hidden md:block absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
 
           <motion.div 
             className="flex gap-6 w-max"

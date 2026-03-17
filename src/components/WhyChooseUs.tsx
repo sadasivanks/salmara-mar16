@@ -26,7 +26,7 @@ const WhyChooseUs = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 bg-white" ref={ref}>
+    <section className="py-12 md:py-24 bg-white" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -47,7 +47,7 @@ const WhyChooseUs = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: i * 0.15 }}
-              className="bg-[#FDFBF7] border border-[#F2EDE4] p-10 rounded-xl text-center shadow-sm hover:shadow-md transition-all duration-300"
+              className="bg-[#FDFBF7] border border-[#F2EDE4] p-10 rounded-xl text-center shadow-sm hover:shadow-md hover:border-[#5A7A5C] transition-all duration-300"
             >
               <div className="w-16 h-16 rounded-full bg-white border border-[#F2EDE4] flex items-center justify-center mx-auto mb-8 shadow-sm">
                 <feature.icon className="h-6 w-6 text-[#5A7A5C]" />
@@ -64,19 +64,19 @@ const WhyChooseUs = () => {
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-4 mt-16"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 md:mt-16"
         >
           <a 
-            href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+            href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[#5A7A5C] hover:bg-[#4A634B] text-white px-10 py-4 rounded-lg shadow-lg font-sans-clean font-bold text-sm transition-all duration-300 transform hover:-translate-y-1 block w-fit"
+            className="w-full sm:w-auto bg-[#5A7A5C] hover:bg-[#4A634B] text-white px-10 py-5 rounded-lg shadow-lg font-sans-clean font-bold text-sm transition-all duration-300 transform hover:-translate-y-1 text-center"
           >
             Book Appointment
           </a>
           <Link
             to="/shop"
-            className="border-2 border-[#5A7A5C]/20 hover:border-[#5A7A5C] text-[#5A7A5C] px-10 py-4 rounded-lg font-sans-clean font-bold text-sm transition-all duration-300"
+            className="w-full sm:w-auto border-2 border-[#5A7A5C]/20 hover:border-[#5A7A5C] text-[#5A7A5C] px-10 py-5 rounded-lg font-sans-clean font-bold text-sm transition-all duration-300 text-center"
           >
             Shop Now
           </Link>

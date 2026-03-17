@@ -30,7 +30,7 @@ const AboutUsPage = () => {
       
       <main className="relative">
         {/* 1) Hero Banner */}
-        <section className="relative h-[60vh] flex items-center justify-center overflow-hidden bg-[#1A2E35]">
+        <section className="relative min-h-[60vh] md:h-[60vh] py-16 md:py-0 flex items-center justify-center overflow-hidden bg-[#1A2E35]">
           <div className="absolute inset-0 opacity-40">
             {/* Minimalistic lab/herbal visual placeholder style */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1A2E35]" />
@@ -42,31 +42,32 @@ const AboutUsPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              className="max-w-4xl mx-auto"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-white mb-4">
-                Where Tradition <br /> Meets Science.
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-medium text-white mb-4 leading-tight">
+                Where Tradition <br className="hidden sm:block" /> Meets Science.
               </h1>
-              <p className="text-base md:text-lg text-white/80 max-w-2xl mx-auto mb-8 font-sans-clean leading-relaxed">
+              <p className="text-xs sm:text-sm md:text-lg text-white/80 max-w-xl mx-auto mb-8 font-sans-clean leading-relaxed px-4">
                 We didn’t reinvent Ayurveda — we refined it through proof, purity, and precision.
               </p>
               
-              <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
-                <span className="flex items-center gap-2 text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full">
+              <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-10 px-4">
+                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full whitespace-nowrap">
                   <ShieldCheck className="h-3 w-3" /> GMP Certified
                 </span>
-                <span className="flex items-center gap-2 text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full">
+                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full whitespace-nowrap">
                   <CheckCircle2 className="h-3 w-3" /> ISO Compliant
                 </span>
-                <span className="flex items-center gap-2 text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full">
+                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full whitespace-nowrap">
                   <Award className="h-3 w-3" /> AYUSH Approved
                 </span>
               </div>
               
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/shop" className="w-full sm:w-auto px-8 py-4 bg-[#5A7A5C] text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-black/20">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 sm:px-0">
+                <Link to="/shop" className="w-full sm:w-auto px-10 py-4 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-black/20">
                   Explore Products
                 </Link>
-                <Link to="/clinics" className="w-full sm:w-auto px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-white/20 transition-all">
+                <Link to="/clinics" className="w-full sm:w-auto px-10 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-white/20 transition-all">
                   Discover Our Clinics
                 </Link>
               </div>
@@ -113,12 +114,12 @@ const AboutUsPage = () => {
         </section>
 
         {/* 2.5) Our Journey */}
-        <section className="py-16 md:py-24 bg-white overflow-hidden">
+        <section className="py-12 md:py-24 bg-white overflow-hidden">
           <div className="container px-4 max-w-6xl mx-auto">
-            <div className="text-center mb-16">
+            <div className="text-center mb-10 md:mb-16">
               <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-[#5A7A5C] mb-4 block">The Salmara Legacy</span>
-              <h2 className="text-4xl md:text-5xl font-display font-medium text-[#1A2E35]">Our Journey</h2>
-              <div className="w-24 h-1 bg-[#F2EDE4] mx-auto mt-6" />
+              <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">Our Journey</h2>
+              <div className="w-24 h-1 bg-[#F2EDE4] mx-auto mt-4 md:mt-6" />
             </div>
 
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
@@ -148,9 +149,9 @@ const AboutUsPage = () => {
               </div>
 
               {/* Milestones Timeline */}
-              <div className="bg-[#FDFBF7] rounded-[2.5rem] p-8 md:p-12 border border-[#F2EDE4] relative overflow-hidden">
+              <div className="bg-[#FDFBF7] rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 border border-[#F2EDE4] relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#F2EDE4]/30 rounded-full blur-3xl -mr-32 -mt-32" />
-                <h3 className="text-2xl font-display font-medium text-[#1A2E35] mb-10 relative z-10">Milestones of Growth</h3>
+                <h3 className="text-xl md:text-2xl font-display font-medium text-[#1A2E35] mb-8 md:mb-10 relative z-10">Milestones of Growth</h3>
                 
                 <div className="space-y-8 relative z-10">
                   <div className="absolute left-[11px] top-2 bottom-2 w-[1px] bg-[#F2EDE4] md:left-[15px]" />
@@ -188,14 +189,14 @@ const AboutUsPage = () => {
             </div>
 
             {/* Impact Block */}
-            <div className="mt-24 bg-[#1A2E35] rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden">
+            <div className="mt-16 md:mt-24 bg-[#1A2E35] rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
               <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#5A7A5C_0%,transparent_50%)]" />
               </div>
               
               <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
                 <div className="space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-display border-b border-white/10 pb-4">Our Impact</h3>
+                  <h3 className="text-2xl md:text-4xl font-display border-b border-white/10 pb-4">Our Impact</h3>
                   <p className="text-white/60 font-sans-clean italic">
                     "Our journey from one clinic to eight cities. From local practice to a national movement."
                   </p>
@@ -378,21 +379,18 @@ const AboutUsPage = () => {
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Full regulatory compliance for traditional Ayurvedic formulations and clinical procedures.</p>
             </div>
             
-            <div className="p-8 border border-dashed border-[#F2EDE4] rounded-2xl text-center flex flex-col items-center justify-center min-h-[200px]">
-              <p className="text-xs font-bold text-[#1A2E35]/20 uppercase tracking-widest">Add your certificate here</p>
-            </div>
           </div>
         </section>
 
 
 
         {/* 7) The Process - Science Behind Every Drop */}
-        <section className="py-10 md:py-12 bg-[#F8F9FA] overflow-hidden">
+        <section className="py-6 md:py-10 bg-[#F8F9FA] overflow-hidden">
           <div className="container px-4">
-            <div className="flex flex-col lg:flex-row items-center gap-12 mb-16">
+            <div className="flex flex-col lg:flex-row items-center gap-12 mb-8">
               {/* Left visuals */}
               <div className="w-full lg:w-1/2 relative">
-                <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl">
+                <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl max-h-[300px] md:max-h-[400px]">
                   <img 
                     src={aboutLab || "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?q=80&w=2070&auto=format&fit=crop"} 
                     alt="Salmara Labs" 

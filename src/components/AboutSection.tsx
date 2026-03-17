@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import aboutLab from "@/assets/about-lab.jpg";
 
@@ -12,8 +12,37 @@ const timeline = [
 ];
 
 const AboutSection = () => {
+  const [activeSlide, setActiveSlide] = useState(0);
   const ref = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth } = scrollRef.current;
+      const totalSlides = timeline.length;
+      const slideWidth = scrollWidth / totalSlides;
+      const currentSlide = Math.round(scrollLeft / slideWidth);
+      if (currentSlide !== activeSlide) {
+        setActiveSlide(currentSlide);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (scrollRef.current && window.innerWidth < 1024) {
+        const nextSlide = (activeSlide + 1) % timeline.length;
+        const slideWidth = scrollRef.current.scrollWidth / timeline.length;
+        scrollRef.current.scrollTo({
+          left: nextSlide * slideWidth,
+          behavior: "smooth"
+        });
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [activeSlide]);
 
   return (
     <section id="about" className="py-12 bg-[#F2EDE4]" ref={ref}>
@@ -105,19 +134,33 @@ const AboutSection = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="max-w-4xl mx-auto mt-10"
         >
-          <div className="flex justify-between items-center gap-4">
+          <div 
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex flex-nowrap lg:justify-between lg:items-center gap-0 lg:gap-4 overflow-x-auto no-scrollbar pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+          >
             {timeline.map((item, i) => (
-              <div key={item.label} className="flex items-center flex-1 last:flex-none">
-                <div className="flex flex-col items-center text-center">
+              <div key={item.label} className="flex items-center flex-shrink-0 w-full lg:w-auto lg:flex-1 last:flex-none snap-center">
+                <div className="flex flex-col items-center lg:items-center text-center w-full lg:min-w-[100px]">
                   <p className="font-display font-bold text-[#5A7A5C] text-2xl lg:text-3xl mb-1">{item.year}</p>
                   <p className="font-sans-clean text-[#1A2E35]/60 text-xs md:text-sm tracking-wide">{item.label}</p>
                 </div>
                 
-                {/* Connecting Line */}
+                {/* Connecting Line - Only on Desktop */}
                 {i < timeline.length - 1 && (
-                  <div className="flex-1 mx-4 h-[1px] bg-[#C5A059]/30" />
+                  <div className="hidden lg:block flex-1 mx-4 h-[1px] bg-[#C5A059]/30" />
                 )}
               </div>
+            ))}
+          </div>
+
+          {/* Slider Dots - Mobile Only */}
+          <div className="flex lg:hidden justify-center gap-2 mt-2">
+            {timeline.map((_, i) => (
+              <div 
+                key={i}
+                className={`h-1.5 transition-all duration-300 rounded-full ${activeSlide === i ? 'w-6 bg-[#5A7A5C]' : 'w-1.5 bg-[#5A7A5C]/20'}`}
+              />
             ))}
           </div>
         </motion.div>

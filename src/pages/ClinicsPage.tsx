@@ -20,7 +20,8 @@ import {
   CheckCircle2,
   ShieldCheck,
   ArrowRight,
-  ArrowLeft
+  ArrowLeft,
+  Filter
 } from "lucide-react";
 
 const ClinicsPage = () => {
@@ -29,42 +30,67 @@ const ClinicsPage = () => {
   const [cityFilter, setCityFilter] = useState("All");
   const [treatmentFilter, setTreatmentFilter] = useState("All");
   const [consultType, setConsultType] = useState("All");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [selectedClinicId, setSelectedClinicId] = useState<number>(1);
 
   const clinics = [
     {
       id: 1,
-      name: "Salmara Wellness Center - Indiranagar",
-      address: "123, 100 Feet Rd, Indiranagar, Bengaluru, Karnataka 560038",
-      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Salmara+Wellness+Center+Indiranagar+Bengaluru",
-      embedQuery: "Salmara+Wellness+Center+Indiranagar+Bengaluru",
-      hours: "Mon - Sat: 09:00 AM - 08:00 PM",
-      availability: "Next available: Tomorrow, 10:00 AM",
+      name: "Salmara Ayurveda - Rajajinagar",
+      address: "Bangalore - Rajajinagar / ಬೆಂಗಳೂರು - ರಾಜಾಜಿನಗರ",
+      googleMapsUrl: "https://maps.app.goo.gl/1Eo81kBhyswaBi1W6",
+      embedQuery: "Salmara+Ayurveda+Rajajinagar+Bangalore",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
       city: "Bengaluru",
       type: "In-Person",
       specialties: ["Pain Relief", "Liver Detox"]
     },
     {
       id: 2,
-      name: "Salmara Ayurveda Hub - Jayanagar",
-      address: "45, 4th Block, Jayanagar, Bengaluru, Karnataka 560011",
-      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Salmara+Ayurveda+Hub+Jayanagar+Bengaluru",
-      embedQuery: "Salmara+Ayurveda+Hub+Jayanagar+Bengaluru",
-      hours: "Mon - Sun: 10:00 AM - 07:00 PM",
-      availability: "Next available: Today, 04:30 PM",
-      city: "Bengaluru",
+      name: "Salmara Ayurveda - Puttur",
+      address: "Puttur - D.K / ಪುತ್ತೂರು - ದ.ಕ",
+      googleMapsUrl: "https://maps.app.goo.gl/3oEEbpH7h8w8Uyx2A",
+      embedQuery: "Salmara+Ayurveda+Puttur",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Puttur",
       type: "In-Person",
       specialties: ["Women's Wellness", "Digestion"]
     },
     {
       id: 3,
-      name: "Salmara Virtual Clinic - India Metro",
+      name: "Salmara Ayurveda - Saraswatipuram",
+      address: "Mysore - Saraswatipuram / ಮೈಸೂರು - ಸರಸ್ವತೀಪುರಂ",
+      googleMapsUrl: "https://maps.app.goo.gl/XRr29xvW9GJF3QDH6",
+      embedQuery: "Salmara+Ayurveda+Saraswatipuram+Mysore",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Mysuru",
+      type: "In-Person",
+      specialties: ["Immunity", "Skin Care"]
+    },
+    {
+      id: 4,
+      name: "Salmara Ayurveda - Vidyanagar",
+      address: "Hubli - Vidyanagar / ಹುಬ್ಬಳ್ಳಿ - ವಿದ್ಯಾನಗರ",
+      googleMapsUrl: "https://maps.app.goo.gl/v1Gz1a5R36etHVoY9",
+      embedQuery: "Salmara+Ayurveda+Vidyanagar+Hubli",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Hubli",
+      type: "In-Person",
+      specialties: ["Stress Management", "General Wellness"]
+    },
+    {
+      id: 5,
+      name: "Salmara Virtual Clinic",
       address: "Online / Video Consultation",
-      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Salmara+Health+India",
+      googleMapsUrl: "https://wa.me/919353436373",
       embedQuery: "India",
-      hours: "Mon - Sat: 08:00 AM - 09:00 PM",
-      availability: "Next available: Tomorrow, 09:00 AM",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
       city: "Digital",
       type: "Virtual",
       specialties: ["Immunity", "Skin Care", "Stress Management"]
@@ -130,7 +156,7 @@ const ClinicsPage = () => {
       
       <main className="relative">
         {/* 1) Hero Section */}
-        <section className="relative pt-12 pb-16 md:pt-16 md:pb-24 bg-[#F2EDE4] overflow-hidden">
+        <section className="relative pt-12 pb-0 md:pt-16 md:pb-0 bg-[#F2EDE4] overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block">
             <img 
               // src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop" 
@@ -154,7 +180,7 @@ const ClinicsPage = () => {
                 Visit our certified clinics or book a virtual consultation with Salmara’s Ayurvedic experts. Science-backed guidance for a balanced life.
               </p>
               <a 
-                href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+                href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#5A7A5C] text-white px-10 py-4 rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-[#5A7A5C]/20 transform hover:-translate-y-1 block w-fit"
@@ -168,62 +194,110 @@ const ClinicsPage = () => {
         {/* 2 & 3) Search, Filter and Available Clinics Combined Container */}
         <div className="relative">
           {/* Search & Filter - Sticky but localized to this container */}
-          <section className="py-8 bg-white border-b border-[#F2EDE4] sticky top-20 z-40 shadow-sm">
+          <section className="py-6 md:py-8 bg-white border-b border-[#F2EDE4] sticky top-[64px] lg:top-[80px] z-40 shadow-sm">
             <div className="container px-4">
-              <div className="flex flex-col lg:flex-row items-center gap-6">
-                <div className="relative flex-1 w-full">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#1A2E35]/40" />
-                  <input 
-                    type="text" 
-                    placeholder="Search by City / area / clinic name..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
-                  />
+              <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+                <div className="flex items-center gap-2 w-full lg:flex-1">
+                  <div className="relative flex-1 group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1A2E35]/40 group-focus-within:text-[#5A7A5C] transition-colors" />
+                    <input 
+                      type="text" 
+                      placeholder="Search by location..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 bg-[#F8F9FA] border border-[#F2EDE4] rounded-xl text-xs font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors placeholder:text-[#1A2E35]/20"
+                    />
+                  </div>
+                  
+                  {/* Mobile Filter Toggle Button */}
+                  <button 
+                    onClick={() => setShowMobileFilters(!showMobileFilters)}
+                    className={`lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${
+                      showMobileFilters || cityFilter !== 'All' || treatmentFilter !== 'All' || consultType !== 'All'
+                      ? 'bg-[#5A7A5C] border-[#5A7A5C] text-white' 
+                      : 'bg-white border-[#F2EDE4] text-[#1A2E35]'
+                    }`}
+                  >
+                    <Filter className="h-4 w-4" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Filters</span>
+                    {(cityFilter !== 'All' && cityFilter !== 'All Locations' || treatmentFilter !== 'All' && treatmentFilter !== 'All Treatments' || consultType !== 'All' && consultType !== 'All Types') && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-400 border border-white" />
+                    )}
+                  </button>
                 </div>
-                <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
-                  <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">City</label>
-                    <select 
-                      value={cityFilter}
-                      onChange={(e) => setCityFilter(e.target.value)}
-                      className="appearance-none bg-[#F8F9FA] border border-[#F2EDE4] rounded-xl px-4 py-3 text-xs font-sans-clean focus:outline-none cursor-pointer"
-                    >
-                      <option>All Locations</option>
-                      <option>Bengaluru</option>
-                      <option>Digital</option>
-                    </select>
+
+                <div className={`${showMobileFilters ? 'flex' : 'hidden'} lg:flex flex-wrap items-center gap-3 w-full lg:w-auto mt-2 lg:mt-0 p-3 lg:p-0 bg-[#FDFBF7] lg:bg-transparent rounded-2xl border border-[#F2EDE4] lg:border-none shadow-lg lg:shadow-none`}>
+                  <div className="flex flex-col gap-1 flex-1 min-w-[110px] lg:min-w-[140px]">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">City</label>
+                    <div className="relative">
+                      <select 
+                        value={cityFilter}
+                        onChange={(e) => setCityFilter(e.target.value)}
+                        className="w-full appearance-none bg-white lg:bg-[#F8F9FA] border border-[#F2EDE4] rounded-lg px-3 py-2 text-[11px] font-sans-clean focus:outline-none cursor-pointer pr-8"
+                      >
+                        <option>All Locations</option>
+                        <option>Bengaluru</option>
+                        <option>Puttur</option>
+                        <option>Mysuru</option>
+                        <option>Hubli</option>
+                        <option>Digital</option>
+                      </select>
+                      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1A2E35]/40 pointer-events-none" />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Treatment Type</label>
-                    <select 
-                      value={treatmentFilter}
-                      onChange={(e) => setTreatmentFilter(e.target.value)}
-                      className="appearance-none bg-[#F8F9FA] border border-[#F2EDE4] rounded-xl px-4 py-3 text-xs font-sans-clean focus:outline-none cursor-pointer"
-                    >
-                      <option>All Treatments</option>
-                      <option>Pain & Mobility</option>
-                      <option>Gut & Digestive Health</option>
-                      <option>Liver & Detox</option>
-                      <option>Women's Wellness</option>
-                      <option>Immunity</option>
-                    </select>
+                  <div className="flex flex-col gap-1 flex-1 min-w-[110px] lg:min-w-[140px]">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Treatment</label>
+                    <div className="relative">
+                      <select 
+                        value={treatmentFilter}
+                        onChange={(e) => setTreatmentFilter(e.target.value)}
+                        className="w-full appearance-none bg-white lg:bg-[#F8F9FA] border border-[#F2EDE4] rounded-lg px-3 py-2 text-[11px] font-sans-clean focus:outline-none cursor-pointer pr-8"
+                      >
+                        <option>All Treatments</option>
+                        <option>Pain & Mobility</option>
+                        <option>Gut & Digestive Health</option>
+                        <option>Liver & Detox</option>
+                        <option>Women's Wellness</option>
+                        <option>Immunity</option>
+                      </select>
+                      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1A2E35]/40 pointer-events-none" />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1.5 flex-1 min-w-[120px]">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Type</label>
-                    <select 
-                      value={consultType}
-                      onChange={(e) => setConsultType(e.target.value)}
-                      className="appearance-none bg-[#F8F9FA] border border-[#F2EDE4] rounded-xl px-4 py-3 text-xs font-sans-clean focus:outline-none cursor-pointer"
-                    >
-                      <option>All Types</option>
-                      <option>In-Person</option>
-                      <option>Virtual</option>
-                    </select>
+                  <div className="flex flex-col gap-1 flex-1 min-w-[110px] lg:min-w-[140px]">
+                    <label className="text-[9px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Type</label>
+                    <div className="relative">
+                      <select 
+                        value={consultType}
+                        onChange={(e) => setConsultType(e.target.value)}
+                        className="w-full appearance-none bg-white lg:bg-[#F8F9FA] border border-[#F2EDE4] rounded-lg px-3 py-2 text-[11px] font-sans-clean focus:outline-none cursor-pointer pr-8"
+                      >
+                        <option>All Types</option>
+                        <option>In-Person</option>
+                        <option>Virtual</option>
+                      </select>
+                      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1A2E35]/40 pointer-events-none" />
+                    </div>
                   </div>
                 </div>
               </div>
-              <p className="text-[10px] text-[#1A2E35]/40 italic mt-4 ml-1">Results updating in real-time based on your preferences.</p>
+              <div className="flex items-center justify-between mt-4">
+                <p className="text-[10px] text-[#1A2E35]/40 italic ml-1">
+                  {filteredClinics.length} clinical centers found
+                </p>
+                {(cityFilter !== 'All' && cityFilter !== 'All Locations' || treatmentFilter !== 'All' && treatmentFilter !== 'All Treatments' || consultType !== 'All' && consultType !== 'All Types' || searchQuery) && (
+                  <button 
+                    onClick={() => {
+                      setSearchQuery("");
+                      setCityFilter("All");
+                      setTreatmentFilter("All");
+                      setConsultType("All");
+                    }}
+                    className="text-[9px] font-bold text-red-500 uppercase tracking-widest hover:underline"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
             </div>
           </section>
 
@@ -293,7 +367,7 @@ const ClinicsPage = () => {
                         </div>
                         
                         <a 
-                          href={`https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20appointment%20at%20${encodeURIComponent(clinic.name)}.`}
+                          href={`https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20appointment%20at%20${encodeURIComponent(clinic.name)}.`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full mt-8 bg-[#5A7A5C] text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#4a654c] transition-colors flex items-center justify-center"
@@ -350,44 +424,38 @@ const ClinicsPage = () => {
                       allowFullScreen 
                       referrerPolicy="no-referrer-when-downgrade"
                       title={`Map for ${clinics.find(c => c.id === selectedClinicId)?.name}`}
-                      src={`https://maps.google.com/maps?q=${encodeURIComponent(clinics.find(c => c.id === selectedClinicId)?.address || 'Bengaluru')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                      src={`https://maps.google.com/maps?q=${encodeURIComponent(clinics.find(c => c.id === selectedClinicId)?.address || 'Bengaluru')}&t=&z=15&ie=UTF8&iwloc=near&output=embed`}
                     />
                   </motion.div>
                 </AnimatePresence>
                 
                 <div className="absolute top-6 left-6 right-6">
-                  <div className="bg-white/95 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 bg-[#5A7A5C]/10 rounded-lg flex items-center justify-center">
-                        <Navigation className="h-4 w-4 text-[#5A7A5C]" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 block">Viewing Location</span>
-                        <span className="text-xs font-sans-clean font-bold text-[#1A2E35]">{clinics.find(c => c.id === selectedClinicId)?.name}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-1">
-                      <div className="h-1.5 w-1.5 bg-[#5A7A5C] rounded-full animate-pulse" />
-                      <div className="h-1.5 w-1.5 bg-[#5A7A5C] rounded-full animate-pulse delay-75" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Get Directions Floating Button */}
-                <motion.div 
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  className="absolute bottom-6 left-1/2 -translate-x-1/2"
-                >
                   <a 
                     href={clinics.find(c => c.id === selectedClinicId)?.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-[#1A2E35] text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-xl hover:bg-[#1A2E35]/90 transition-all flex items-center gap-2"
+                    className="block bg-white/95 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl hover:bg-white transition-all group/card"
                   >
-                    <MapPin className="h-3 w-3 text-[#C5A059]" /> Get Directions
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 bg-[#5A7A5C]/10 rounded-lg flex items-center justify-center group-hover/card:bg-[#5A7A5C] group-hover/card:text-white transition-colors">
+                          <Navigation className="h-4 w-4" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 block">Click to open in Maps</span>
+                          <span className="text-xs font-sans-clean font-bold text-[#1A2E35]">{clinics.find(c => c.id === selectedClinicId)?.name}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-1 items-center">
+                        <MapPin className="h-3.5 w-3.5 text-[#C5A059]" />
+                        <div className="flex gap-0.5 ml-2">
+                          <div className="h-1.5 w-1.5 bg-[#5A7A5C] rounded-full animate-pulse" />
+                          <div className="h-1.5 w-1.5 bg-[#5A7A5C] rounded-full animate-pulse delay-75" />
+                        </div>
+                      </div>
+                    </div>
                   </a>
-                </motion.div>
+                </div>
               </div>
             </div>
           </section>
@@ -414,7 +482,7 @@ const ClinicsPage = () => {
             
             <div className="mt-20 text-center">
               <a 
-                href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+                href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-10 py-5 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-[#5A7A5C]/20 transform hover:-translate-y-1 group"
@@ -507,7 +575,7 @@ const ClinicsPage = () => {
               <p className="text-white/60 text-lg font-sans-clean">Experience personalized healing designed for your unique constitution by Salmara’s trusted experts.</p>
               <div className="pt-4">
                 <a 
-                  href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20start%20my%20Ayurvedic%20journey."
+                  href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20start%20my%20Ayurvedic%20journey."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-[#5A7A5C] text-white px-12 py-5 rounded-2xl font-bold tracking-[0.2em] uppercase text-xs hover:bg-[#4a654c] transition-all shadow-2xl shadow-black/40 transform hover:-translate-y-1 inline-block"

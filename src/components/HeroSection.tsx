@@ -74,20 +74,20 @@ const HeroSection = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.8 }}
-        className="absolute top-12 md:top-24 right-4 md:right-12 z-20 flex flex-nowrap justify-end gap-3 md:gap-5"
+        className="absolute top-6 md:top-24 right-4 md:right-12 z-20 flex flex-nowrap justify-end gap-2 md:gap-5 overflow-x-auto no-scrollbar pb-2 max-w-[calc(100%-2rem)]"
       >
         {badges.map((badge) => (
           <div
             key={badge}
-            className="w-16 h-16 md:w-28 md:h-28 rounded-full border border-white/20 bg-black/40 backdrop-blur-md flex items-center justify-center text-center p-3"
+            className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 md:w-28 md:h-28 rounded-full border border-white/20 bg-black/40 backdrop-blur-md flex items-center justify-center text-center p-2 md:p-3"
           >
-            <span className="text-[7px] md:text-[10px] font-sans-clean font-bold text-white uppercase tracking-widest leading-tight whitespace-pre-line">
+            <span className="text-[5px] sm:text-[7px] md:text-[10px] font-sans-clean font-bold text-white uppercase tracking-widest leading-tight whitespace-pre-line">
               {badge}
             </span>
           </div>
         ))}
       </motion.div>
-
+ 
       {/* Main Content Overlay */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-7xl lg:pr-32 xl:pr-48">
@@ -95,32 +95,33 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
+            className="text-left md:text-left" // Keep left-aligned for desktop as requested
           >
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[84px] font-display font-medium text-white leading-tight mb-8 drop-shadow-2xl">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[84px] font-display font-medium text-white leading-[1.2] md:leading-tight mb-6 md:mb-8 drop-shadow-2xl">
               <span className="inline-block">Rooted in Ayurveda.</span>
               <br />
               <span className="italic inline-block text-[#C5A059]">Refined by Science.</span>
             </h1>
             
-            <p className="text-white/90 text-lg md:text-2xl font-body leading-relaxed mb-12 max-w-xl md:max-w-2xl drop-shadow-lg">
+            <p className="text-white/90 text-sm sm:text-lg md:text-2xl font-body leading-relaxed mb-8 md:mb-12 max-w-sm sm:max-w-xl md:max-w-2xl drop-shadow-lg">
               Unlock the power of ancestral formulations with modern quality standards. 
               Pure ingredients, proven results.
             </p>
-
-            <div className="flex flex-wrap gap-6 items-center">
+ 
+            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-start">
               <Link
                 to="/shop"
-                className="bg-white text-[#1A2E35] px-10 py-5 font-sans-clean font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#F2EDE4] hover:scale-105 shadow-xl shadow-black/20"
+                className="w-full sm:w-auto bg-white text-[#1A2E35] px-10 py-4 sm:py-5 font-sans-clean font-bold text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#F2EDE4] hover:scale-105 shadow-xl shadow-black/20 text-center"
               >
                 Shop Now
               </Link>
               <a 
-                href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
+                href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group border border-white/60 text-white px-10 py-5 font-sans-clean font-bold text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white hover:text-[#1A2E35] block w-fit shadow-xl"
+                className="group w-full sm:w-auto border border-white/60 text-white px-10 py-4 sm:py-5 font-sans-clean font-bold text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white hover:text-[#1A2E35] block shadow-xl text-center"
               >
-                <span className="flex items-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   Book Consultation <PlayCircle className="h-4 w-4 hidden group-hover:block animate-pulse" />
                 </span>
               </a>
@@ -130,7 +131,7 @@ const HeroSection = () => {
       </div>
 
       {/* Navigation Arrows */}
-      <div className="absolute bottom-12 right-4 md:right-12 z-20 flex gap-4">
+      {/* <div className="absolute bottom-12 right-4 md:right-12 z-20 flex gap-4">
         <button
           onClick={prevSlide}
           className="p-3 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-[#1A2E35] transition-all duration-300 group"
@@ -145,7 +146,7 @@ const HeroSection = () => {
         >
           <ChevronRight className="h-6 w-6 group-hover:scale-110" />
         </button>
-      </div>
+      </div> */}
 
       {/* Scroll indicator */}
       <motion.div

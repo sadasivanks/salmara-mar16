@@ -10,14 +10,14 @@ const AffiliatePage = () => {
     <div className="min-h-screen bg-[#FDFBF7]">
       <Header />
       
-      <main className="min-h-[60vh] flex items-center justify-center relative overflow-hidden pt-16">
+      <main className="min-h-[40vh] md:min-h-[60vh] flex items-center justify-center relative overflow-hidden pt-4 md:pt-16">
         {/* Background Elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
           <div className="absolute top-[20%] right-[15%] w-[40rem] h-[40rem] bg-[#5A7A5C]/5 rounded-full blur-3xl opacity-50" />
           <div className="absolute bottom-[20%] left-[10%] w-[30rem] h-[30rem] bg-[#C5A059]/5 rounded-full blur-3xl opacity-50" />
         </div>
 
-        <section className="container px-4 relative z-10 py-12">
+        <section className="container px-4 relative z-10 pt-4 pb-12 md:py-12">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

@@ -167,6 +167,22 @@ const ProductDetail = () => {
     );
   }
 
+  const getBenefitLine = (handle: string, type: string) => {
+    const benefits: Record<string, string> = {
+      "karpooradi-thailam": "Fast-absorbing oil for muscle comfort and relaxation.",
+      "brahmi-hair-oil": "Nourishing formula for scalp health and natural shine.",
+      "triphala-churna": "Traditional digestive support for internal balance.",
+      "triphala-tablets": "Convenient daily support for digestive wellness.",
+      "sahacharadi-thailam": "Standardized oil for joint mobility and lower back support.",
+      "murivenna": "Herbal first-aid oil for quick recovery and skin resilience.",
+      "pinda-thailam": "Cooling ayurvedic oil for inflammatory support and comfort.",
+      "dhanwantharam-thailam": "Versatile restorative oil for postnatal and general wellness."
+    };
+    return benefits[handle] || `Expertly balanced Ayurvedic formulation for ${type?.toLowerCase() || 'holistic'} support.`;
+  };
+
+  const benefitLine = getBenefitLine(handle || '', product.productType);
+
   const variants = product.variants?.edges || [];
   const selectedVariant = variants[selectedVariantIdx]?.node;
   const images = product.images?.edges || [];
@@ -219,24 +235,31 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-[#FDFBF7]">
       <Header />
       
-      <main className="pt-32 pb-24">
+      <main className="pt-4 md:pt-8 pb-0 md:pb-24">
         <div className="container px-4 mx-auto">
           {/* Product Page Header */}
-          <div className="max-w-4xl mx-auto text-center mb-20 space-y-8">
+          <div className="max-w-4xl mx-auto text-center mb-6 md:mb-20 space-y-2 md:space-y-8">
             <button
               onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors mb-4"
+              className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> Back to Collection
             </button>
             
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-display font-medium text-[#1A2E35] leading-tight">
-                {product.title}
-              </h1>
-              <p className="text-xl md:text-2xl text-[#1A2E35]/50 font-body max-w-2xl mx-auto leading-relaxed">
-                Expertly balanced Ayurvedic formulation for {product.productType?.toLowerCase() || 'holistic'} support and stabilizing internal resilience.
-              </p>
+              <div className="space-y-4">
+                <h1 className="text-5xl md:text-7xl font-display font-medium text-[#1A2E35] leading-tight mb-2">
+                  {product.title}
+                </h1>
+                <div className="flex justify-center">
+                  <p className="inline-block px-4 py-1.5 bg-[#5A7A5C]/5 text-[#5A7A5C] text-sm md:text-base font-sans-clean font-bold rounded-full border border-[#5A7A5C]/10 mb-4">
+                    {benefitLine}
+                  </p>
+                </div>
+                <p className="text-xl md:text-2xl text-[#1A2E35]/50 font-body max-w-2xl mx-auto leading-relaxed">
+                  Expertly balanced Ayurvedic formulation for {product.productType?.toLowerCase() || 'holistic'} support and stabilizing internal resilience.
+                </p>
+              </div>
 
               <div className="flex justify-center items-center gap-6 pt-2">
                 <div className="flex items-center gap-2">
@@ -345,13 +368,13 @@ const ProductDetail = () => {
               </div>
 
               <div className="space-y-6">
-                <div className="flex items-end gap-3">
-                  <span className="text-3xl font-display font-medium text-[#1A2E35]">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <span className="text-2xl sm:text-3xl font-display font-medium text-[#1A2E35] whitespace-nowrap">
                     {selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode}{' '}
                     {parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
                   </span>
-                  <span className="text-lg text-[#1A2E35]/30 line-through mb-1">₹ {((parseFloat(selectedVariant?.price.amount || "0") * 1.15)).toFixed(2)}</span>
-                  <span className="bg-[#5A7A5C]/5 text-[#5A7A5C] text-[10px] font-bold px-2 py-1 rounded-md mb-1 uppercase tracking-widest">Inclusive of Taxes</span>
+                  <span className="text-base sm:text-lg text-[#1A2E35]/30 line-through whitespace-nowrap">₹ {((parseFloat(selectedVariant?.price.amount || "0") * 1.15)).toFixed(2)}</span>
+                  <span className="bg-[#5A7A5C]/5 text-[#5A7A5C] text-[10px] font-bold px-2 py-1 rounded-md mb-1 uppercase tracking-widest whitespace-nowrap">Inclusive of Taxes</span>
                 </div>
 
                 {/* Rating Display */}
@@ -431,14 +454,6 @@ const ProductDetail = () => {
                   {isBuyingNow ? "Preparing Checkout..." : (!selectedVariant?.availableForSale ? "Out of Stock" : "Buy Now Direct")}
                 </button>
                 
-                <div className="flex items-center justify-center gap-8 py-4 bg-[#F2EDE4]/30 rounded-2xl">
-                   <div className="flex items-center gap-2 text-[9px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">
-                    <CheckCircle2 className="h-3 w-3 text-[#5A7A5C]" /> Ships in 24–48 hours
-                  </div>
-                  <div className="flex items-center gap-2 text-[9px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">
-                    <ShieldCheck className="h-3 w-3 text-[#5A7A5C]" /> Secure Checkout
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -692,7 +707,7 @@ const ProductDetail = () => {
           </AnimatePresence>
 
           {/* 12) FAQs */}
-          <section className="py-24 max-w-3xl mx-auto">
+          <section className="py-12 md:py-24 max-w-3xl mx-auto">
             <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-16">Frequently Asked Questions</h2>
             <div className="space-y-4">
               {faqs.map((faq, i) => (
@@ -809,7 +824,7 @@ const ProductDetail = () => {
             </div>
           </section>
 
-          {/* 14) Cross-sells (Recommended) */}
+          {/* 14) Cross-sells (Recommended) - COMMENTED OUT AS PER USER REQUEST
           <section className="py-24 border-t border-[#F2EDE4]">
             <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-16">Pairs well with</h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -825,6 +840,7 @@ const ProductDetail = () => {
               ))}
             </div>
           </section>
+          */}
         </div>
       </main>
 

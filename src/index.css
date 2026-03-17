@@ -106,11 +106,16 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
     font-family: 'Lora', serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Playfair Display', serif;
   }
 }
@@ -119,10 +124,21 @@
   .font-display {
     font-family: 'Playfair Display', serif;
   }
+
   .font-body {
     font-family: 'Lora', serif;
   }
+
   .font-sans-clean {
     font-family: 'Inter', sans-serif;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

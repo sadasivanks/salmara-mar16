@@ -71,8 +71,8 @@ const FeaturedProducts = () => {
   const marqueeProducts = [...products, ...products, ...products];
 
   return (
-    <section id="products" className="pt-24 pb-12 bg-[#FDFBF7] overflow-hidden" ref={ref}>
-      <div className="container mx-auto px-4 text-center mb-16">
+    <section id="products" className="pt-12 md:pt-24 pb-12 bg-[#FDFBF7] overflow-hidden" ref={ref}>
+      <div className="container mx-auto px-4 text-center mb-10 md:mb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -97,9 +97,9 @@ const FeaturedProducts = () => {
         </div>
       ) : (
         <div className="relative">
-          {/* Edge Fades for Premium Look */}
-          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
+          {/* Edge Fades for Premium Look - Hidden on Mobile as requested */}
+          <div className="hidden md:block absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
+          <div className="hidden md:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
 
           {/* Marquee Container */}
           <div className="flex overflow-hidden group">

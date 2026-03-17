@@ -63,7 +63,7 @@ const ContactPage = () => {
       
       <main>
         {/* HERO SECTION */}
-        <section className="relative pt-16 pb-12 md:pt-20 md:pb-16 overflow-hidden">
+        <section className="relative pt-12 pb-8 md:pt-16 md:pb-10 overflow-hidden">
           <div className="absolute inset-0 bg-white">
             {/* <img 
               src="/C:/Users/Admin/.gemini/antigravity/brain/81674a61-4351-4cc1-be3e-ca84fc1e49a0/salmara_contact_bg_1773572963140.png" 
@@ -73,16 +73,16 @@ const ContactPage = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FDFBF7]/80 to-[#FDFBF7]" />
           </div>
           
-          <div className="container px-4 text-center relative z-10">
+          <div className="container mx-auto px-6 md:px-4 text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-6xl font-display font-medium text-[#1A2E35] mb-4 tracking-tight">
+              <h1 className="text-[26px] sm:text-4xl md:text-6xl font-display font-medium text-[#1A2E35] mb-4 tracking-tight leading-tight px-2">
                 Connect With <span className="italic font-normal">Salmara Ayurveda</span>
               </h1>
-              <p className="text-base md:text-lg text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed">
+              <p className="text-xs sm:text-base md:text-lg text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed px-4">
                 Have a question, feedback, or collaboration idea? We'd love to hear from you.
               </p>
             </motion.div>
@@ -90,17 +90,17 @@ const ContactPage = () => {
         </section>
 
         {/* QUICK CONTACT OPTIONS */}
-        <section className="pb-24 container px-4">
+        <section className="pt-8 pb-16 container mx-auto px-6 md:px-4">
           <div className="grid md:grid-cols-3 gap-12 lg:gap-16 max-w-6xl mx-auto items-stretch">
             {/* General Enquiries Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white border-2 border-[#1A2E35]/5 rounded-[2.5rem] p-10 pt-16 text-center relative group hover:shadow-2xl hover:shadow-[#1A2E35]/10 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
+              className="bg-white border-2 border-[#1A2E35]/5 rounded-[2.5rem] p-6 sm:p-10 pt-16 text-center relative group hover:shadow-2xl hover:shadow-[#1A2E35]/10 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 bg-[#1A2E35] rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
-                <MessageSquare className="h-7 w-7" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12 sm:h-16 sm:w-16 bg-[#1A2E35] rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
+                <MessageSquare className="h-5 w-5 sm:h-7 sm:w-7" />
               </div>
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#1A2E35]/10 rounded-t-[2.5rem]" />
               
@@ -113,9 +113,9 @@ const ContactPage = () => {
                 <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Primary Email</p>
                 <a 
                   href="mailto:support@salmaraherbals.com" 
-                  className="bg-[#5A7A5C] text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#5A7A5C]/90 transition-all shadow-lg shadow-[#5A7A5C]/10"
+                  className="bg-[#5A7A5C] text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#5A7A5C]/90 transition-all shadow-lg shadow-[#5A7A5C]/10 break-all sm:break-normal"
                 >
-                  support@salmaraherbals.com <Mail className="h-3 w-3" />
+                  support@salmaraherbals.com <Mail className="h-3 w-3 shrink-0" />
                 </a>
               </div>
             </motion.div>
@@ -127,8 +127,8 @@ const ContactPage = () => {
               transition={{ delay: 0.3 }}
               className="bg-white border-2 border-[#1A2E35]/5 rounded-[2.5rem] p-10 pt-16 text-center relative group hover:shadow-2xl hover:shadow-[#1A2E35]/10 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 bg-[#1A2E35] rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
-                <MapPin className="h-7 w-7" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12 sm:h-16 sm:w-16 bg-[#1A2E35] rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
+                <MapPin className="h-5 w-5 sm:h-7 sm:w-7" />
               </div>
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#1A2E35]/10 rounded-t-[2.5rem]" />
 
@@ -140,7 +140,7 @@ const ContactPage = () => {
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
                 <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Secure Booking</p>
                 <a 
-                  href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+                  href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-[#1A2E35] text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/10"
@@ -157,8 +157,8 @@ const ContactPage = () => {
               transition={{ delay: 0.4 }}
               className="bg-white border-2 border-[#1A2E35]/5 rounded-[2.5rem] p-10 pt-16 text-center relative group hover:shadow-2xl hover:shadow-[#1A2E35]/10 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-16 w-16 bg-[#1A2E35] rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
-                <Users className="h-7 w-7" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12 sm:h-16 sm:w-16 bg-[#1A2E35] rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
+                <Users className="h-5 w-5 sm:h-7 sm:w-7" />
               </div>
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#1A2E35]/10 rounded-t-[2.5rem]" />
 
@@ -170,7 +170,7 @@ const ContactPage = () => {
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
                 <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Join Network</p>
                 <Link 
-                  to="/shop"
+                  to="/affiliate"
                   className="bg-[#1A2E35] text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/10"
                 >
                   Join the Program <ArrowRight className="h-3 w-3" />
@@ -181,8 +181,8 @@ const ContactPage = () => {
         </section>
 
         {/* COMMUNICATION HUB SECTION */}
-        <section className="py-24 bg-white border-y border-[#F2EDE4]">
-          <div className="container px-4">
+        <section className="py-16 md:py-20 bg-white border-y border-[#F2EDE4]">
+          <div className="container mx-auto px-6 md:px-4">
             <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-start">
               
               {/* DETAILS SIDE */}
@@ -234,7 +234,7 @@ const ContactPage = () => {
                     <h4 className="font-display font-medium text-[#1A2E35] mb-2">Need a faster response?</h4>
                     <p className="text-xs text-[#1A2E35]/50 leading-relaxed mb-6 font-sans-clean">Chat with our experts on WhatsApp for immediate product guidance.</p>
                     <a 
-                      href="https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
+                      href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-bold text-[#5A7A5C] uppercase tracking-[0.2em] flex items-center gap-2 hover:translate-x-1 transition-transform"
@@ -358,7 +358,7 @@ const ContactPage = () => {
         </section>
 
         {/* CLINIC HIGHLIGHTS */}
-        <section className="py-24 container px-4 mb-24">
+        <section className="py-16 container mx-auto px-6 md:px-4 mb-16">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-16">
               <div className="max-w-xl">

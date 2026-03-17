@@ -66,6 +66,7 @@ const ShopPage = () => {
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState("Bestselling");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   
   const { addItem, isLoading: isCartStoreLoading } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
@@ -217,7 +218,7 @@ const ShopPage = () => {
       
       <main>
         {/* 1) Hero Section */}
-        <section className="relative h-[60vh] flex items-center justify-center bg-[#1A2E35] overflow-hidden">
+        <section className="relative min-h-[60vh] md:h-[60vh] py-20 md:py-0 flex items-center justify-center bg-[#1A2E35] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35] via-[#1A2E35]/90 to-[#1A2E35]/80" />
           
           <div className="container px-4 relative z-10 text-center max-w-4xl">
@@ -226,17 +227,17 @@ const ShopPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-4xl md:text-6xl font-display font-medium text-white mb-6">
-                Explore Our Certified Ayurvedic Range
+              <h1 className="text-2xl sm:text-4xl md:text-6xl font-display font-medium text-white mb-6 leading-tight">
+                Explore Our Certified <br className="sm:hidden" /> Ayurvedic Range
               </h1>
-              <p className="text-white/80 text-lg md:text-xl font-body leading-relaxed mb-10 max-w-2xl mx-auto">
+              <p className="text-white/80 text-xs sm:text-sm md:text-xl font-body leading-relaxed mb-10 max-w-2xl mx-auto px-4">
                 From muscle relief oils to immunity blends, each Salmara formulation is crafted under GMP-certified conditions and tested with quality standards for consistent results.
               </p>
               <button 
                 onClick={() => {
                   document.getElementById('product-grid')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="bg-white text-[#1A2E35] px-12 py-5 rounded-2xl font-bold tracking-widest uppercase text-xs hover:bg-[#F2EDE4] transition-all shadow-2xl"
+                className="bg-white text-[#1A2E35] px-10 py-4 sm:px-12 sm:py-5 rounded-2xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-[#F2EDE4] transition-all shadow-2xl"
               >
                 Shop All Products
               </button>
@@ -276,106 +277,139 @@ const ShopPage = () => {
         </section>
 
         {/* 3) Filters & Sorting */}
-        <section id="product-grid" className="py-12 border-t border-[#F2EDE4] bg-[#FDFBF7] sticky top-[64px] lg:top-[80px] z-40">
+        <section id="product-grid" className="py-8 md:py-12 border-t border-[#F2EDE4] bg-[#FDFBF7] sticky top-[64px] lg:top-[80px] z-40">
           <div className="container px-4">
-            <div className="flex flex-wrap items-center justify-between gap-6">
-              <div className="flex items-center gap-4 lg:gap-8">
-                {/* Search Expansion Logic */}
-                <div className="relative group">
-                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-[#1A2E35]/30 group-focus-within:text-[#5A7A5C] transition-colors" />
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-8">
+                {/* Search & Mobile Filter Toggle */}
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1 lg:flex-none group">
+                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-[#1A2E35]/30 group-focus-within:text-[#5A7A5C] transition-colors" />
+                    </div>
+                    <input 
+                      type="text"
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="bg-white border border-[#F2EDE4] rounded-xl pl-10 pr-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] transition-all w-full lg:w-64 placeholder:text-[#1A2E35]/20"
+                    />
                   </div>
-                  <input 
-                    type="text"
-                    placeholder="Search Formulations..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-white border border-[#F2EDE4] rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold uppercase tracking-widest text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] transition-all w-full lg:w-64 placeholder:text-[#1A2E35]/20"
-                  />
+                  
+                  {/* Mobile Filter Toggle Button */}
+                  <button 
+                    onClick={() => setShowMobileFilters(!showMobileFilters)}
+                    className={`lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${
+                      showMobileFilters || selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" 
+                      ? 'bg-[#5A7A5C] border-[#5A7A5C] text-white' 
+                      : 'bg-white border-[#F2EDE4] text-[#1A2E35]'
+                    }`}
+                  >
+                    <Filter className="h-4 w-4" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest">Filters</span>
+                    {(selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all") && (
+                      <span className="ml-1 w-2 h-2 rounded-full bg-red-400 border border-white" />
+                    )}
+                  </button>
                 </div>
 
-                <div className="flex items-center gap-3 lg:gap-6">
+                {/* Filter Controls - Conditional on Mobile */}
+                <div className={`${showMobileFilters ? 'flex' : 'hidden'} lg:flex flex-wrap items-center gap-2 lg:gap-6 mt-2 lg:mt-0 p-2 lg:p-0 bg-white lg:bg-transparent rounded-2xl border border-[#F2EDE4] lg:border-none shadow-xl lg:shadow-none`}>
                   {/* Category Filter */}
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] hover:text-[#5A7A5C] transition-colors focus:outline-none">
+                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] hover:text-[#5A7A5C] transition-colors focus:outline-none px-3 py-2 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
                       Category <ChevronDown className="h-4 w-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
                       <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Select Category</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuRadioGroup value={selectedCategory} onValueChange={setSelectedCategory}>
+                      <div className="space-y-1">
                         {categories.map((cat) => (
-                          <DropdownMenuRadioItem 
+                          <DropdownMenuItem 
                             key={cat} 
-                            value={cat}
-                            className="rounded-xl px-4 py-3 cursor-pointer text-xs font-display focus:bg-[#F2EDE4]/30"
+                            onClick={() => setSelectedCategory(cat)}
+                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display hover:bg-[#F2EDE4]/30 transition-colors ${
+                              selectedCategory === cat ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35]'
+                            }`}
                           >
                             {cat}
-                          </DropdownMenuRadioItem>
+                          </DropdownMenuItem>
                         ))}
-                      </DropdownMenuRadioGroup>
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
 
                   {/* Price Filter */}
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] hover:text-[#5A7A5C] transition-colors focus:outline-none">
+                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] hover:text-[#5A7A5C] transition-colors focus:outline-none px-3 py-2 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
                       Price <ChevronDown className="h-4 w-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
                       <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Price Range</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuRadioGroup value={selectedPriceRange} onValueChange={setSelectedPriceRange}>
+                      <div className="space-y-1">
                         {priceRanges.map((range) => (
-                          <DropdownMenuRadioItem 
+                          <DropdownMenuItem 
                             key={range.value} 
-                            value={range.value}
-                            className="rounded-xl px-4 py-3 cursor-pointer text-xs font-display focus:bg-[#F2EDE4]/30"
+                            onClick={() => setSelectedPriceRange(range.value)}
+                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display hover:bg-[#F2EDE4]/30 transition-colors ${
+                              selectedPriceRange === range.value ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35]'
+                            }`}
                           >
                             {range.label}
-                          </DropdownMenuRadioItem>
+                          </DropdownMenuItem>
                         ))}
-                      </DropdownMenuRadioGroup>
+                      </div>
                     </DropdownMenuContent>
                   </DropdownMenu>
 
                   {/* Availability Filter */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
                     <button 
                       onClick={() => setInStockOnly(!inStockOnly)}
-                      className={`h-5 w-10 rounded-full transition-all relative ${inStockOnly ? 'bg-[#5A7A5C]' : 'bg-[#F2EDE4]'}`}
+                      className={`h-4 w-8 rounded-full transition-all relative ${inStockOnly ? 'bg-[#5A7A5C]' : 'bg-[#F2EDE4]'}`}
                     >
-                      <div className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${inStockOnly ? 'left-[22px]' : 'left-0.5 shadow-sm'}`} />
+                      <div className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${inStockOnly ? 'left-[18px]' : 'left-0.5 shadow-sm'}`} />
                     </button>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">In Stock</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#1A2E35]/40">In Stock</span>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mr-2">Sort by</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] border-b border-[#1A2E35]/20 pb-1 focus:outline-none">
-                    {sortBy} <ChevronDown className="h-3 w-3" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
-                    <DropdownMenuRadioGroup value={sortBy} onValueChange={setSortBy}>
-                      {["Bestselling", "Price: Low to High", "Price: High to Low", "Newest First", "Doctor Recommended"].map((s) => (
-                        <DropdownMenuRadioItem 
-                          key={s} 
-                          value={s}
-                          className="rounded-xl px-4 py-3 cursor-pointer text-xs font-display focus:bg-[#F2EDE4]/30"
-                        >
-                          {s}
-                        </DropdownMenuRadioItem>
-                      ))}
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0 mt-2 lg:mt-0">
+                <div className="flex items-center gap-2 lg:hidden">
+                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">
+                    {filteredProducts.length} Results
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mr-2">Sort by</span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] border-b border-[#1A2E35]/20 pb-1 focus:outline-none">
+                      {sortBy} <ChevronDown className="h-3 w-3" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                      <div className="space-y-1">
+                        {["Bestselling", "Price: Low to High", "Price: High to Low", "Newest First", "Doctor Recommended"].map((s) => (
+                          <DropdownMenuItem 
+                            key={s} 
+                            onClick={() => setSortBy(s)}
+                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display hover:bg-[#F2EDE4]/30 transition-colors ${
+                              sortBy === s ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35]'
+                            }`}
+                          >
+                            {s}
+                          </DropdownMenuItem>
+                        ))}
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </div>
             
-            <div className="mt-8 flex items-center justify-between bg-white/50 border border-[#F2EDE4] rounded-2xl px-6 py-4">
+            <div className="mt-8 hidden lg:flex items-center justify-between bg-white/50 border border-[#F2EDE4] rounded-2xl px-6 py-4">
                <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]">
                 Showing {filteredProducts.length} formulations
               </p>
@@ -436,7 +470,7 @@ const ShopPage = () => {
                       initial={{ opacity: 0, y: 30 }}
                       animate={isGridInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ duration: 0.5, delay: i * 0.05 }}
-                      className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 group"
+                      className="bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 group relative"
                     >
                       <Link to={`/product/${product.node.handle}`}>
                         <div className="relative aspect-square bg-gradient-to-br from-secondary to-sand-warm flex items-center justify-center overflow-hidden">

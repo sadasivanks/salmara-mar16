@@ -16,8 +16,8 @@ const navItems = [
   { label: "About Us", href: "/about" },
   { label: "Shop Now", href: "/shop" },
   { label: "Clinics", href: "/clinics" },
-  { label: "Blog", href: "/#blog" },
-  { label: "Book Appointment", href: "https://wa.me/919995731915?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.", external: true },
+//   { label: "Blog", href: "/#blog" },
+  { label: "Book Appointment", href: "https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.", external: true },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -219,9 +219,9 @@ const Header = () => {
                 {searchOpen && (
                   <motion.div
                     initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: 200, opacity: 1 }}
+                    animate={{ width: window.innerWidth < 640 ? 140 : 200, opacity: 1 }}
                     exit={{ width: 0, opacity: 0 }}
-                    className="overflow-hidden mr-2"
+                    className="overflow-hidden mr-1 sm:mr-2"
                   >
                     <input
                       type="text"
@@ -253,7 +253,7 @@ const Header = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full right-0 mt-2 w-64 bg-white border border-[#F2EDE4] rounded-2xl shadow-2xl z-[60] overflow-hidden"
+                    className="absolute top-full right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] max-h-[60vh] overflow-y-auto bg-white border border-[#F2EDE4] rounded-2xl shadow-2xl z-[60]"
                   >
                     <div className="p-2 space-y-1">
                       <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 border-b border-[#F2EDE4] mb-1">
@@ -300,7 +300,7 @@ const Header = () => {
 
             <Link 
               to="/wishlist" 
-              className="p-2 text-foreground/70 hover:text-red-500 transition-colors relative group"
+              className={`p-2 text-foreground/70 hover:text-red-500 transition-colors relative group ${searchOpen ? 'hidden sm:block' : ''}`}
               aria-label="Wishlist"
             >
               <Heart className="h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -309,7 +309,7 @@ const Header = () => {
             <CartDrawer />
             
             {user ? (
-              <div className="hidden sm:flex items-center gap-4">
+              <div className={`hidden sm:flex items-center gap-4 ${searchOpen ? 'md:flex' : ''}`}>
                 <Link 
                   to="/dashboard"
                   className="flex items-center gap-2 px-3 py-1.5 bg-[#FDFBF7] rounded-full border border-[#F2EDE4] hover:bg-[#5A7A5C]/5 transition-colors group"
@@ -332,7 +332,7 @@ const Header = () => {
                   setAuthView("login");
                   setAuthOpen(true);
                 }}
-                className="hidden sm:flex items-center gap-1.5 p-2 text-foreground/70 hover:text-primary transition-colors" 
+                className={`hidden sm:flex items-center gap-1.5 p-2 text-foreground/70 hover:text-primary transition-colors ${searchOpen ? 'md:flex' : ''}`} 
                 aria-label="Login"
               >
                 <User className="h-5 w-5" />
@@ -342,7 +342,7 @@ const Header = () => {
 
             <button
               onClick={() => setMobileOpen(true)}
-              className="p-2 text-foreground/70 hover:text-primary transition-colors xl:hidden"
+              className={`p-2 text-foreground/70 hover:text-primary transition-colors xl:hidden ${searchOpen ? 'hidden' : ''}`}
               aria-label="Menu"
             >
               <Menu className="h-6 w-6" />
@@ -425,14 +425,14 @@ const Header = () => {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {shopByConcern.map((concern) => (
-                    <a
+                    <Link
                       key={concern}
-                      href="#products"
+                      to="/shop"
                       onClick={() => setMobileOpen(false)}
                       className="px-3 py-1.5 text-xs font-sans-clean bg-secondary text-foreground rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
                     >
                       {concern}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -472,12 +472,16 @@ const Header = () => {
                     <User className="h-4 w-4" /> Login
                   </button>
                 )}
-                <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary">
+                {/* <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary">
                   <Package className="h-4 w-4" /> Track Order
-                </a>
-                <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary">
+                </a> */}
+                <Link 
+                  to="/" 
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
+                >
                   <Phone className="h-4 w-4" /> Contact Us
-                </a>
+                </Link>
               </div>
             </motion.div>
           </>

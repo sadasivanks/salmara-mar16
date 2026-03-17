@@ -65,10 +65,10 @@ const BlogSection = () => {
                 <p className="text-[#4A5568] font-body text-sm leading-relaxed mb-6 line-clamp-2">
                   {post.snippet}
                 </p>
-                <div className="flex items-center gap-1.5 text-[#5A7A5C] font-sans-clean text-xs font-bold uppercase tracking-wider group/link">
+                {/* <div className="flex items-center gap-1.5 text-[#5A7A5C] font-sans-clean text-xs font-bold uppercase tracking-wider group/link">
                   <span>Read More</span>
                   <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
-                </div>
+                </div> */}
               </div>
             </motion.article>
           ))}
