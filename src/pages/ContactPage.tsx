@@ -115,7 +115,8 @@ const ContactPage = () => {
                   href="mailto:support@salmaraherbals.com" 
                   className="bg-[#5A7A5C] text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#5A7A5C]/90 transition-all shadow-lg shadow-[#5A7A5C]/10 break-all sm:break-normal"
                 >
-                  support@salmaraherbals.com <Mail className="h-3 w-3 shrink-0" />
+                  support@salmaraherbals.com 
+                  {/* <Mail className="h-3 w-3 shrink-0" /> */}
                 </a>
               </div>
             </motion.div>
@@ -188,7 +189,7 @@ const ContactPage = () => {
               {/* DETAILS SIDE */}
               <div className="space-y-12">
                 <div>
-                  <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-6">Our Communication Hub</h2>
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-medium text-[#1A2E35] mb-6 whitespace-nowrap">Our Communication Hub</h2>
                   <p className="text-[#1A2E35]/60 leading-relaxed font-sans-clean">
                     For us, Ayurveda is a dialogue. We've dedicated teams for each touchpoint to ensure your inquiry reaches the right hands instantly.
                   </p>

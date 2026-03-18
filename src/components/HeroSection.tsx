@@ -74,7 +74,7 @@ const HeroSection = () => {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.8 }}
-        className="absolute top-6 md:top-24 right-4 md:right-12 z-20 flex flex-nowrap justify-end gap-2 md:gap-5 overflow-x-auto no-scrollbar pb-2 max-w-[calc(100%-2rem)]"
+        className="absolute top-6 md:top-24 inset-x-0 md:inset-x-auto md:right-12 z-20 flex flex-nowrap justify-center md:justify-end gap-2 md:gap-5 overflow-x-auto no-scrollbar pb-2 px-4 md:px-0"
       >
         {badges.map((badge) => (
           <div
@@ -95,7 +95,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="text-left md:text-left" // Keep left-aligned for desktop as requested
+            className="text-center md:text-left"
           >
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[84px] font-display font-medium text-white leading-[1.2] md:leading-tight mb-6 md:mb-8 drop-shadow-2xl">
               <span className="inline-block">Rooted in Ayurveda.</span>
@@ -103,12 +103,12 @@ const HeroSection = () => {
               <span className="italic inline-block text-[#C5A059]">Refined by Science.</span>
             </h1>
             
-            <p className="text-white/90 text-sm sm:text-lg md:text-2xl font-body leading-relaxed mb-8 md:mb-12 max-w-sm sm:max-w-xl md:max-w-2xl drop-shadow-lg">
+            <p className="text-white/90 text-sm sm:text-lg md:text-2xl font-body leading-relaxed mb-8 md:mb-12 max-w-sm sm:max-w-xl md:max-w-2xl mx-auto md:mx-0 drop-shadow-lg">
               Unlock the power of ancestral formulations with modern quality standards. 
               Pure ingredients, proven results.
             </p>
  
-            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-start">
+            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-center md:items-start">
               <Link
                 to="/shop"
                 className="w-full sm:w-auto bg-white text-[#1A2E35] px-10 py-4 sm:py-5 font-sans-clean font-bold text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#F2EDE4] hover:scale-105 shadow-xl shadow-black/20 text-center"

@@ -238,15 +238,17 @@ const ProductDetail = () => {
       <main className="pt-4 md:pt-8 pb-0 md:pb-24">
         <div className="container px-4 mx-auto">
           {/* Product Page Header */}
-          <div className="max-w-4xl mx-auto text-center mb-6 md:mb-20 space-y-2 md:space-y-8">
-            <button
-              onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to Collection
-            </button>
+          <div className="max-w-4xl mx-auto mb-6 md:mb-20 space-y-4 md:space-y-8">
+            <div className="flex justify-start">
+              <button
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" /> Back to Collection
+              </button>
+            </div>
             
-            <div className="space-y-4">
+            <div className="text-center space-y-4 md:space-y-8">
               <div className="space-y-4">
                 <h1 className="text-5xl md:text-7xl font-display font-medium text-[#1A2E35] leading-tight mb-2">
                   {product.title}
@@ -261,8 +263,8 @@ const ProductDetail = () => {
                 </p>
               </div>
 
-              <div className="flex justify-center items-center gap-6 pt-2">
-                <div className="flex items-center gap-2">
+              <div className="flex justify-center items-center gap-3 md:gap-6 pt-2 overflow-x-auto no-scrollbar whitespace-nowrap">
+                <div className="flex items-center gap-2 shrink-0">
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map(s => (
                       <Star 
@@ -273,8 +275,8 @@ const ProductDetail = () => {
                   </div>
                   <span className="text-[10px] font-bold text-[#1A2E35] uppercase tracking-widest">{averageRating || 4.9} / 5.0</span>
                 </div>
-                <div className="w-1 h-1 bg-[#F2EDE4] rounded-full" />
-                <a href="#reviews" className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline underline-offset-4">
+                <div className="w-1 h-1 bg-[#F2EDE4] rounded-full shrink-0" />
+                <a href="#reviews" className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline underline-offset-4 shrink-0">
                   {productReviews.length + 112} Verified Reviews
                 </a>
               </div>
@@ -378,8 +380,8 @@ const ProductDetail = () => {
                 </div>
 
                 {/* Rating Display */}
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="flex gap-1">
+                <div className="flex items-center gap-2 mb-6 whitespace-nowrap overflow-x-auto no-scrollbar">
+                  <div className="flex gap-1 shrink-0">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star 
                         key={s} 
@@ -387,10 +389,10 @@ const ProductDetail = () => {
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-[#1A2E35]">
+                  <span className="text-xs font-bold text-[#1A2E35] shrink-0">
                     {averageRating}
                   </span>
-                  <span className="text-xs text-[#1A2E35]/40">
+                  <span className="text-xs text-[#1A2E35]/40 shrink-0">
                     ({productReviews.length + 112} reviews)
                   </span>
                 </div>
@@ -561,10 +563,10 @@ const ProductDetail = () => {
 
           {/* 11) Reviews */}
           <section id="reviews" className="py-24 max-w-4xl mx-auto border-b border-[#F2EDE4]">
-            <div className="flex items-center justify-between mb-16">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12 md:mb-16">
               <div className="space-y-2">
                 <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Customer Reviews</h2>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3 md:gap-4">
                   <div className="flex items-center gap-1 text-[#C5A059]">
                     {[1, 2, 3, 4, 5].map(s => (
                       <Star 
@@ -573,14 +575,14 @@ const ProductDetail = () => {
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-[#1A2E35]/40 uppercase tracking-widest">
+                  <span className="text-xs font-bold text-[#1A2E35]/40 uppercase tracking-widest whitespace-nowrap">
                     Based on {productReviews.length + 112} verified ratings
                   </span>
                 </div>
               </div>
               <button 
                 onClick={() => setReviewModalOpen(true)}
-                className="bg-[#1A2E35] text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/20"
+                className="w-full sm:w-auto bg-[#1A2E35] text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/20"
               >
                 Write a Review
               </button>
@@ -595,7 +597,7 @@ const ProductDetail = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white p-8 rounded-3xl border border-[#F2EDE4] space-y-4"
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                       <div className="space-y-1">
                         <div className="flex gap-1 text-[#C5A059]">
                           {[1, 2, 3, 4, 5].map(s => (
@@ -604,7 +606,7 @@ const ProductDetail = () => {
                         </div>
                         <p className="font-display font-medium text-[#1A2E35]">{review.userName}</p>
                       </div>
-                      <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest">{review.date}</span>
+                      <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest shrink-0">{review.date}</span>
                     </div>
                     <p className="text-sm text-[#1A2E35]/60 leading-relaxed font-sans-clean">
                       {review.comment}
@@ -637,7 +639,7 @@ const ProductDetail = () => {
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                  className="relative w-full max-w-lg bg-[#FDFBF7] rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-[#F2EDE4]"
+                  className="relative w-full max-w-lg bg-[#FDFBF7] rounded-[2.5rem] p-6 md:p-10 shadow-2xl border border-[#F2EDE4]"
                 >
                   <button 
                     onClick={() => setReviewModalOpen(false)}
@@ -646,15 +648,15 @@ const ProductDetail = () => {
                     <X className="h-5 w-5" />
                   </button>
 
-                  <div className="text-center mb-10">
+                  <div className="text-center mb-6">
                     <p className="text-[#5A7A5C] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-3">Share your experience</p>
                     <h3 className="text-3xl font-display font-medium text-[#1A2E35]">Product Review</h3>
                   </div>
 
-                  <form onSubmit={handleReviewSubmit} className="space-y-8">
-                    <div className="space-y-3">
+                  <form onSubmit={handleReviewSubmit} className="space-y-4">
+                    <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Rating</label>
-                      <div className="flex gap-2 justify-center py-4 bg-white rounded-2xl border border-[#F2EDE4]">
+                      <div className="flex gap-2 justify-center py-2 bg-white rounded-2xl border border-[#F2EDE4]">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
@@ -663,40 +665,40 @@ const ProductDetail = () => {
                             className="p-1 transition-transform hover:scale-125 focus:outline-none"
                           >
                             <Star 
-                              className={`h-8 w-8 transition-colors ${star <= reviewRating ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                              className={`h-7 w-7 transition-colors ${star <= reviewRating ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
                             />
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Name</label>
                       <input
                         type="text"
                         value={reviewName}
                         onChange={(e) => setReviewName(e.target.value)}
                         placeholder="John Doe"
-                        className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors"
+                        className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors"
                         required
                       />
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Feedback</label>
                       <textarea
                         value={reviewComment}
                         onChange={(e) => setReviewComment(e.target.value)}
                         placeholder="How has this formulation supported you?"
-                        rows={4}
-                        className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors resize-none"
+                        rows={3}
+                        className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors resize-none"
                         required
                       />
                     </div>
 
                     <button
                       type="submit"
-                      className="w-full bg-[#1A2E35] text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1A2E35]/10"
+                      className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1A2E35]/10"
                     >
                       Submit Review <Send className="h-4 w-4" />
                     </button>
