@@ -90,16 +90,16 @@ const Footer = () => (
         
         <div className="flex flex-wrap items-center gap-6 md:gap-8">
           <div className="flex items-center gap-2 text-white/80">
-            <Lock className="h-4 w-4 text-[#C5A059]" />
-            <span className="text-[10px] uppercase tracking-widest font-bold">Secure Payments</span>
+            <Lock className="h-5 w-5 text-[#C5A059]" />
+            <span className="text-xs sm:text-sm uppercase tracking-widest font-bold">Secure Payments</span>
           </div>
           <div className="flex items-center gap-2 text-white/80">
-            <Wallet className="h-4 w-4 text-[#C5A059]" />
-            <span className="text-[10px] uppercase tracking-widest font-bold">COD Available</span>
+            <Wallet className="h-5 w-5 text-[#C5A059]" />
+            <span className="text-xs sm:text-sm uppercase tracking-widest font-bold">COD Available</span>
           </div>
           <div className="flex items-center gap-2 text-white/80">
-            <BadgeCheck className="h-4 w-4 text-[#C5A059]" />
-            <span className="text-[10px] uppercase tracking-widest font-bold">GMP Certified</span>
+            <BadgeCheck className="h-5 w-5 text-[#C5A059]" />
+            <span className="text-xs sm:text-sm uppercase tracking-widest font-bold">GMP Certified</span>
           </div>
         </div>
       </div>

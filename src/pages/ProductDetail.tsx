@@ -27,7 +27,8 @@ import {
   Heart,
   X,
   Send,
-  ChevronRight
+  ChevronRight,
+  MessageCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -54,6 +55,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [isProductInfoOpen, setIsProductInfoOpen] = useState(true);
   const [isBuyingNow, setIsBuyingNow] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isZooming, setIsZooming] = useState(false);
@@ -261,6 +263,70 @@ const ProductDetail = () => {
     return benefits[handle] || `Expertly balanced Ayurvedic formulation for ${type?.toLowerCase() || 'holistic'} support.`;
   };
 
+  const getProductIngredients = (handle: string) => {
+    const ingredientsMap: Record<string, string[]> = {
+      "karpooradi-thailam": ["Karpooradi", "Sesame Oil", "Ajwain"],
+      "brahmi-hair-oil": ["Brahmi", "Amla", "Bhringraj"],
+      "triphala-churna": ["Amalaki", "Haritaki", "Bibhitaki"],
+      "triphala-tablets": ["Amalaki", "Haritaki", "Bibhitaki"],
+      "sahacharadi-thailam": ["Sahachara", "Dashamoola", "Sesame Oil"],
+      "murivenna": ["Aloe Vera", "Betel Leaves", "Moringa"],
+      "pinda-thailam": ["Manjistha", "Sariva", "Sesame Oil"],
+      "dhanwantharam-thailam": ["Bala", "Dashamoola", "Cow's Milk"]
+    };
+    return ingredientsMap[handle] || ["Dashamoola", "Botanical Extract", "Ayurvedic Base"];
+  };
+
+  const getProductMetadata = (handle: string, type: string) => {
+    const metadataMap: Record<string, { qty: string, form: string }> = {
+      "karpooradi-thailam": { qty: "200 ml", form: "Ayurvedic Massage Oil" },
+      "brahmi-hair-oil": { qty: "200 ml", form: "Herbal Hair Oil" },
+      "triphala-churna": { qty: "100 g", form: "Ayurvedic Herbal Powder" },
+      "triphala-tablets": { qty: "60 Tablets", form: "Ayurvedic Tablets" },
+      "sahacharadi-thailam": { qty: "200 ml", form: "Ayurvedic Massage Oil" },
+      "murivenna": { qty: "200 ml", form: "Ayurvedic Healing Oil" },
+      "pinda-thailam": { qty: "200 ml", form: "Ayurvedic Cooling Oil" },
+      "dhanwantharam-thailam": { qty: "200 ml", form: "Ayurvedic Massage Oil" }
+    };
+    return metadataMap[handle] || { qty: "100 ml", form: type || 'Ayurvedic Herbal Range' };
+  };
+
+  const getIngredientBenefit = (ingredient: string) => {
+    const benefits: Record<string, string> = {
+      "Dashamoola": "Supports nerve health and reduces inflammation.",
+      "Botanical Extract": "Provides concentrated plant-based wellness.",
+      "Ayurvedic Base": "Traditional foundation for balanced formulation.",
+      "Tulsi": "Strengthens respiratory immunity.",
+      "Guggul": "Supports joint flexibility and metabolism.",
+      "Triphala": "Enhances digestion and gentle detox.",
+      "Ashwagandha": "Reduces stress and improves vitality.",
+      "Brahmi": "Nourishes scalp and supports cognitive function.",
+      "Karpooradi": "Provides cooling relief for muscles.",
+      "Sahacharadi": "Supports lower back and joint mobility.",
+      "Sahachara": "Effective for easing stiffness and joint support.",
+      "Murivenna": "Aids in fast recovery of minor injuries.",
+      "Pinda": "Cools and soothes inflammatory sensations.",
+      "Dhanwantharam": "Comprehensive restorative and postnatal support.",
+      "Amalaki": "Rich in Vitamin C, supports immune health.",
+      "Haritaki": "Aids digestion and healthy bowel movement.",
+      "Bibhitaki": "Supports respiratory health and fluid balance.",
+      "Amla": "Potent antioxidant for immune and hair health.",
+      "Bhringraj": "Promotes hair growth and scalp health.",
+      "Sesame Oil": "Deeply penetrating base for joint and muscle nourishment.",
+      "Ajwain": "Helps relieve discomfort and muscle spasms.",
+      "Aloe Vera": "Cools, soothes, and repairs damaged tissue.",
+      "Betel Leaves": "Possesses natural antibacterial and healing properties.",
+      "Moringa": "Rich in nutrients, supports tissue regeneration.",
+      "Manjistha": "Purifies the blood and cools the system.",
+      "Sariva": "Reduces burning sensations and clears the skin.",
+      "Bala": "Strengthens muscles, nerves, and overall vitality.",
+      "Cow's Milk": "Nourishing base for cellular repair."
+    };
+    
+    const key = Object.keys(benefits).find(k => ingredient.toLowerCase().includes(k.toLowerCase()));
+    return key ? benefits[key] : "Standardized for optimal efficacy and integrity.";
+  };
+
   const benefitLine = getBenefitLine(handle || '', product.productType);
   const subtitle = product.description?.split('.')[0] + '.' || `${product.productType} formulation for balanced internal wellness.`;
 
@@ -412,14 +478,14 @@ const ProductDetail = () => {
                 </p>
 
                 <div className="flex flex-wrap items-center gap-6 pt-2">
-                  <div className="flex items-center gap-2 text-[8px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">
-                    <ShieldCheck className="h-3 w-3 text-[#5A7A5C]" /> GMP
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
+                    <ShieldCheck className="h-4 w-4 text-[#5A7A5C]" /> GMP Certified
                   </div>
-                  <div className="flex items-center gap-2 text-[8px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">
-                    <Leaf className="h-3 w-3 text-[#C5A059]" /> 100% Herbal
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
+                    <Leaf className="h-4 w-4 text-[#C5A059]" /> 100% Herbal
                   </div>
-                  <div className="flex items-center gap-2 text-[8px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">
-                    <CheckCircle2 className="h-3 w-3 text-[#5A7A5C]" /> CLINICAL
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
+                    <CheckCircle2 className="h-4 w-4 text-[#5A7A5C]" /> CLINICAL
                   </div>
                 </div>
               </div>
@@ -515,6 +581,35 @@ const ProductDetail = () => {
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
                 />
               </div>
+
+              <div className="pt-2">
+                <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-6 relative overflow-hidden mt-6">
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-[#5A7A5C]" />
+                  <div className="flex gap-4 items-start">
+                    <div className="bg-white p-2.5 rounded-xl border border-[#5A7A5C]/10 shrink-0 shadow-sm">
+                       <Leaf className="h-4 w-4 text-[#5A7A5C]" />
+                    </div>
+                    <div>
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h4>
+                      <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
+                        "For chronic muscle fatigue, pair this oil with gentle stretching for quicker recovery."
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <a 
+                  href={`https://wa.me/919353436373?text=${encodeURIComponent(`Hello Salmara Team, I would like to consult a doctor regarding ${product.title}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#FDFBF7] border-2 border-[#5A7A5C] text-[#5A7A5C] h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#5A7A5C] hover:text-white transition-all shadow-lg flex items-center justify-center gap-2 group"
+                >
+                  <MessageCircle className="h-5 w-5 transition-transform group-hover:scale-110" />
+                  Consult a Doctor
+                </a>
+              </div>
             </div>
           </div>
 
@@ -543,18 +638,19 @@ const ProductDetail = () => {
           <section className="py-24 bg-white -mx-4 px-4 border-y border-[#F2EDE4]">
             <div className="max-w-4xl mx-auto space-y-16">
               <div className="text-center">
-                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-4">Pure Ingredients. Scientific Precision.</h2>
+                <p className="text-[#C5A059] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Ingredient Insights</p>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-4">Core Herbs & Extracts</h2>
                 <p className="text-[#1A2E35]/40 font-sans-clean max-w-xl mx-auto text-sm">We believe transparency is the root of trust. Every milligram in this formulation is ethically sourced and standardized.</p>
               </div>
               
               <div className="grid md:grid-cols-3 gap-8">
-                {(product.tags?.slice(0, 3) || ["Dashamoola", "Botanical Extract", "Ayurvedic Base"]).map((ing: string) => (
+                {getProductIngredients(handle || '').map((ing: string) => (
                   <div key={ing} className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group">
                     <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
                       <Leaf className="h-6 w-6 text-[#5A7A5C]" />
                     </div>
                     <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">{ing}</h4>
-                    <p className="text-[11px] text-[#1A2E35]/40 mt-3 uppercase tracking-widest">Standardized Integrity</p>
+                    <p className="text-sm font-sans-clean text-[#1A2E35]/60 mt-3 leading-relaxed">{getIngredientBenefit(ing)}</p>
                   </div>
                 ))}
               </div>
@@ -761,8 +857,75 @@ const ProductDetail = () => {
           </AnimatePresence>
 
           <section className="py-12 md:py-24 max-w-3xl mx-auto">
-            <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-16">Frequently Asked Questions</h2>
-            <div className="space-y-4">
+            <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-16">Product Information & FAQ</h2>
+            <div className="space-y-8">
+              
+              <div className="border border-[#F2EDE4] rounded-2xl overflow-hidden">
+                <button 
+                  onClick={() => setIsProductInfoOpen(!isProductInfoOpen)}
+                  className="w-full text-left px-8 py-6 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group bg-[#FDFBF7]"
+                >
+                  <span className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">Know Your Product</span>
+                  <ChevronDown className={`h-4 w-4 text-[#1A2E35]/30 transition-transform ${isProductInfoOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {isProductInfoOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="px-0 sm:px-8 pb-8 bg-[#FDFBF7]"
+                    >
+                      <div className="pt-4 border-t border-[#F2EDE4] overflow-x-auto">
+                        <table className="w-full text-left bg-white border border-[#F2EDE4] rounded-2xl overflow-hidden shadow-sm">
+                          <thead>
+                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]">
+                              <th className="py-5 px-6 text-sm font-bold text-[#1A2E35] w-1/3">Field</th>
+                              <th className="py-5 px-6 text-sm font-bold text-[#1A2E35]">Example</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Shelf Life:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">36 months from manufacturing date</td>
+                            </tr>
+                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Net Quantity:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{selectedVariant?.title !== "Default Title" ? selectedVariant?.title : getProductMetadata(handle || '', product.productType).qty}</td>
+                            </tr>
+                            <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Formulation Type:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getProductMetadata(handle || '', product.productType).form}</td>
+                            </tr>
+                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Manufactured By:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">Salmara Ayurveda Pvt. Ltd., Karnataka</td>
+                            </tr>
+                            <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-red-600/90">Batch No.:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">
+                                <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">PRO-1234</span>
+                              </td>
+                            </tr>
+                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-red-600/90">License No.:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">
+                                <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">AYU/KA/2025/09</span>
+                              </td>
+                            </tr>
+                            <tr className="hover:bg-[#F2EDE4]/20 transition-colors">
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Country of Origin:</th>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">India</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="space-y-4 pt-4">
               {faqs.map((faq, i) => (
                 <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden">
                   <button 
@@ -788,6 +951,7 @@ const ProductDetail = () => {
                   </AnimatePresence>
                 </div>
               ))}
+              </div>
             </div>
           </section>
 
