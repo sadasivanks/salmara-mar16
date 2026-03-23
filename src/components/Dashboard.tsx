@@ -55,9 +55,19 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (activeTab === "orders" && user?.id) {
-      // Fetch fresh orders every time the tab is opened
-      fetchOrders();
+    if (user?.id) {
+       // Check if we just returned from a checkout
+       const isPending = localStorage.getItem('shopify_checkout_pending');
+       if (isPending === 'true') {
+         console.log("Dashboard: Order detected via pending flag, clearing cart...");
+         clearCart();
+         localStorage.removeItem('shopify_checkout_pending');
+         toast.success("Order confirmed", { description: "Your cart has been cleared." });
+       }
+       
+       if (activeTab === "orders") {
+         fetchOrders();
+       }
     }
   }, [activeTab, user?.id]);
 

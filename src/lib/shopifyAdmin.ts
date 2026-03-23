@@ -728,6 +728,7 @@ export async function createHybridCheckout(
       permalinkUrl += `?${params.toString()}`;
       
       console.log("[CHECKOUT] Standard Checkout URL generated:", permalinkUrl);
+      localStorage.setItem('shopify_checkout_pending', 'true');
       return { success: true, checkoutUrl: permalinkUrl };
     }
     
