@@ -22,7 +22,16 @@ import {
   Truck,
   X 
 } from "lucide-react";
-import { fetchCustomerViaAdmin, updateCustomerViaAdmin, fetchCustomerOrdersViaAdmin, fetchCustomerOrdersByEmailViaAdmin, clearSession, saveSession, getStoredSession } from "@/lib/shopifyAdmin";
+import { 
+  fetchCustomerViaAdmin, 
+  updateCustomerViaAdmin, 
+  fetchCustomerOrdersViaAdmin, 
+  fetchCustomerOrdersByEmailViaAdmin, 
+  clearSession, 
+  saveSession, 
+  getStoredSession,
+  cancelOrderViaAdmin 
+} from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
@@ -46,6 +55,7 @@ const Dashboard = () => {
     email: "",
     phone: ""
   });
+  const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -56,15 +66,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (user?.id) {
-       // Check if we just returned from a checkout
-       const isPending = localStorage.getItem('shopify_checkout_pending');
-       if (isPending === 'true') {
-         console.log("Dashboard: Order detected via pending flag, clearing cart...");
-         clearCart();
-         localStorage.removeItem('shopify_checkout_pending');
-         toast.success("Order confirmed", { description: "Your cart has been cleared." });
-       }
-       
        if (activeTab === "orders") {
          fetchOrders();
        }
@@ -102,6 +103,25 @@ const Dashboard = () => {
       console.error("Error fetching orders:", error);
     } finally {
       setFetchingOrders(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId: string) => {
+    setCancellingOrderId(orderId);
+    try {
+      const result = await cancelOrderViaAdmin(orderId);
+      if (result.success) {
+        toast.success("Order cancelled successfully");
+        fetchOrders(); // Refresh list
+      } else {
+        toast.error("Cancellation failed", { 
+          description: result.errors?.[0]?.message || "Please contact support." 
+        });
+      }
+    } catch (error: any) {
+      toast.error("Error cancelling order", { description: error.message });
+    } finally {
+      setCancellingOrderId(null);
     }
   };
 
@@ -445,11 +465,6 @@ const Dashboard = () => {
                           <div className="space-y-4">
                             <div className="flex items-center gap-4">
                               <span className="text-lg font-sans-clean font-bold text-[#1A2E35]">{order.name}</span>
-                              {order.id.startsWith('sample-') && (
-                                <span className="px-3 py-1 rounded-full bg-[#C5A059]/10 text-[#C5A059] text-[8px] font-bold uppercase tracking-widest border border-[#C5A059]/20">
-                                  Sample Order
-                                </span>
-                              )}
                             </div>
                             
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -466,11 +481,13 @@ const Dashboard = () => {
                               <div className="space-y-1">
                                 <p className="text-[8px] uppercase tracking-widest font-bold text-[#1A2E35]/30">Order Status</p>
                                 <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
-                                  order.displayFulfillmentStatus === 'DELIVERED' 
-                                    ? 'bg-blue-100 text-blue-700' 
-                                    : 'bg-[#1A2E35]/5 text-[#1A2E35]/60'
+                                  order.cancelledAt
+                                    ? 'bg-red-100 text-red-700'
+                                    : order.displayFulfillmentStatus === 'DELIVERED' 
+                                      ? 'bg-green-100 text-green-700' 
+                                      : 'bg-blue-100 text-blue-700'
                                 }`}>
-                                  {order.displayFulfillmentStatus.replace('_', ' ')}
+                                  {order.cancelledAt ? 'CANCELLED' : order.displayFulfillmentStatus.replace('_', ' ')}
                                 </span>
                               </div>
                             </div>
@@ -497,12 +514,35 @@ const Dashboard = () => {
                               {order.totalPriceSet.shopMoney.currencyCode === 'INR' ? '₹' : order.totalPriceSet.shopMoney.currencyCode}{' '}
                               {parseFloat(order.totalPriceSet.shopMoney.amount).toFixed(2)}
                             </p>
-                            <button 
-                              onClick={() => handleTrackOrder(order)}
-                              className="flex items-center gap-2 text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:text-[#1A2E35] transition-colors mt-2"
-                            >
-                              Track My Order <ArrowRight className="h-3 w-3" />
-                            </button>
+                            
+                            {order.cancelledAt && (
+                              <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-1">
+                                {order.displayFinancialStatus === 'REFUNDED' ? 'Refund is completed' : 'Refund is processing'}
+                              </p>
+                            )}
+                            <div className="flex flex-col items-end gap-3 mt-2">
+                                <button 
+                                  onClick={() => handleTrackOrder(order)}
+                                  className="flex items-center gap-2 text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:text-[#1A2E35] transition-colors"
+                                >
+                                  {order.cancelledAt ? 'View Cancelled Order' : 'Track My Order'} <ArrowRight className="h-3 w-3" />
+                                </button>
+                              
+                              {order.displayFulfillmentStatus === 'UNFULFILLED' && !order.cancelledAt && (
+                                <button 
+                                  onClick={() => handleCancelOrder(order.id)}
+                                  disabled={cancellingOrderId === order.id}
+                                  className="flex items-center gap-2 text-[10px] font-bold text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors disabled:opacity-50"
+                                >
+                                  {cancellingOrderId === order.id ? (
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                  ) : (
+                                    <X className="h-3 w-3" />
+                                  )}
+                                  Cancel Order
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -565,20 +605,41 @@ const TrackingModal = ({ order, onClose }: { order: any; onClose: () => void }) 
   const steps = [
     { title: "Order Placed", date: order.processedAt, completed: true, icon: ClipboardList },
     { title: "Payment Confirmed", date: order.processedAt, completed: order.displayFinancialStatus === 'PAID', icon: CheckCircle2 },
-    { title: "Processing", date: order.processedAt, completed: true, icon: Package },
-    { 
-      title: "Shipped", 
-      date: order.fulfillments?.[0]?.createdAt || "Estimated: 1-2 days", 
-      completed: order.fulfillments?.length > 0, 
-      icon: Truck 
-    },
-    { 
-      title: "Delivered", 
-      date: order.displayFulfillmentStatus === 'DELIVERED' ? (order.fulfillments?.[0]?.updatedAt || order.fulfillments?.[0]?.createdAt) : "Estimated: 3-5 days", 
-      completed: order.displayFulfillmentStatus === 'DELIVERED', 
-      icon: Home 
-    },
+    { title: "Processing", date: order.processedAt, completed: !order.cancelledAt, icon: Package },
   ];
+
+  if (order.cancelledAt) {
+    steps.push({ 
+      title: "Cancelled", 
+      date: order.cancelledAt, 
+      completed: true, 
+      icon: X 
+    });
+
+    if (order.displayFinancialStatus === 'REFUNDED') {
+      steps.push({ 
+        title: "Refund Completed", 
+        date: order.cancelledAt, 
+        completed: true, 
+        icon: CheckCircle2 
+      });
+    }
+  } else {
+    steps.push(
+      { 
+        title: "Shipped", 
+        date: order.fulfillments?.[0]?.createdAt || "Estimated: 1-2 days", 
+        completed: order.fulfillments?.length > 0, 
+        icon: Truck 
+      },
+      { 
+        title: "Delivered", 
+        date: order.displayFulfillmentStatus === 'DELIVERED' ? (order.fulfillments?.[0]?.updatedAt || order.fulfillments?.[0]?.createdAt) : "Estimated: 3-5 days", 
+        completed: order.displayFulfillmentStatus === 'DELIVERED', 
+        icon: Home 
+      }
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">

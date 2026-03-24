@@ -199,7 +199,7 @@ const ShopPage = () => {
     try {
       const session = getStoredSession();
       const lineItems = [{ variantId: variant.id, quantity: 1 }];
-      const result = await createHybridCheckout(lineItems, session?.user?.id);
+      const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email);
       
       if (result.success && result.checkoutUrl) {
         window.location.href = result.checkoutUrl;

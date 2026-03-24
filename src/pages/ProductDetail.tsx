@@ -249,86 +249,27 @@ const ProductDetail = () => {
     );
   }
 
-  const getBenefitLine = (handle: string, type: string) => {
-    const benefits: Record<string, string> = {
-      "karpooradi-thailam": "Fast-absorbing oil for muscle comfort and relaxation.",
-      "brahmi-hair-oil": "Nourishing formula for scalp health and natural shine.",
-      "triphala-churna": "Traditional digestive support for internal balance.",
-      "triphala-tablets": "Convenient daily support for digestive wellness.",
-      "sahacharadi-thailam": "Standardized oil for joint mobility and lower back support.",
-      "murivenna": "Herbal first-aid oil for quick recovery and skin resilience.",
-      "pinda-thailam": "Cooling ayurvedic oil for inflammatory support and comfort.",
-      "dhanwantharam-thailam": "Versatile restorative oil for postnatal and general wellness."
-    };
-    return benefits[handle] || `Expertly balanced Ayurvedic formulation for ${type?.toLowerCase() || 'holistic'} support.`;
-  };
 
-  const getProductIngredients = (handle: string) => {
-    const ingredientsMap: Record<string, string[]> = {
-      "karpooradi-thailam": ["Karpooradi", "Sesame Oil", "Ajwain"],
-      "brahmi-hair-oil": ["Brahmi", "Amla", "Bhringraj"],
-      "triphala-churna": ["Amalaki", "Haritaki", "Bibhitaki"],
-      "triphala-tablets": ["Amalaki", "Haritaki", "Bibhitaki"],
-      "sahacharadi-thailam": ["Sahachara", "Dashamoola", "Sesame Oil"],
-      "murivenna": ["Aloe Vera", "Betel Leaves", "Moringa"],
-      "pinda-thailam": ["Manjistha", "Sariva", "Sesame Oil"],
-      "dhanwantharam-thailam": ["Bala", "Dashamoola", "Cow's Milk"]
-    };
-    return ingredientsMap[handle] || ["Dashamoola", "Botanical Extract", "Ayurvedic Base"];
-  };
-
-  const getProductMetadata = (handle: string, type: string) => {
-    const metadataMap: Record<string, { qty: string, form: string }> = {
-      "karpooradi-thailam": { qty: "200 ml", form: "Ayurvedic Massage Oil" },
-      "brahmi-hair-oil": { qty: "200 ml", form: "Herbal Hair Oil" },
-      "triphala-churna": { qty: "100 g", form: "Ayurvedic Herbal Powder" },
-      "triphala-tablets": { qty: "60 Tablets", form: "Ayurvedic Tablets" },
-      "sahacharadi-thailam": { qty: "200 ml", form: "Ayurvedic Massage Oil" },
-      "murivenna": { qty: "200 ml", form: "Ayurvedic Healing Oil" },
-      "pinda-thailam": { qty: "200 ml", form: "Ayurvedic Cooling Oil" },
-      "dhanwantharam-thailam": { qty: "200 ml", form: "Ayurvedic Massage Oil" }
-    };
-    return metadataMap[handle] || { qty: "100 ml", form: type || 'Ayurvedic Herbal Range' };
-  };
-
-  const getIngredientBenefit = (ingredient: string) => {
-    const benefits: Record<string, string> = {
-      "Dashamoola": "Supports nerve health and reduces inflammation.",
-      "Botanical Extract": "Provides concentrated plant-based wellness.",
-      "Ayurvedic Base": "Traditional foundation for balanced formulation.",
-      "Tulsi": "Strengthens respiratory immunity.",
-      "Guggul": "Supports joint flexibility and metabolism.",
-      "Triphala": "Enhances digestion and gentle detox.",
-      "Ashwagandha": "Reduces stress and improves vitality.",
-      "Brahmi": "Nourishes scalp and supports cognitive function.",
-      "Karpooradi": "Provides cooling relief for muscles.",
-      "Sahacharadi": "Supports lower back and joint mobility.",
-      "Sahachara": "Effective for easing stiffness and joint support.",
-      "Murivenna": "Aids in fast recovery of minor injuries.",
-      "Pinda": "Cools and soothes inflammatory sensations.",
-      "Dhanwantharam": "Comprehensive restorative and postnatal support.",
-      "Amalaki": "Rich in Vitamin C, supports immune health.",
-      "Haritaki": "Aids digestion and healthy bowel movement.",
-      "Bibhitaki": "Supports respiratory health and fluid balance.",
-      "Amla": "Potent antioxidant for immune and hair health.",
-      "Bhringraj": "Promotes hair growth and scalp health.",
-      "Sesame Oil": "Deeply penetrating base for joint and muscle nourishment.",
-      "Ajwain": "Helps relieve discomfort and muscle spasms.",
-      "Aloe Vera": "Cools, soothes, and repairs damaged tissue.",
-      "Betel Leaves": "Possesses natural antibacterial and healing properties.",
-      "Moringa": "Rich in nutrients, supports tissue regeneration.",
-      "Manjistha": "Purifies the blood and cools the system.",
-      "Sariva": "Reduces burning sensations and clears the skin.",
-      "Bala": "Strengthens muscles, nerves, and overall vitality.",
-      "Cow's Milk": "Nourishing base for cellular repair."
-    };
+  const getMetafieldValue = (keyMatch: string) => {
+    if (!product?.metafields?.edges) return null;
+    const cleanMatch = keyMatch.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanHandle = (handle || '').toLowerCase().replace(/-/g, '_').replace(/[^a-z0-9_]/g, '');
     
-    const key = Object.keys(benefits).find(k => ingredient.toLowerCase().includes(k.toLowerCase()));
-    return key ? benefits[key] : "Standardized for optimal efficacy and integrity.";
+    const node = product.metafields.edges.find((e: any) => {
+      const cleanKey = e.node.key.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const rawKey = e.node.key.toLowerCase();
+      return (
+        cleanKey === cleanMatch || 
+        (cleanMatch === 'ingredients' && (cleanKey === 'ingrediants' || rawKey === cleanHandle))
+      );
+    })?.node;
+    
+    return node ? node.value : null;
   };
 
-  const benefitLine = getBenefitLine(handle || '', product.productType);
-  const subtitle = product.description?.split('.')[0] + '.' || `${product.productType} formulation for balanced internal wellness.`;
+  const firstBenefit = getMetafieldValue('benefits')?.split(/[,\n]+/)[0]?.trim();
+  const benefitLine = firstBenefit || "-";
+  const subtitle = product.description?.split('.')[0] + '.' || "-";
 
   const variants = product.variants?.edges || [];
   const selectedVariant = variants[selectedVariantIdx]?.node;
@@ -360,7 +301,7 @@ const ProductDetail = () => {
     }
 
     setIsBuyingNow(true);
-    const toastId = toast.loading("Generating secure checkout link...");
+    const toastId = toast.loading("Submitting...");
     
     try {
       const lineItems = [{ variantId: selectedVariant.id, quantity: quantity }];
@@ -466,7 +407,7 @@ const ProductDetail = () => {
                   className="inline-flex items-center gap-2 px-3 py-1 bg-[#5A7A5C]/5 rounded-full border border-[#5A7A5C]/10"
                 >
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C]" />
-                  <span className="text-[9px] uppercase tracking-[0.22em] text-[#5A7A5C] font-bold">{benefitLine || "Batch Verified"}</span>
+                  <span className="text-[9px] uppercase tracking-[0.22em] text-[#5A7A5C] font-bold">{benefitLine}</span>
                 </motion.div>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
@@ -474,7 +415,7 @@ const ProductDetail = () => {
                 </h1>
                 
                 <p className="text-lg text-[#1A2E35]/50 font-sans-clean leading-relaxed max-w-md">
-                   {subtitle || `${product.productType} formulation for balanced internal wellness.`}
+                   {subtitle}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-6 pt-2">
@@ -492,12 +433,12 @@ const ProductDetail = () => {
 
               <div className="space-y-6">
                 <div className="flex flex-wrap items-center gap-4">
-                  <span className="text-4xl font-display font-medium text-[#1A2E35]">
+                  <span className="text-4xl font-sans-clean font-bold text-[#1A2E35]">
                     {selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode}{' '}
-                    {parseFloat(selectedVariant?.price.amount || "0").toFixed(0)}
+                    {parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
                   </span>
                   <div className="flex flex-col">
-                    <span className="text-sm text-[#1A2E35]/30 line-through">₹ {((parseFloat(selectedVariant?.price.amount || "0") * 1.25)).toFixed(0)}</span>
+                    <span className="text-sm text-[#1A2E35]/30 line-through">₹ {((parseFloat(selectedVariant?.price.amount || "0") * 1.25)).toFixed(2)}</span>
                     <span className="text-[#5A7A5C] text-[10px] font-bold uppercase tracking-wider">Save 25% Today</span>
                   </div>
                 </div>
@@ -582,22 +523,24 @@ const ProductDetail = () => {
                 />
               </div>
 
-              <div className="pt-2">
-                <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-6 relative overflow-hidden mt-6">
-                  <div className="absolute top-0 left-0 w-1.5 h-full bg-[#5A7A5C]" />
-                  <div className="flex gap-4 items-start">
-                    <div className="bg-white p-2.5 rounded-xl border border-[#5A7A5C]/10 shrink-0 shadow-sm">
-                       <Leaf className="h-4 w-4 text-[#5A7A5C]" />
-                    </div>
-                    <div>
-                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h4>
-                      <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
-                        "For chronic muscle fatigue, pair this oil with gentle stretching for quicker recovery."
-                      </p>
+              {getMetafieldValue('doctorsinsight') && (
+                <div className="pt-2">
+                  <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-6 relative overflow-hidden mt-6">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-[#5A7A5C]" />
+                    <div className="flex gap-4 items-start">
+                      <div className="bg-white p-2.5 rounded-xl border border-[#5A7A5C]/10 shrink-0 shadow-sm">
+                         <Leaf className="h-4 w-4 text-[#5A7A5C]" />
+                      </div>
+                      <div>
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h4>
+                        <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
+                          "{getMetafieldValue('doctorsinsight')}"
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="pt-2">
                 <a 
@@ -613,27 +556,28 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          <section className="py-24 border-t border-[#F2EDE4]">
-            <div className="max-w-4xl mx-auto text-center">
-              <p className="text-[#C5A059] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-4">THE SALMARA EXPERIENCE</p>
-              <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-12">How it Supports Your Wellness</h2>
-              <div className="grid md:grid-cols-2 gap-12 text-left">
-                {[
-                  `Expertly balanced to support ${product.productType?.toLowerCase() || 'general'} wellness and vitality.`,
-                  "Formulated with traditional botanical extracts for consistent, stabilizing results.",
-                  "Contains pure herbal concentrations that respect the body's natural rhythms.",
-                  "Supports smooth metabolic flow and adaptive internal resilience."
-                ].map((benefit, i) => (
-                  <div key={i} className="flex gap-4 p-8 bg-white rounded-3xl border border-[#F2EDE4] hover:border-[#5A7A5C]/30 transition-all">
-                    <div className="h-8 w-8 bg-[#5A7A5C]/5 rounded-xl flex items-center justify-center text-[#5A7A5C] shrink-0">
-                      <CheckCircle2 className="h-4 w-4" />
+          {getMetafieldValue('benefits') && (
+            <section className="py-24 border-t border-[#F2EDE4]">
+              <div className="max-w-4xl mx-auto text-center">
+                <p className="text-[#C5A059] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-4">THE SALMARA EXPERIENCE</p>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-12">How it Supports Your Wellness</h2>
+                <div className="grid md:grid-cols-2 gap-12 text-left">
+                  {getMetafieldValue('benefits')
+                    .split(/[,\n]+/)
+                    .map((s: string) => s.trim())
+                    .filter(Boolean)
+                    .map((benefit: string, i: number) => (
+                    <div key={i} className="flex gap-4 p-8 bg-white rounded-3xl border border-[#F2EDE4] hover:border-[#5A7A5C]/30 transition-all">
+                      <div className="h-8 w-8 bg-[#5A7A5C]/5 rounded-xl flex items-center justify-center text-[#5A7A5C] shrink-0">
+                        <CheckCircle2 className="h-4 w-4" />
+                      </div>
+                      <p className="text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed">{benefit}</p>
                     </div>
-                    <p className="text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed">{benefit}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           <section className="py-24 bg-white -mx-4 px-4 border-y border-[#F2EDE4]">
             <div className="max-w-4xl mx-auto space-y-16">
@@ -643,17 +587,31 @@ const ProductDetail = () => {
                 <p className="text-[#1A2E35]/40 font-sans-clean max-w-xl mx-auto text-sm">We believe transparency is the root of trust. Every milligram in this formulation is ethically sourced and standardized.</p>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-8">
-                {getProductIngredients(handle || '').map((ing: string) => (
-                  <div key={ing} className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group">
-                    <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
-                      <Leaf className="h-6 w-6 text-[#5A7A5C]" />
+              {getMetafieldValue('ingredients') ? (
+                <div className={getMetafieldValue('ingredients').includes(',') ? "grid md:grid-cols-3 gap-8" : "max-w-2xl mx-auto"}>
+                  {getMetafieldValue('ingredients').includes(',') ? (
+                    getMetafieldValue('ingredients').split(',').map((s: string) => s.trim()).filter(Boolean).map((ing: string) => (
+                      <div key={ing} className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group">
+                        <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
+                          <Leaf className="h-6 w-6 text-[#5A7A5C]" />
+                        </div>
+                        <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-loose">{ing}</h4>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group max-w-2xl mx-auto bg-white">
+                      <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
+                        <Leaf className="h-6 w-6 text-[#5A7A5C]" />
+                      </div>
+                      <p className="text-base font-sans-clean text-[#1A2E35]/80 mt-3 leading-relaxed italic">{getMetafieldValue('ingredients')}</p>
                     </div>
-                    <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">{ing}</h4>
-                    <p className="text-sm font-sans-clean text-[#1A2E35]/60 mt-3 leading-relaxed">{getIngredientBenefit(ing)}</p>
-                  </div>
-                ))}
-              </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-10 rounded-3xl border border-[#F2EDE4] text-center bg-white max-w-md mx-auto">
+                  <p className="text-sm text-[#1A2E35]/40 font-sans-clean italic">-</p>
+                </div>
+              )}
 
               <div className="p-10 bg-[#F2EDE4]/20 rounded-3xl text-center space-y-4">
                 <ShieldCheck className="h-8 w-8 text-[#5A7A5C] mx-auto mb-2" />
@@ -668,34 +626,19 @@ const ProductDetail = () => {
           <section className="py-24 max-w-4xl mx-auto">
             <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-12">Suggested Use</h2>
             <div className="grid md:grid-cols-2 gap-12">
-              <div className="space-y-8">
-                <div className="flex gap-6">
-                  <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">01</div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Dosage</h4>
-                    <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">Take 1-2 units twice daily, or as directed by your healthcare practitioner. Consistency is key for Ayurvedic efficacy.</p>
-                  </div>
-                </div>
-                <div className="flex gap-6">
-                  <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">02</div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Timing</h4>
-                    <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">Best consumed after meals with lukewarm water or milk for optimal bioavailability and gentle digestion.</p>
-                  </div>
+              <div className="flex gap-6">
+                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">01</div>
+                <div>
+                  <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Dosage</h4>
+                  <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">{getMetafieldValue('dosage') || "-"}</p>
                 </div>
               </div>
-              
-              <div className="bg-[#1A2E35] text-white p-10 rounded-3xl space-y-6">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-[#C5A059]" />
-                  <span className="text-xs font-bold uppercase tracking-widest">Safety Notes</span>
+              <div className="flex gap-6">
+                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">02</div>
+                <div>
+                  <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Timing & Usage</h4>
+                  <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">{getMetafieldValue('usage') || "-"}</p>
                 </div>
-                <ul className="space-y-4 text-xs font-sans-clean text-white/60 leading-relaxed">
-                  <li>• Store in a cool, dry place away from direct sunlight.</li>
-                  <li>• Use within the specific batch timelines (see packaging).</li>
-                  <li>• Consult your Ayurvedic practitioner if pregnant or nursing.</li>
-                  <li>• For external oils: Conduct a patch test on a small area first.</li>
-                </ul>
               </div>
             </div>
           </section>
@@ -887,35 +830,39 @@ const ProductDetail = () => {
                           <tbody>
                             <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Shelf Life:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">36 months from manufacturing date</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('shelf') || "-"}</td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Net Quantity:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{selectedVariant?.title !== "Default Title" ? selectedVariant?.title : getProductMetadata(handle || '', product.productType).qty}</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('netquantity') || (selectedVariant?.title !== "Default Title" ? selectedVariant?.title : null) || "-"}</td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Formulation Type:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getProductMetadata(handle || '', product.productType).form}</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{product.productType || "-"}</td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Manufactured By:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">Salmara Ayurveda Pvt. Ltd., Karnataka</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('manufacturedby') || product.vendor || "-"}</td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-red-600/90">Batch No.:</th>
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Batch No.:</th>
                               <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">
-                                <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">PRO-1234</span>
+                                {getMetafieldValue('batchno') ? (
+                                  <span className="px-2 py-1 rounded text-xs font-bold bg-[#5A7A5C] text-white tracking-widest">{getMetafieldValue('batchno')}</span>
+                                ) : "-"}
                               </td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-red-600/90">License No.:</th>
+                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">License No.:</th>
                               <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">
-                                <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">AYU/KA/2025/09</span>
+                                {getMetafieldValue('licenseno') ? (
+                                  <span className="px-2 py-1 rounded text-xs font-bold bg-[#5A7A5C] text-white tracking-widest">{getMetafieldValue('licenseno')}</span>
+                                ) : "-"}
                               </td>
                             </tr>
                             <tr className="hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Country of Origin:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">India</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('countryoforigin') || getMetafieldValue('shelflife') || "-"}</td>
                             </tr>
                           </tbody>
                         </table>

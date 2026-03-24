@@ -61,6 +61,15 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }[];
+    metafields?: {
+      edges: Array<{
+        node: {
+          namespace: string;
+          key: string;
+          value: string;
+        }
+      }>
+    };
   };
 }
 
@@ -132,6 +141,17 @@ const CUSTOMER_INVITE_MUTATION = `
   }
 `;
 
+const ORDER_CANCEL_MUTATION = `
+  mutation orderCancel($orderId: ID!, $reason: OrderCancelReason!, $refund: Boolean!, $restock: Boolean!) {
+    orderCancel(orderId: $orderId, reason: $reason, refund: $refund, restock: $restock) {
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 
 const CUSTOMER_ORDERS_QUERY = `
   query getCustomerOrders($id: ID!) {
@@ -150,6 +170,8 @@ const CUSTOMER_ORDERS_QUERY = `
             }
             displayFinancialStatus
             displayFulfillmentStatus
+            cancelledAt
+            cancelReason
             lineItems(first: 50) {
               edges {
                 node {
@@ -257,6 +279,15 @@ const PRODUCT_BY_HANDLE_ADMIN_QUERY = `
         name
         values
       }
+      metafields(first: 50) {
+        edges {
+          node {
+            namespace
+            key
+            value
+          }
+        }
+      }
     }
   }
 `;
@@ -277,6 +308,8 @@ const ORDERS_BY_EMAIL_QUERY = `
           }
           displayFinancialStatus
           displayFulfillmentStatus
+          cancelledAt
+          cancelReason
           lineItems(first: 20) {
             edges {
               node {
@@ -846,6 +879,33 @@ export async function updateProductReviewsInShopify(productId: string, reviews: 
     }
 
     const userErrors = data?.data?.productUpdate?.userErrors || [];
+    if (userErrors.length > 0) {
+      return { success: false, errors: userErrors };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, errors: [{ message: error.message }] };
+  }
+}
+
+/**
+ * Cancel a Shopify order via the Admin API.
+ */
+export async function cancelOrderViaAdmin(orderId: string): Promise<AdminApiResponse> {
+  try {
+    const data = await adminApiRequest(ORDER_CANCEL_MUTATION, { 
+      orderId: orderId,
+      reason: "CUSTOMER", 
+      restock: true,
+      refund: false 
+    });
+    
+    if (data?.errors) {
+      return { success: false, errors: data.errors };
+    }
+
+    const userErrors = data?.data?.orderCancel?.userErrors || [];
     if (userErrors.length > 0) {
       return { success: false, errors: userErrors };
     }

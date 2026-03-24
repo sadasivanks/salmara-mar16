@@ -62,7 +62,7 @@ const FeaturedProducts = () => {
     setBuyingId(product.node.id);
     try {
       const lineItems = [{ variantId: variant.id, quantity: 1 }];
-      const result = await createHybridCheckout(lineItems, session?.user?.id);
+      const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email);
       
       if (result.success && result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
@@ -232,7 +232,7 @@ const FeaturedProducts = () => {
                         </div>
                         {price && (
                           <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
-                            {price.currencyCode === 'INR' ? '₹' : price.currencyCode}{parseInt(price.amount)}
+                            {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
                           </span>
                         )}
                       </div>

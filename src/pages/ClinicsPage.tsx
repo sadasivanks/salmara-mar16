@@ -85,6 +85,54 @@ const ClinicsPage = () => {
     },
     {
       id: 5,
+      name: "Salmara Ayurveda - Ghatkopar",
+      address: "Ghatkopar - Mumbai / ಘಾಟ್ಕೋಪರ್ - ಮುಂಬೈ",
+      googleMapsUrl: "https://share.google/YbwMw4fdmlXDEys0Y",
+      embedQuery: "Salmara+Ayurveda+Ghatkopar+Mumbai",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Mumbai",
+      type: "In-Person",
+      specialties: ["Pain Relief", "Digestive Health"]
+    },
+    {
+      id: 6,
+      name: "Salmara Ayurveda - Raichur",
+      address: "Raichur / ರಾಯಚೂರು",
+      googleMapsUrl: "https://share.google/ghLXUmxbv8JFYkObN",
+      embedQuery: "Salmara+Ayurveda+Raichur",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Raichur",
+      type: "In-Person",
+      specialties: ["General Wellness", "Pain Relief"]
+    },
+    {
+      id: 7,
+      name: "Salmara Ayurveda - Calicut",
+      address: "Calicut - Kerala / ಕ್ಯಾಲಿಕಟ್ - ಕೇರಳ",
+      googleMapsUrl: "https://share.google/s9H5ousUgqnkho1nD",
+      embedQuery: "Salmara+Ayurveda+Calicut",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Kozhikode",
+      type: "In-Person",
+      specialties: ["Stress Management", "Immunity"]
+    },
+    {
+      id: 8,
+      name: "Salmara Ayurveda - Kochi",
+      address: "Kochi - Kerala / ಕೊಚ್ಚಿ - ಕೇರಳ",
+      googleMapsUrl: "https://share.google/YpXbo28Y2UE6WOwXM",
+      embedQuery: "Salmara+Ayurveda+Kochi+Kerala",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "Kochi",
+      type: "In-Person",
+      specialties: ["Pain Relief", "Skin Care"]
+    },
+    {
+      id: 9,
       name: "Salmara Virtual Clinic",
       address: "Online - Consultation",
       googleMapsUrl: "https://wa.me/919353436373",
@@ -240,6 +288,10 @@ const ClinicsPage = () => {
                         <option>Puttur</option>
                         <option>Mysuru</option>
                         <option>Hubli</option>
+                        <option>Mumbai</option>
+                        <option>Raichur</option>
+                        <option>Kozhikode</option>
+                        <option>Kochi</option>
                         <option>Digital</option>
                       </select>
                       <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#1A2E35]/40 pointer-events-none" />
@@ -306,7 +358,7 @@ const ClinicsPage = () => {
             <div className="grid lg:grid-cols-2 gap-16">
               <div className="space-y-8">
                 <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Available Clinics</h2>
-                <div className="space-y-6">
+                <div className="space-y-6 max-h-[1000px] overflow-y-auto pr-4 custom-scrollbar scroll-smooth">
                   {filteredClinics.length > 0 ? (
                     filteredClinics.map((clinic) => (
                       <motion.div 

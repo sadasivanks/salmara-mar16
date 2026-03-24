@@ -7,7 +7,7 @@ import aboutLab from "@/assets/about-lab.jpg";
 const timeline = [
   { year: "1997", label: "Origins" },
   { year: "2005", label: "Certification" },
-  { year: "2015", label: "Clinics" },
+  { year: "2005", label: "Clinic Opened" },
   { year: "2024", label: "PAN India Reach" },
 ];
 

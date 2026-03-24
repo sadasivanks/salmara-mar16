@@ -193,7 +193,7 @@ const ProductList = () => {
                       </div>
                       {price && (
                         <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
-                          {price.currencyCode === 'INR' ? '₹' : price.currencyCode}{parseInt(price.amount)}
+                          {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
                         </span>
                       )}
                     </div>
