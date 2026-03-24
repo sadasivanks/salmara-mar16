@@ -234,10 +234,9 @@ const Dashboard = () => {
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back
           </button>
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/salamara_icon.png" alt="Salmara" className="h-8 w-auto brightness-0 invert" />
+          <div className="flex items-center gap-3">
             <span className="font-display font-medium text-xl tracking-tight text-white/90">My Dashboard</span>
-          </Link>
+          </div>
         </div>
         <nav className="flex-1 px-4 space-y-2">
           <Link 
