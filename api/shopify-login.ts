@@ -91,18 +91,86 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ errors: [{ message: "Invalid password." }] });
     }
 
-    // 3. Return success with customer data
+    // 3. Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
+
+    // 4. Store OTP in Metafields via Admin API
+    const updateMetafieldsMutation = `
+      mutation customerUpdate($input: CustomerInput!) {
+        customerUpdate(input: $input) {
+          customer {
+            id
+          }
+          userErrors {
+            field
+            message
+          }
+        }
+      }
+    `;
+
+    const updateRes = await fetch(shopifyUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Shopify-Access-Token": adminToken,
+      },
+      body: JSON.stringify({
+        query: updateMetafieldsMutation,
+        variables: {
+          input: {
+            id: customer.id,
+            metafields: [
+              {
+                namespace: "custom_auth",
+                key: "otp",
+                value: otp,
+                type: "single_line_text_field"
+              },
+              {
+                namespace: "custom_auth",
+                key: "otp_expires",
+                value: otpExpiry,
+                type: "single_line_text_field"
+              }
+            ]
+          }
+        }
+      }),
+    });
+
+    const updateData = await updateRes.json() as any;
+    if (updateData.errors || updateData.data?.customerUpdate?.userErrors?.length > 0) {
+      console.error("Metafield Update Errors:", updateData.errors || updateData.data.customerUpdate.userErrors);
+      return res.status(500).json({ error: "Failed to securely store OTP" });
+    }
+
+    // 5. Send Email (MOCK/PLACEHOLDER)
+    // IMPORTANT: Replace this with your actual email service (Resend, SendGrid, etc.)
+    console.log(`[AUTH] OTP for ${email}: ${otp}`);
+    
+    // Example for Resend:
+    /*
+    if (process.env.RESEND_API_KEY) {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.RESEND_API_KEY}` },
+        body: JSON.stringify({
+          from: 'Salmara <auth@salmara.in>',
+          to: [email],
+          subject: 'Your Login OTP',
+          html: `<p>Your verification code is: <strong>${otp}</strong>. It expires in 10 minutes.</p>`
+        })
+      });
+    }
+    */
+
+    // 6. Return response to trigger OTP view
     res.status(200).json({
       success: true,
-      user: {
-        id: customer.id,
-        email: customer.email,
-        name: `${customer.firstName} ${customer.lastName}`.trim(),
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        phone: customer.phone,
-        shopifyCartId: customer.cartId?.value
-      }
+      requiresOtp: true,
+      email: customer.email
     });
   } catch (error: any) {
     console.error("Login Error:", error);

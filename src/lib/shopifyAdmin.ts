@@ -490,12 +490,30 @@ export async function createCustomerViaAdmin(input: {
  * Custom login via the Vite proxy endpoint /api/shopify-login
  * This uses the Admin API to verify passwords stored in metafields.
  */
-export async function loginViaProxy(email: string, password: string): Promise<{ success: boolean; user?: any; errors?: any[] }> {
+export async function loginViaProxy(email: string, password: string): Promise<{ success: boolean; user?: any; errors?: any[]; requiresOtp?: boolean; email?: string }> {
   try {
     const response = await fetch('/api/shopify-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    return { success: false, errors: [{ message: error.message }] };
+  }
+}
+
+/**
+ * Verify OTP via the Vite proxy endpoint /api/shopify-verify-otp
+ */
+export async function verifyOtpViaProxy(email: string, otp: string): Promise<{ success: boolean; user?: any; errors?: any[] }> {
+  try {
+    const response = await fetch('/api/shopify-verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp }),
     });
 
     const data = await response.json();

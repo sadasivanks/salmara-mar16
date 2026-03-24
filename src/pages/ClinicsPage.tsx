@@ -131,8 +131,22 @@ const ClinicsPage = () => {
       type: "In-Person",
       specialties: ["Pain Relief", "Skin Care"]
     },
-    {
+
+
+        {
       id: 9,
+      name: "Salmara Ayurveda - mumbai",
+      address: "mumbai - maharashtra / ಕೊಚ್ಚಿ - ಕೇರಳ",
+      googleMapsUrl: "https://share.google/3802DmHcGqYmQp9n7",
+      embedQuery: "Salmara+Ayurveda+mumbai+maharashtra",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      city: "mumbai",
+      type: "In-Person",
+      specialties: ["Pain Relief", "Skin Care"]
+    },
+    {
+      id: 10,
       name: "Salmara Virtual Clinic",
       address: "Online - Consultation",
       googleMapsUrl: "https://wa.me/919353436373",

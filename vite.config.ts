@@ -155,23 +155,43 @@ function shopifyAdminProxy(): Plugin {
             return;
           }
 
-          const userData = {
-            id: customer.id,
-            email: customer.email,
-            name: `${customer.firstName} ${customer.lastName}`.trim(),
-            firstName: customer.firstName,
-            lastName: customer.lastName,
-            phone: customer.phone,
-            shopifyCartId: customer.cartId?.value,
-            cartJson: customer.cartJson?.value
-          };
+          // --- OTP Logic ---
+          const otp = Math.floor(100000 + Math.random() * 900000).toString();
+          const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-          console.log(`[LOGIN PROXY] Successful login for: ${email}. User ID: ${customer.id}`);
-          
+          const updateMetaMutation = `
+            mutation customerUpdate($input: CustomerInput!) {
+              customerUpdate(input: $input) {
+                customer { id }
+                userErrors { field message }
+              }
+            }
+          `;
+
+          await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({
+              query: updateMetaMutation,
+              variables: {
+                input: {
+                  id: customer.id,
+                  metafields: [
+                    { namespace: "custom_auth", key: "otp", value: otp, type: "single_line_text_field" },
+                    { namespace: "custom_auth", key: "otp_expires", value: otpExpiry, type: "single_line_text_field" }
+                  ]
+                }
+              }
+            }),
+          });
+
+          console.log(`[LOGIN PROXY] OTP for ${email}: ${otp}`);
+
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({
             success: true,
-            user: userData
+            requiresOtp: true,
+            email: customer.email
           }));
         } catch (error: any) {
           console.error("[Shopify Login Proxy Error]", error);
@@ -180,6 +200,102 @@ function shopifyAdminProxy(): Plugin {
             error: error.message,
             isTimeout: error.name === 'AbortError' || error.message?.includes('Maximum retries reached')
           }));
+        }
+      });
+
+      // --- 2b. OTP Verification Proxy ---
+      server.middlewares.use("/api/shopify-verify-otp", async (req, res) => {
+        if (req.method !== "POST") {
+          res.writeHead(405, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+
+        let body = "";
+        for await (const chunk of req) body += chunk;
+
+        try {
+          const { email, otp } = JSON.parse(body);
+          if (!adminToken) throw new Error("SHOPIFY_ADMIN_API_ACCESS_TOKEN is missing");
+
+          const customerQuery = `
+            query getCustomerOtp($query: String!) {
+              customers(first: 1, query: $query) {
+                edges {
+                  node {
+                    id
+                    email
+                    firstName
+                    lastName
+                    phone
+                    otp: metafield(namespace: "custom_auth", key: "otp") { value }
+                    otpExpires: metafield(namespace: "custom_auth", key: "otp_expires") { value }
+                    cartId: metafield(namespace: "custom_auth", key: "cart_id") { value }
+                  }
+                }
+              }
+            }
+          `;
+
+          const response = await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({ query: customerQuery, variables: { query: `email:${email}` } }),
+          });
+
+          const data = await response.json() as any;
+          const customer = data?.data?.customers?.edges?.[0]?.node;
+
+          if (!customer) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: "Session expired or invalid user." }] }));
+            return;
+          }
+
+          if (customer.otp?.value !== otp || !customer.otpExpires?.value || new Date() > new Date(customer.otpExpires.value)) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: "Invalid or expired verification code." }] }));
+            return;
+          }
+
+          // Clear OTP
+          const clearMutation = `
+            mutation customerUpdate($input: CustomerInput!) {
+              customerUpdate(input: $input) { customer { id } }
+            }
+          `;
+          await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({
+              query: clearMutation,
+              variables: {
+                input: {
+                  id: customer.id,
+                  metafields: [
+                    { namespace: "custom_auth", key: "otp", value: "", type: "single_line_text_field" },
+                    { namespace: "custom_auth", key: "otp_expires", value: "", type: "single_line_text_field" }
+                  ]
+                }
+              }
+            }),
+          });
+
+          const userData = {
+            id: customer.id,
+            email: customer.email,
+            name: `${customer.firstName} ${customer.lastName}`.trim(),
+            firstName: customer.firstName,
+            lastName: customer.lastName,
+            phone: customer.phone,
+            shopifyCartId: customer.cartId?.value
+          };
+
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: true, user: userData }));
+        } catch (error: any) {
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: error.message }));
         }
       });
 

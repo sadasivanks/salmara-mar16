@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 import { saveSession } from "@/lib/shopifyAdmin";
-import { createCustomerViaAdmin, loginViaProxy, updateCustomerCartId } from "@/lib/shopifyAdmin";
+import { createCustomerViaAdmin, loginViaProxy, verifyOtpViaProxy, updateCustomerCartId } from "@/lib/shopifyAdmin";
 import { syncShopifyCustomerToDb } from "@/lib/dbSync";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
@@ -10,11 +10,11 @@ import { toast } from "sonner";
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialView?: "login" | "register";
+  initialView?: "login" | "register" | "otp";
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = "login" }) => {
-  const [view, setView] = useState<"login" | "register">(initialView);
+  const [view, setView] = useState<"login" | "register" | "otp">(initialView);
   const [loading, setLoading] = useState(false);
   const { cartId, setCartId, syncCart, clearCart } = useCartStore();
   
@@ -24,6 +24,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
 
   if (!isOpen) return null;
 
@@ -38,41 +39,69 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
         throw new Error(errorMsg);
       }
 
-      // Explicitly clear local cart state before restoring the user's specific cart
-      const currentCartId = cartId;
-      clearCart();
-
-      // Sync with standard session FIRST
-      saveSession({
-        accessToken: "admin_proxy_mode",
-        user: result.user,
-        expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
-      });
-
-      // 1. Restore Cart from Shopify if available
-      if (result.user?.shopifyCartId) {
-        console.log("Found Shopify Cart ID, restoring:", result.user.shopifyCartId);
-        setCartId(result.user.shopifyCartId);
-        // Wait a bit for state to propagate
-        setTimeout(async () => {
-          await syncCart(); 
-          console.log("Cart restoration complete");
-        }, 500);
-      } else if (currentCartId) {
-        // 2. Save current local cart to new account if Shopify had none
-        console.log("Saving local cart to Shopify account:", currentCartId);
-        await updateCustomerCartId(result.user.id, currentCartId);
-        // Restore local id
-        setCartId(currentCartId);
+      if (result.requiresOtp) {
+        toast.info("Verification Required", { description: "We've sent a 6-digit code to your email." });
+        setView("otp");
+        return;
       }
 
-      toast.success(`Welcome back, ${result.user?.name}!`);
-      onClose();
+      await completeLogin(result.user);
     } catch (error: any) {
       toast.error("Login failed", { description: error.message });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      toast.error("Please enter the full 6-digit code");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await verifyOtpViaProxy(email, otp);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Verification failed");
+      }
+      await completeLogin(result.user);
+    } catch (error: any) {
+      toast.error("Verification failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const completeLogin = async (userData: any) => {
+    // Explicitly clear local cart state before restoring the user's specific cart
+    const currentCartId = cartId;
+    clearCart();
+
+    // Sync with standard session FIRST
+    saveSession({
+      accessToken: "admin_proxy_mode",
+      user: userData,
+      expires: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+    });
+
+    // 1. Restore Cart from Shopify if available
+    if (userData?.shopifyCartId) {
+      console.log("Found Shopify Cart ID, restoring:", userData.shopifyCartId);
+      setCartId(userData.shopifyCartId);
+      setTimeout(async () => {
+        await syncCart(); 
+        console.log("Cart restoration complete");
+      }, 500);
+    } else if (currentCartId) {
+      console.log("Saving local cart to Shopify account:", currentCartId);
+      await updateCustomerCartId(userData.id, currentCartId);
+      setCartId(currentCartId);
+    }
+
+    toast.success(`Welcome back, ${userData?.name}!`);
+    onClose();
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -218,6 +247,50 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                   </button>
                 </form>
                 <p className="mt-6 text-sm text-[#1A2E35]/40 font-sans-clean">Don't have an account? <button onClick={() => setView("register")} className="text-[#5A7A5C] font-bold hover:underline underline-offset-4 decoration-2">Register Now</button></p>
+              </motion.div>
+            ) : view === "otp" ? (
+              <motion.div 
+                key="otp" 
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: 20 }} 
+                transition={{ duration: 0.3 }} 
+                className="flex flex-col items-center"
+              >
+                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Identity Verification</span>
+                </div>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Verify Email</h2>
+                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">We've sent a code to <span className="text-[#1A2E35] font-medium">{email}</span></p>
+                
+                <form onSubmit={handleVerifyOtp} className="w-full space-y-6">
+                  <div className="flex justify-center">
+                    <input 
+                      type="text" 
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                      className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                      placeholder="000000"
+                      autoFocus
+                    />
+                  </div>
+                  
+                  <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
+                    {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Verifying..." : "Verify & Continue"}
+                  </button>
+                </form>
+                
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  <p className="text-xs text-[#1A2E35]/40 font-sans-clean">Didn't receive the code?</p>
+                  <div className="flex items-center gap-4">
+                    <button onClick={handleLogin} className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline">Resend Code</button>
+                    <div className="h-3 w-[1px] bg-[#F2EDE4]" />
+                    <button onClick={() => setView("login")} className="text-[10px] font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Back to Login</button>
+                  </div>
+                </div>
               </motion.div>
             ) : (
               <motion.div 
