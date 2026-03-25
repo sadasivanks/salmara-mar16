@@ -13,6 +13,18 @@ export interface ShopifyAdminCustomer {
   lastName?: string;
   phone?: string;
   shopifyCartId?: string;
+  addresses?: Array<{
+    id: string;
+    address1: string;
+    address2?: string;
+    city: string;
+    province: string;
+    zip: string;
+    country: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+  }>;
 }
 
 export interface ShopifyProduct {
@@ -105,6 +117,22 @@ const CUSTOMER_QUERY = `
       firstName
       lastName
       phone
+      addresses(first: 10) {
+        edges {
+          node {
+            id
+            address1
+            address2
+            city
+            province
+            zip
+            country
+            firstName
+            lastName
+            phone
+          }
+        }
+      }
     }
   }
 `;
@@ -529,7 +557,16 @@ export async function verifyOtpViaProxy(email: string, otp: string): Promise<{ s
 export async function fetchCustomerViaAdmin(customerId: string): Promise<ShopifyAdminCustomer | null> {
   try {
     const data = await adminApiRequest(CUSTOMER_QUERY, { id: customerId });
-    return data?.data?.customer || null;
+    const customer = data?.data?.customer;
+    if (!customer) return null;
+
+    // Flatten addresses connection into a simple array
+    const addresses = customer.addresses?.edges?.map((edge: any) => edge.node) || [];
+    
+    return {
+      ...customer,
+      addresses
+    };
   } catch {
     return null;
   }
@@ -744,7 +781,8 @@ export async function fetchReviewStatsViaAdmin(productId: string): Promise<{ rat
 export async function createHybridCheckout(
   lineItems: Array<{ variantId: string; quantity: number }>, 
   customerId?: string,
-  customerEmail?: string
+  customerEmail?: string,
+  shippingAddress?: any
 ): Promise<{ success: boolean; checkoutUrl?: string; errors?: any[] }> {
   const getNumericId = (gid: string) => {
     if (!gid) return '';
@@ -774,6 +812,18 @@ export async function createHybridCheckout(
       params.append('locale', 'en');
       if (customerEmail) {
         params.append('checkout[email]', customerEmail);
+      }
+      
+      if (shippingAddress) {
+        if (shippingAddress.firstName) params.set('checkout[shipping_address][first_name]', shippingAddress.firstName);
+        if (shippingAddress.lastName) params.set('checkout[shipping_address][last_name]', shippingAddress.lastName);
+        if (shippingAddress.address1) params.set('checkout[shipping_address][address1]', shippingAddress.address1);
+        if (shippingAddress.address2) params.set('checkout[shipping_address][address2]', shippingAddress.address2);
+        if (shippingAddress.city) params.set('checkout[shipping_address][city]', shippingAddress.city);
+        if (shippingAddress.province) params.set('checkout[shipping_address][province]', shippingAddress.province);
+        if (shippingAddress.zip) params.set('checkout[shipping_address][zip]', shippingAddress.zip);
+        if (shippingAddress.country) params.set('checkout[shipping_address][country]', shippingAddress.country);
+        if (shippingAddress.phone) params.set('checkout[shipping_address][phone]', shippingAddress.phone);
       }
       
       permalinkUrl += `?${params.toString()}`;

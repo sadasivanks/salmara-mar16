@@ -207,31 +207,33 @@ const FeaturedProducts = () => {
                     </Link>
 
                     <div className="px-2">
-                      <div className="flex justify-between items-start mb-2">
-                        <Link to={`/product/${product.node.handle}`}>
-                          <h3 className="font-display font-medium text-[#1A2E35] text-lg hover:text-[#5A7A5C] transition-colors line-clamp-1">
-                            {product.node.title}
-                          </h3>
-                        </Link>
+                      <Link to={`/product/${product.node.handle}`} className="block mb-1">
+                        <h3 className="font-display font-medium text-[#1A2E35] text-lg hover:text-[#5A7A5C] transition-colors line-clamp-1">
+                          {product.node.title}
+                        </h3>
+                      </Link>
+
+                      <div className="flex justify-between items-center mb-3">
                         {/* Rating Display */}
-                        <div className="flex items-center gap-1.5 mt-1 mb-2">
-                          <div className="flex">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <div className="flex shrink-0">
                             {[...Array(5)].map((_, i) => (
                               <Star 
                                 key={i} 
-                                className={`h-3 w-3 ${i < (product.node.handle === 'triphala-churna' ? 5 : 4) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                                className={`h-2.5 w-2.5 ${i < (product.node.handle === 'triphala-churna' ? 5 : 4) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
                               />
                             ))}
                           </div>
-                          <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
-                            {product.node.handle === 'triphala-churna' ? '4.9 (248 reviews)' : 
-                             product.node.handle === 'brahmi-hair-oil' ? '4.8 (186 reviews)' : 
-                             product.node.handle === 'triphala-tablets' ? '4.7 (92 reviews)' : 
-                             '4.5 (124 reviews)'}
+                          <span className="text-[9px] font-bold text-[#1A2E35]/40 tracking-tighter truncate">
+                            {product.node.handle === 'triphala-churna' ? '4.9 (248)' : 
+                             product.node.handle === 'brahmi-hair-oil' ? '4.8 (186)' : 
+                             product.node.handle === 'triphala-tablets' ? '4.7 (92)' : 
+                             '4.5 (124)'}
                           </span>
                         </div>
+
                         {price && (
-                          <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
+                          <span className="text-[#C5A059] font-sans-clean font-bold text-sm whitespace-nowrap ml-2">
                             {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
                           </span>
                         )}

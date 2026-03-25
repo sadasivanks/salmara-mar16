@@ -483,24 +483,24 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="space-y-6 pt-6 border-t border-[#F2EDE4]">
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                  <div className="flex items-center bg-white border border-[#F2EDE4] rounded-2xl px-2 h-16 sm:w-32 justify-between">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-4 text-[#1A2E35]/30 hover:text-[#1A2E35]">
+              <div className="space-y-4 pt-6 border-t border-[#F2EDE4]">
+                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+                  <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[56px] md:w-32 justify-between shrink-0">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors">
                       <Minus className="h-4 w-4" />
                     </button>
-                    <span className="text-center font-display font-medium text-[#1A2E35] min-w-[2ch]">{quantity}</span>
-                    <button onClick={() => setQuantity(quantity + 1)} className="p-4 text-[#1A2E35]/30 hover:text-[#1A2E35]">
+                    <span className="text-center font-display font-medium text-[#1A2E35] min-w-[3ch]">{quantity}</span>
+                    <button onClick={() => setQuantity(quantity + 1)} className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors">
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
                   <button
                     onClick={handleAddToCart}
                     disabled={isLoading || !selectedVariant?.availableForSale}
-                    className="flex-1 bg-[#5A7A5C] text-white h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#4A634B] transition-all shadow-xl shadow-[#5A7A5C]/20 flex items-center justify-center gap-3 disabled:opacity-50 disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
+                    className="flex-1 bg-[#5A7A5C] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#4A634B] active:scale-[0.98] transition-all shadow-lg shadow-[#5A7A5C]/20 flex items-center justify-center gap-3 disabled:opacity-50 disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
                   >
-                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
-                      !selectedVariant?.availableForSale ? "Sold Out" : <><ShoppingCart className="h-4 w-4" /> Add to Cart</>
+                    {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                      !selectedVariant?.availableForSale ? "Sold Out" : <><ShoppingCart className="h-5 w-5" /> Add to Cart</>
                     )}
                   </button>
                 </div>
@@ -508,9 +508,9 @@ const ProductDetail = () => {
                 <button 
                   onClick={handleBuyNow}
                   disabled={isBuyingNow || !selectedVariant?.availableForSale}
-                  className="w-full bg-[#1A2E35] text-white h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#1A2E35]/90 transition-all disabled:opacity-50 disabled:bg-[#f2f2f2] disabled:text-gray-400 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
+                  className="w-full bg-[#1A2E35] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:bg-[#f2f2f2] disabled:text-gray-400 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
                 >
-                  {isBuyingNow ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
                   {isBuyingNow ? "Redirecting..." : (!selectedVariant?.availableForSale ? "Sold Out" : "Buy Now Direct")}
                 </button>
               </div>

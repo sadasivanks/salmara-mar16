@@ -58,6 +58,8 @@ const Dashboard = () => {
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
   const [showCancelPrompt, setShowCancelPrompt] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<any>(null);
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -162,6 +164,12 @@ const Dashboard = () => {
       };
 
       setUser(userData);
+      if (shopifyCustomer.addresses) {
+        setAddresses(shopifyCustomer.addresses);
+        if (shopifyCustomer.addresses.length > 0) {
+          setSelectedAddress(shopifyCustomer.addresses[0]);
+        }
+      }
       setFormData({
         firstName: userData.firstName,
         lastName: userData.lastName,
@@ -604,7 +612,11 @@ const Dashboard = () => {
             )}
             
             {activeTab === "cart" && (
-              <DashboardCart />
+              <DashboardCart 
+                addresses={addresses} 
+                selectedAddress={selectedAddress} 
+                setSelectedAddress={setSelectedAddress} 
+              />
             )}
           </AnimatePresence>
         </div>
@@ -791,7 +803,15 @@ const TrackingModal = ({ order, onClose }: { order: any; onClose: () => void }) 
   );
 };
 
-const DashboardCart = () => {
+const DashboardCart = ({ 
+  addresses, 
+  selectedAddress, 
+  setSelectedAddress 
+}: { 
+  addresses: any[]; 
+  selectedAddress: any; 
+  setSelectedAddress: (addr: any) => void 
+}) => {
   const { items, isLoading, updateQuantity, removeItem, checkout } = useCartStore();
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
@@ -858,24 +878,58 @@ const DashboardCart = () => {
           </div>
         ))}
       </div>
+      <div className="pt-8 border-t border-[#F2EDE4] space-y-8">
+        {/* ADDRESS SELECTION */}
+        {addresses.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">Select Shipping Address</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {addresses.map((addr) => (
+                <div 
+                  key={addr.id}
+                  onClick={() => setSelectedAddress(addr)}
+                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                    selectedAddress?.id === addr.id 
+                      ? 'border-[#5A7A5C] bg-[#5A7A5C]/5' 
+                      : 'border-[#F2EDE4] hover:border-[#5A7A5C]/20'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="font-display font-medium text-[#1A2E35]">{addr.firstName} {addr.lastName}</p>
+                    {selectedAddress?.id === addr.id && (
+                      <CheckCircle2 className="h-4 w-4 text-[#5A7A5C]" />
+                    )}
+                  </div>
+                  <p className="text-xs text-[#1A2E35]/60 font-sans-clean leading-relaxed">
+                    {addr.address1}{addr.address2 ? `, ${addr.address2}` : ''}<br />
+                    {addr.city}, {addr.province} {addr.zip}<br />
+                    {addr.country}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-      <div className="pt-8 border-t border-[#F2EDE4] flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="text-center md:text-left">
-          <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-widest mb-1">Subtotal Estimate</p>
-          <p className="text-3xl font-display font-bold text-[#1A2E35]">
-            {items[0]?.price.currencyCode === 'INR' ? '₹' : items[0]?.price.currencyCode} {totalPrice.toFixed(2)}
-          </p>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 pt-8 border-t border-[#F2EDE4]">
+          <div className="text-center md:text-left">
+            <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-widest mb-1">Subtotal Estimate</p>
+            <p className="text-3xl font-display font-bold text-[#1A2E35]">
+              {items[0]?.price.currencyCode === 'INR' ? '₹' : items[0]?.price.currencyCode} {totalPrice.toFixed(2)}
+            </p>
+          </div>
+          <button
+            onClick={async () => {
+              const checkoutUrl = await checkout(selectedAddress);
+              if (checkoutUrl) window.location.assign(checkoutUrl);
+            }
+          }
+            disabled={isLoading}
+            className="w-full md:w-auto bg-[#5A7A5C] text-white px-12 py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#4A634B] transition-all shadow-xl shadow-[#5A7A5C]/20 flex items-center justify-center gap-3"
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4" /> Checkout</>}
+          </button>
         </div>
-        <button
-          onClick={async () => {
-            const checkoutUrl = await checkout();
-            if (checkoutUrl) window.location.assign(checkoutUrl);
-          }}
-          disabled={isLoading}
-          className="w-full md:w-auto bg-[#5A7A5C] text-white px-12 py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#4A634B] transition-all shadow-xl shadow-[#5A7A5C]/20 flex items-center justify-center gap-3"
-        >
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4" /> Checkout</>}
-        </button>
       </div>
     </motion.div>
   );

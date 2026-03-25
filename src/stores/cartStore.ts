@@ -26,7 +26,7 @@ interface CartStore {
   removeItem: (variantId: string) => void;
   clearCart: () => void;
   setCartId: (id: string | null) => void;
-  checkout: () => Promise<string | null>;
+  checkout: (shippingAddress?: any) => Promise<string | null>;
   syncCart: () => Promise<void>;
 }
 
@@ -102,22 +102,27 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      checkout: async () => {
-        const { items, isLoading } = get();
-        if (items.length === 0 || isLoading) return null;
+  checkout: async (shippingAddress?: any) => {
+    const { items, isLoading } = get();
+    if (items.length === 0 || isLoading) return null;
 
-        set({ isLoading: true });
-        try {
-          const session = getStoredSession();
-          const lineItems = items.map(item => ({
-            variantId: item.variantId,
-            quantity: item.quantity
-          }));
+    set({ isLoading: true });
+    try {
+      const session = getStoredSession();
+      const lineItems = items.map(item => ({
+        variantId: item.variantId,
+        quantity: item.quantity
+      }));
 
-          console.log("Starting Standard checkout flow...");
-          const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email);
+      console.log("Starting Standard checkout flow with address:", shippingAddress);
+      const result = await createHybridCheckout(
+        lineItems, 
+        session?.user?.id, 
+        session?.user?.email,
+        shippingAddress
+      );
 
-          if (result.success && result.checkoutUrl) {
+      if (result.success && result.checkoutUrl) {
             console.log("Admin checkout successful URL:", result.checkoutUrl);
             return result.checkoutUrl;
           } else {
