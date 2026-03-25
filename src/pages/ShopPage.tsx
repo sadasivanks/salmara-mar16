@@ -23,11 +23,14 @@ import {
   type ShopifyProduct, 
   fetchProductsViaAdmin, 
   createHybridCheckout, 
-  getStoredSession
+  getStoredSession,
+  type Address
 } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
+import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +67,10 @@ const ShopPage = () => {
   const [loading, setLoading] = useState(true);
   const [addingId, setAddingId] = useState<string | null>(null);
   const [buyingId, setBuyingId] = useState<string | null>(null);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [selectedProductForCheckout, setSelectedProductForCheckout] = useState<ShopifyProduct | null>(null);
+  
+  const navigate = useNavigate();
   
   // Filter & Sort State
   const [selectedConcern, setSelectedConcern] = useState<string | null>(null);
@@ -194,22 +201,41 @@ const ShopPage = () => {
       return;
     }
     
-    console.log("Buy Now started for:", product.node.title, "Variant ID:", variant.id);
-    setBuyingId(product.node.id);
+    const session = getStoredSession();
+    if (!session?.user) {
+      toast.info("Please sign in to proceed with direct checkout");
+      navigate(`/login?redirect=buy_now&variantId=${variant.id}&quantity=1`);
+      return;
+    }
+
+    setSelectedProductForCheckout(product);
+    setIsAddressModalOpen(true);
+  };
+
+  const onAddressSelect = async (address: Address | null) => {
+    if (!selectedProductForCheckout) return;
+    
+    const variant = selectedProductForCheckout.node.variants.edges[0]?.node;
+    if (!variant) return;
+
+    setBuyingId(selectedProductForCheckout.node.id); // Also set buyingId for card loader
+    
     try {
       const session = getStoredSession();
       const lineItems = [{ variantId: variant.id, quantity: 1 }];
-      const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email);
+      const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email, address);
       
       if (result.success && result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
       } else {
         toast.error("Checkout failed. Please try again.");
         setBuyingId(null);
+        setIsAddressModalOpen(false); // Close modal on error
       }
     } catch (error: any) {
       toast.error("An unexpected error occurred");
       setBuyingId(null);
+      setIsAddressModalOpen(false); // Close modal on error
     }
   };
 
@@ -611,6 +637,17 @@ const ShopPage = () => {
       </main>
 
       <Footer />
+
+      {/* Address Selection Modal */}
+      {selectedProductForCheckout && (
+        <AddressSelectionModal
+          isOpen={isAddressModalOpen}
+          onClose={() => setIsAddressModalOpen(false)}
+          customerId={getStoredSession()?.user?.id || ""}
+          onSelect={onAddressSelect}
+          isProcessing={!!buyingId}
+        />
+      )}
     </div>
   );
 };

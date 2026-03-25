@@ -105,8 +105,10 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground overflow-x-hidden;
+  html, body {
+    @apply bg-background text-foreground;
+    max-width: 100%;
+    overflow-x: hidden;
     font-family: 'Lora', serif;
   }
 

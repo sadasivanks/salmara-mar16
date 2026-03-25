@@ -45,6 +45,7 @@ const faqs = [
   { q: "Is it safe during pregnancy/breastfeeding?", a: "We recommend consulting your healthcare provider before starting any new wellness regimen during pregnancy or lactation." },
   { q: "What is your return policy?", a: "We accept returns for damaged items within 7 days of delivery. For more details, please visit our dedicated returns policy page." },
 ];
+import AddressSelectionModal from "@/components/AddressSelectionModal";
 
 const ProductDetail = () => {
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ const ProductDetail = () => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isProductInfoOpen, setIsProductInfoOpen] = useState(true);
   const [isBuyingNow, setIsBuyingNow] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isZooming, setIsZooming] = useState(false);
   const { addItem, isLoading } = useCartStore();
@@ -80,7 +82,7 @@ const ProductDetail = () => {
 
   // Safely calculate average rating
   const safeReviews = Array.isArray(reviews) ? reviews : [];
-  const averageRating = safeReviews.length > 0 
+  const averageRating = safeReviews.length > 0
     ? parseFloat((safeReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / safeReviews.length).toFixed(1))
     : 4.9; // Fallback to premium default
 
@@ -90,7 +92,7 @@ const ProductDetail = () => {
       setReviewName(session.user.name || "");
       setQuestionName(session.user.name || "");
       setQuestionEmail(session.user.email || "");
-      
+
       if (product?.id) {
         checkEligibility(session.user.id, product.id);
       }
@@ -155,7 +157,7 @@ const ProductDetail = () => {
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product?.id) return;
-    
+
     const session = getStoredSession();
     if (!session?.user) {
       toast.info("Please login to leave a review");
@@ -164,12 +166,12 @@ const ProductDetail = () => {
     }
 
     if (!hasPurchased) {
-      toast.error("Verification Required", { 
-        description: "Only customers who purchased this product can leave a review." 
+      toast.error("Verification Required", {
+        description: "Only customers who purchased this product can leave a review."
       });
       return;
     }
-    
+
     if (!reviewComment.trim()) {
       toast.error("Please add your feedback");
       return;
@@ -227,7 +229,7 @@ const ProductDetail = () => {
         setLoading(false);
       }
     };
-    
+
     loadProduct();
   }, [handle]);
 
@@ -254,16 +256,16 @@ const ProductDetail = () => {
     if (!product?.metafields?.edges) return null;
     const cleanMatch = keyMatch.toLowerCase().replace(/[^a-z0-9]/g, '');
     const cleanHandle = (handle || '').toLowerCase().replace(/-/g, '_').replace(/[^a-z0-9_]/g, '');
-    
+
     const node = product.metafields.edges.find((e: any) => {
       const cleanKey = e.node.key.toLowerCase().replace(/[^a-z0-9]/g, '');
       const rawKey = e.node.key.toLowerCase();
       return (
-        cleanKey === cleanMatch || 
+        cleanKey === cleanMatch ||
         (cleanMatch === 'ingredients' && (cleanKey === 'ingrediants' || rawKey === cleanHandle))
       );
     })?.node;
-    
+
     return node ? node.value : null;
   };
 
@@ -288,10 +290,10 @@ const ProductDetail = () => {
     });
     toast.success("Added to cart", { description: product.title, position: "top-center" });
   };
-  
+
   const handleBuyNow = async () => {
     if (!selectedVariant) return;
-    
+
     const session = getStoredSession();
     if (!session?.user) {
        toast.info("Please sign in to proceed with direct checkout");
@@ -300,26 +302,31 @@ const ProductDetail = () => {
       return;
     }
 
+    setIsAddressModalOpen(true);
+  };
+
+  const onAddressSelect = async (address: any) => {
     setIsBuyingNow(true);
-    const toastId = toast.loading("Submitting...");
     
     try {
       const lineItems = [{ variantId: selectedVariant.id, quantity: quantity }];
-      const result = await createHybridCheckout(lineItems, session.user.id, session.user.email);
-      
+      const result = await createHybridCheckout(lineItems, getStoredSession()?.user?.id, getStoredSession()?.user?.email, address);
+
        if (result.success && result.checkoutUrl) {
         console.log("ProductDetail: Redirecting to Direct Buy Now:", result.checkoutUrl);
         await logCheckoutToTerminal(result.checkoutUrl, `ProductDetail (Buy Now: ${encodeURIComponent(selectedVariant.id)})`);
         window.location.href = result.checkoutUrl;
       } else {
-        toast.error("Checkout failed", { 
-          description: "Could not generate checkout link. Please try again." 
+        toast.error("Checkout failed", {
+          description: "Could not generate checkout link. Please try again."
         });
         setIsBuyingNow(false);
+        setIsAddressModalOpen(false);
       }
     } catch (error: any) {
       toast.error("An unexpected error occurred");
       setIsBuyingNow(false);
+      setIsAddressModalOpen(false);
     }
   };
 
@@ -988,6 +995,15 @@ const ProductDetail = () => {
         </div>
       </main>
       <Footer />
+      {getStoredSession()?.user?.id && (
+        <AddressSelectionModal 
+          isOpen={isAddressModalOpen}
+          onClose={() => setIsAddressModalOpen(false)}
+          customerId={getStoredSession()?.user?.id}
+          onSelect={onAddressSelect}
+          isProcessing={isBuyingNow}
+        />
+      )}
     </div>
   );
 };

@@ -6,6 +6,19 @@ import { toast } from "sonner";
  * so the Admin API access token is never exposed to the browser.
  */
 
+export interface Address {
+  id: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  province: string;
+  zip: string;
+  country: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+}
+
 export interface ShopifyAdminCustomer {
   id: string;
   email: string;
@@ -13,18 +26,7 @@ export interface ShopifyAdminCustomer {
   lastName?: string;
   phone?: string;
   shopifyCartId?: string;
-  addresses?: Array<{
-    id: string;
-    address1: string;
-    address2?: string;
-    city: string;
-    province: string;
-    zip: string;
-    country: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
-  }>;
+  addresses?: Address[];
 }
 
 export interface ShopifyProduct {

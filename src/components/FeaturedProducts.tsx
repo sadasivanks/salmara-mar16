@@ -2,10 +2,11 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { ShoppingCart, Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, Heart } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import { type ShopifyProduct, fetchProductsViaAdmin, createHybridCheckout, getStoredSession } from "@/lib/shopifyAdmin";
+import { type ShopifyProduct, fetchProductsViaAdmin, createHybridCheckout, getStoredSession, type Address } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
+import AddressSelectionModal from "@/components/AddressSelectionModal";
 
 const FeaturedProducts = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ const FeaturedProducts = () => {
   const [loading, setLoading] = useState(true);
   const [addingId, setAddingId] = useState<string | null>(null);
   const [buyingId, setBuyingId] = useState<string | null>(null);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [selectedProductForCheckout, setSelectedProductForCheckout] = useState<ShopifyProduct | null>(null);
   const { addItem } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
 
@@ -59,20 +62,34 @@ const FeaturedProducts = () => {
       return;
     }
 
-    setBuyingId(product.node.id);
+    setSelectedProductForCheckout(product);
+    setIsAddressModalOpen(true);
+  };
+
+  const onAddressSelect = async (address: Address | null) => {
+    if (!selectedProductForCheckout) return;
+    
+    const variant = selectedProductForCheckout.node.variants.edges[0]?.node;
+    if (!variant) return;
+
+    setBuyingId(selectedProductForCheckout.node.id);
+    
     try {
+      const session = getStoredSession();
       const lineItems = [{ variantId: variant.id, quantity: 1 }];
-      const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email);
+      const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email, address);
       
       if (result.success && result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
       } else {
         toast.error("Checkout failed. Please try again.");
         setBuyingId(null);
+        setIsAddressModalOpen(false);
       }
     } catch (error: any) {
       toast.error("An unexpected error occurred");
       setBuyingId(null);
+      setIsAddressModalOpen(false);
     }
   };
 
@@ -281,6 +298,17 @@ const FeaturedProducts = () => {
           View All Products
         </Link>
       </div>
+
+      {/* Address Selection Modal */}
+      {selectedProductForCheckout && (
+        <AddressSelectionModal
+          isOpen={isAddressModalOpen}
+          onClose={() => setIsAddressModalOpen(false)}
+          customerId={getStoredSession()?.user?.id || ""}
+          onSelect={onAddressSelect}
+          isProcessing={!!buyingId}
+        />
+      )}
     </section>
   );
 };
