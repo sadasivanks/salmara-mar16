@@ -105,7 +105,7 @@
     @apply border-border;
   }
 
-  html, body {
+  body {
     @apply bg-background text-foreground;
     max-width: 100%;
     overflow-x: hidden;
