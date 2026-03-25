@@ -333,17 +333,17 @@ const Dashboard = () => {
                 className="space-y-8"
               >
                 {/* Profile Header Card */}
-                <div className="bg-gradient-to-br from-[#1A2E35] to-[#2A4A45] rounded-3xl p-10 text-white relative overflow-hidden">
+                <div className="bg-gradient-to-br from-[#1A2E35] to-[#2A4A45] rounded-3xl p-6 md:p-8 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-64 h-64 bg-[#5A7A5C]/10 rounded-full -translate-y-1/2 translate-x-1/3" />
                   <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#C5A059]/10 rounded-full translate-y-1/2 -translate-x-1/3" />
                   
-                  <div className="relative flex items-center gap-8">
-                    <div className="h-24 w-24 bg-gradient-to-br from-[#5A7A5C] to-[#4A634B] rounded-2xl flex items-center justify-center text-3xl font-display font-bold text-white shadow-2xl shadow-[#5A7A5C]/30 flex-shrink-0">
+                  <div className="relative flex items-center gap-6">
+                    <div className="h-16 w-16 bg-gradient-to-br from-[#5A7A5C] to-[#4A634B] rounded-2xl flex items-center justify-center text-xl font-display font-bold text-white shadow-2xl shadow-[#5A7A5C]/30 flex-shrink-0">
                       {(formData.firstName?.[0] || "").toUpperCase()}{(formData.lastName?.[0] || "").toUpperCase()}
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 font-bold mb-1">Welcome back</p>
-                      <h2 className="text-3xl font-display font-medium mb-1">
+                      <h2 className="text-2xl font-display font-medium mb-1">
                         {formData.firstName} {formData.lastName}
                       </h2>
                       <p className="text-white/50 text-sm font-sans-clean">{formData.email}</p>
@@ -354,20 +354,20 @@ const Dashboard = () => {
                 {/* Profile Form Card */}
                 <form onSubmit={handleSave} className="bg-white rounded-3xl shadow-sm border border-[#F2EDE4] overflow-hidden">
                   {/* Section Header */}
-                  <div className="px-10 pt-10 pb-6 border-b border-[#F2EDE4]">
+                  <div className="px-8 pt-8 pb-5 border-b border-[#F2EDE4]">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-xl font-display font-medium text-[#1A2E35]">Personal Details</h3>
-                        <p className="text-xs text-[#1A2E35]/40 font-sans-clean mt-1">Update your information below</p>
+                        <h3 className="text-lg font-display font-medium text-[#1A2E35]">Personal Details</h3>
+                        <p className="text-[10px] text-[#1A2E35]/40 font-sans-clean mt-0.5">Update your information below</p>
                       </div>
-                      <div className="flex items-center gap-2 bg-[#5A7A5C]/5 px-4 py-2 rounded-xl">
-                        <div className="h-2 w-2 bg-[#5A7A5C] rounded-full animate-pulse" />
-                        <span className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest">Active Account</span>
+                      <div className="flex items-center gap-2 bg-[#5A7A5C]/5 px-3 py-1.5 rounded-xl">
+                        <div className="h-1.5 w-1.5 bg-[#5A7A5C] rounded-full animate-pulse" />
+                        <span className="text-[9px] font-bold text-[#5A7A5C] uppercase tracking-[0.15em]">Active Account</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-10 space-y-8">
+                  <div className="p-8 space-y-6">
                     {/* Name Row */}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="group">
@@ -378,7 +378,7 @@ const Dashboard = () => {
                           type="text" 
                           value={formData.firstName}
                           onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                          className="w-full bg-[#FDFBF7] border-2 border-[#F2EDE4] rounded-2xl px-6 py-4 text-lg font-display font-medium text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] focus:bg-white transition-all placeholder:text-[#1A2E35]/20"
+                          className="w-full bg-[#FDFBF7] border-2 border-[#F2EDE4] rounded-2xl px-5 py-3 text-base font-display font-medium text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] focus:bg-white transition-all placeholder:text-[#1A2E35]/20"
                           placeholder="Enter first name"
                         />
                       </div>
@@ -390,7 +390,7 @@ const Dashboard = () => {
                           type="text" 
                           value={formData.lastName}
                           onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                          className="w-full bg-[#FDFBF7] border-2 border-[#F2EDE4] rounded-2xl px-6 py-4 text-lg font-display font-medium text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] focus:bg-white transition-all placeholder:text-[#1A2E35]/20"
+                          className="w-full bg-[#FDFBF7] border-2 border-[#F2EDE4] rounded-2xl px-5 py-3 text-base font-display font-medium text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] focus:bg-white transition-all placeholder:text-[#1A2E35]/20"
                           placeholder="Enter last name"
                         />
                       </div>
@@ -404,7 +404,7 @@ const Dashboard = () => {
                           Email Address
                           <span className="text-[8px] bg-[#F2EDE4] text-[#1A2E35]/40 px-2 py-0.5 rounded-md ml-1">Read Only</span>
                         </label>
-                        <div className="w-full bg-[#F8F9FA] border-2 border-[#F2EDE4] rounded-2xl px-6 py-4 text-lg font-display font-medium text-[#1A2E35]/50 cursor-not-allowed select-all">
+                        <div className="w-full bg-[#F8F9FA] border-2 border-[#F2EDE4] rounded-2xl px-5 py-3 text-base font-display font-medium text-[#1A2E35]/50 cursor-not-allowed select-all">
                           {formData.email}
                         </div>
                       </div>
@@ -417,7 +417,7 @@ const Dashboard = () => {
                           type="tel" 
                           value={formData.phone}
                           onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                          className="w-full bg-[#FDFBF7] border-2 border-[#F2EDE4] rounded-2xl px-6 py-4 text-lg font-sans-clean font-medium text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] focus:bg-white transition-all placeholder:text-[#1A2E35]/20"
+                          className="w-full bg-[#FDFBF7] border-2 border-[#F2EDE4] rounded-2xl px-5 py-3 text-base font-sans-clean font-medium text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] focus:bg-white transition-all placeholder:text-[#1A2E35]/20"
                           placeholder="Enter phone number"
                         />
                       </div>
@@ -425,12 +425,12 @@ const Dashboard = () => {
                   </div>
 
                   {/* Save Footer */}
-                  <div className="px-10 py-6 bg-[#FDFBF7] border-t border-[#F2EDE4] flex items-center justify-between">
-                    <p className="text-[10px] text-[#1A2E35]/30 font-sans-clean uppercase tracking-widest">All changes are synced to your Shopify account</p>
+                  <div className="px-8 py-5 bg-[#FDFBF7] border-t border-[#F2EDE4] flex items-center justify-between">
+                    <p className="text-[9px] text-[#1A2E35]/30 font-sans-clean uppercase tracking-widest">Synced to Shopify</p>
                     <button 
                       type="submit" 
                       disabled={loading}
-                      className="bg-[#5A7A5C] text-white px-10 py-4 rounded-xl font-bold text-sm tracking-widest uppercase hover:bg-[#4a654c] transition-all shadow-xl shadow-[#5A7A5C]/20 disabled:opacity-50 flex items-center gap-3 group"
+                      className="bg-[#5A7A5C] text-white px-8 py-3 rounded-xl font-bold text-xs tracking-widest uppercase hover:bg-[#4a654c] transition-all shadow-xl shadow-[#5A7A5C]/20 disabled:opacity-50 flex items-center gap-3 group"
                     >
                       {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                         <>

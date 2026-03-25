@@ -146,31 +146,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: "Failed to securely store OTP" });
     }
 
-    // 5. Send Email (MOCK/PLACEHOLDER)
-    // IMPORTANT: Replace this with your actual email service (Resend, SendGrid, etc.)
-    console.log(`[AUTH] OTP for ${email}: ${otp}`);
+    // 5. Send Real SMS via Edumarc
+    const smsApiKey = "56682895f69247d386c1c38121485c36";
+    const senderId = "SLMAYU";
+    const templateId = "1707176959332051773";
+    const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
     
-    // Example for Resend:
-    /*
-    if (process.env.RESEND_API_KEY) {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.RESEND_API_KEY}` },
-        body: JSON.stringify({
-          from: 'Salmara <auth@salmara.in>',
-          to: [email],
-          subject: 'Your Login OTP',
-          html: `<p>Your verification code is: <strong>${otp}</strong>. It expires in 10 minutes.</p>`
-        })
+    const customerPhone = customer.phone;
+
+    if (!customerPhone) {
+      console.error(`[AUTH ERROR] No phone number found for customer: ${email}`);
+      return res.status(400).json({ 
+        errors: [{ message: "No phone number linked to this account. Please contact support." }] 
       });
     }
-    */
+
+    // Format phone number: Remove '+' and ensure it's a string in an array
+    const formattedPhone = customerPhone.replace(/^\+/, '');
+
+    console.log(`[AUTH] Sending SMS OTP to ${formattedPhone}...`);
+
+    try {
+      const smsRes = await fetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'apikey': smsApiKey 
+        },
+        body: JSON.stringify({
+          message: smsMessage,
+          senderId: senderId,
+          number: [formattedPhone],
+          templateId: templateId
+        })
+      });
+
+      const smsData = await smsRes.json() as any;
+      console.log(`[AUTH] SMS API Response:`, JSON.stringify(smsData));
+
+      if (!smsRes.ok || smsData.status === 'error') {
+        throw new Error(smsData.message || "SMS provider error");
+      }
+    } catch (smsErr: any) {
+      console.error("[AUTH ERROR] SMS delivery failed:", smsErr);
+      return res.status(500).json({ 
+        errors: [{ message: `Failed to send SMS: ${smsErr.message}` }] 
+      });
+    }
 
     // 6. Return response to trigger OTP view
     res.status(200).json({
       success: true,
       requiresOtp: true,
-      email: customer.email
+      email: customer.email,
+      phoneHint: customerPhone.replace(/.(?=.{4})/g, '*') // e.g. ******1234
     });
   } catch (error: any) {
     console.error("Login Error:", error);

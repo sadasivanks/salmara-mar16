@@ -89,7 +89,6 @@ const AdminTestimonials = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this testimonial?")) return;
     try {
       const { error } = await supabase
         .from("testimonials")
@@ -98,7 +97,6 @@ const AdminTestimonials = () => {
       
       if (error) throw error;
       setTestimonials(prev => prev.filter(t => t.id !== id));
-      toast.success("Testimonial deleted");
     } catch (error: any) {
       toast.error("Delete failed");
     }

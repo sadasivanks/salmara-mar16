@@ -117,21 +117,17 @@ const CUSTOMER_QUERY = `
       firstName
       lastName
       phone
-      addresses(first: 10) {
-        edges {
-          node {
-            id
-            address1
-            address2
-            city
-            province
-            zip
-            country
-            firstName
-            lastName
-            phone
-          }
-        }
+      addresses {
+        id
+        address1
+        address2
+        city
+        province
+        zip
+        country
+        firstName
+        lastName
+        phone
       }
     }
   }
@@ -518,7 +514,7 @@ export async function createCustomerViaAdmin(input: {
  * Custom login via the Vite proxy endpoint /api/shopify-login
  * This uses the Admin API to verify passwords stored in metafields.
  */
-export async function loginViaProxy(email: string, password: string): Promise<{ success: boolean; user?: any; errors?: any[]; requiresOtp?: boolean; email?: string }> {
+export async function loginViaProxy(email: string, password: string): Promise<{ success: boolean; user?: any; errors?: any[]; requiresOtp?: boolean; email?: string; phoneHint?: string }> {
   try {
     const response = await fetch('/api/shopify-login', {
       method: 'POST',
@@ -560,8 +556,8 @@ export async function fetchCustomerViaAdmin(customerId: string): Promise<Shopify
     const customer = data?.data?.customer;
     if (!customer) return null;
 
-    // Flatten addresses connection into a simple array
-    const addresses = customer.addresses?.edges?.map((edge: any) => edge.node) || [];
+    // The addresses field on Customer in Admin API is already an array of MailingAddress
+    const addresses = customer.addresses || [];
     
     return {
       ...customer,

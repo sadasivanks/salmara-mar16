@@ -187,11 +187,60 @@ function shopifyAdminProxy(): Plugin {
 
           console.log(`[LOGIN PROXY] OTP for ${email}: ${otp}`);
 
+          // 6. Send Real SMS via Edumarc
+          const smsApiKey = "56682895f69247d386c1c38121485c36";
+          const senderId = "SLMAYU";
+          const templateId = "1707176959332051773";
+          const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
+          
+          const customerPhone = customer.phone;
+
+          if (!customerPhone) {
+            console.error(`[AUTH ERROR] No phone number found for customer: ${email}`);
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: "No phone number linked to this account. Please contact support." }] }));
+            return;
+          }
+
+          // Format phone number: Remove '+' 
+          const formattedPhone = customerPhone.replace(/^\+/, '');
+
+          console.log(`[AUTH] Sending SMS OTP to ${formattedPhone}...`);
+
+          try {
+            const smsRes = await secureFetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json', 
+                'apikey': smsApiKey 
+              },
+              body: JSON.stringify({
+                message: smsMessage,
+                senderId: senderId,
+                number: [formattedPhone],
+                templateId: templateId
+              })
+            });
+
+            const smsData = await smsRes.json() as any;
+            console.log(`[AUTH] SMS API Response:`, JSON.stringify(smsData));
+
+            if (!smsRes.ok || smsData.status === 'error') {
+              throw new Error(smsData.message || "SMS provider error");
+            }
+          } catch (smsErr: any) {
+            console.error("[AUTH ERROR] SMS delivery failed:", smsErr);
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: `Failed to send SMS: ${smsErr.message}` }] }));
+            return;
+          }
+
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({
             success: true,
             requiresOtp: true,
-            email: customer.email
+            email: customer.email,
+            phoneHint: customerPhone.replace(/.(?=.{4})/g, '*')
           }));
         } catch (error: any) {
           console.error("[Shopify Login Proxy Error]", error);

@@ -25,6 +25,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [phoneHint, setPhoneHint] = useState("");
 
   if (!isOpen) return null;
 
@@ -40,7 +41,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
       }
 
       if (result.requiresOtp) {
-        toast.info("Verification Required", { description: "We've sent a 6-digit code to your email." });
+        setPhoneHint(result.phoneHint || "");
+        toast.info("Verification Required", { 
+          description: `We've sent a 6-digit code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.` 
+        });
         setView("otp");
         return;
       }
@@ -108,13 +112,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     e.preventDefault();
     setLoading(true);
     try {
+      // Auto-format phone for Shopify (requires + and country code)
+      let formattedPhone = phone.trim();
+      if (!formattedPhone.startsWith('+')) {
+        if (formattedPhone.length === 10) {
+          formattedPhone = `+91${formattedPhone}`;
+        } else if (formattedPhone.length > 10) {
+          formattedPhone = `+${formattedPhone}`;
+        }
+      }
+
       // 1. Create Shopify customer via Admin API proxy
       const shopifyResult = await createCustomerViaAdmin({
         firstName,
         lastName,
         email,
         password,
-        phone: phone || undefined,
+        phone: formattedPhone,
       });
 
       if (!shopifyResult.success) {
@@ -262,8 +276,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Identity Verification</span>
                 </div>
-                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Verify Email</h2>
-                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">We've sent a code to <span className="text-[#1A2E35] font-medium">{email}</span></p>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Verify Phone</h2>
+                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">
+                  We've sent a code to your registered mobile 
+                  <span className="text-[#1A2E35] font-medium block mt-1">{phoneHint || email}</span>
+                </p>
                 
                 <form onSubmit={handleVerifyOtp} className="w-full space-y-6">
                   <div className="flex justify-center">
@@ -323,8 +340,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                     <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Phone (Optional)</label>
-                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      required 
+                      value={phone} 
+                      onChange={(e) => setPhone(e.target.value)} 
+                      placeholder="+91..."
+                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Password</label>
