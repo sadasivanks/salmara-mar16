@@ -341,7 +341,7 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-[#FDFBF7]">
       <Header />
       
-      <main className="pt-4 md:pt-8 pb-0 md:pb-24">
+      <main className="pt-4 md:pt-8 pb-0 md:pb-24 overflow-x-hidden">
         <div className="container px-4 mx-auto max-w-7xl">
           <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-12">
             <Link to="/" className="hover:text-[#5A7A5C]">Home</Link>

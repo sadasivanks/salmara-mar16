@@ -210,7 +210,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col">
       <Header />
-      <main className="flex-1 flex items-center justify-center p-4 py-12 md:py-20">
+      <main className="flex-1 flex items-center justify-center p-4 py-12 md:py-20 overflow-x-hidden">
         <div className="w-full max-w-6xl flex flex-col md:flex-row bg-white rounded-[40px] shadow-2xl overflow-hidden border border-[#F2EDE4]">
           {/* Left Side: Visual/Content */}
           <div className="hidden md:flex md:w-1/2 bg-[#5A7A5C] p-12 flex-col justify-between relative overflow-hidden">

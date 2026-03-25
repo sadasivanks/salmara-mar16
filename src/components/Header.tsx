@@ -213,7 +213,7 @@ const Header = () => {
           </nav>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 px-1 sm:px-0">
             <div className="relative flex items-center">
               <AnimatePresence>
                 {searchOpen && (

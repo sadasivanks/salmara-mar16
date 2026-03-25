@@ -16,7 +16,7 @@ import FloatingButtons from "@/components/FloatingButtons";
 const Index = () => (
   <div className="min-h-screen">
     <Header />
-    <main>
+    <main className="overflow-x-hidden">
       <HeroSection />
       <AboutSection />
       <WhyChooseUs />

@@ -28,7 +28,7 @@ const AboutUsPage = () => {
     <div className="min-h-screen bg-[#FDFBF7]">
       <Header />
       
-      <main className="relative">
+      <main className="relative overflow-x-hidden">
         {/* 1) Hero Banner */}
         <section className="relative min-h-[60vh] md:h-[60vh] py-16 md:py-0 flex items-center justify-center overflow-hidden bg-[#1A2E35]">
           <div className="absolute inset-0 opacity-40">

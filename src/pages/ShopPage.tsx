@@ -251,7 +251,7 @@ const ShopPage = () => {
     <div className="min-h-screen bg-[#FDFBF7]">
       <Header />
       
-      <main>
+      <main className="overflow-x-hidden">
         {/* 1) Hero Section */}
         <section className="relative min-h-[60vh] md:h-[60vh] py-20 md:py-0 flex items-center justify-center bg-[#1A2E35] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35] via-[#1A2E35]/90 to-[#1A2E35]/80" />

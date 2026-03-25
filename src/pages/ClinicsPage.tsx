@@ -216,7 +216,7 @@ const ClinicsPage = () => {
     <div className="min-h-screen bg-[#FDFBF7]">
       <Header />
       
-      <main className="relative">
+      <main className="relative overflow-x-hidden">
         {/* 1) Hero Section */}
         <section className="relative pt-12 pb-0 md:pt-16 md:pb-0 bg-[#F2EDE4] overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block">
