@@ -56,6 +56,8 @@ const Dashboard = () => {
     phone: ""
   });
   const [cancellingOrderId, setCancellingOrderId] = useState<string | null>(null);
+  const [showCancelPrompt, setShowCancelPrompt] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState<any>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -106,13 +108,23 @@ const Dashboard = () => {
     }
   };
 
-  const handleCancelOrder = async (orderId: string) => {
+  const confirmCancelOrder = (order: any) => {
+    setOrderToCancel(order);
+    setShowCancelPrompt(true);
+  };
+
+  const handleCancelOrder = async () => {
+    if (!orderToCancel) return;
+    
+    const orderId = orderToCancel.id;
     setCancellingOrderId(orderId);
+    setShowCancelPrompt(false);
+    
     try {
-      const result = await cancelOrderViaAdmin(orderId);
+      const result = await cancelOrderViaAdmin(orderId, "CUSTOMER", true, false, true);
       if (result.success) {
         toast.success("Order cancelled successfully");
-        fetchOrders(); // Refresh list
+        fetchOrders(); // Refresh list to reflect status change
       } else {
         toast.error("Cancellation failed", { 
           description: result.errors?.[0]?.message || "Please contact support." 
@@ -122,6 +134,7 @@ const Dashboard = () => {
       toast.error("Error cancelling order", { description: error.message });
     } finally {
       setCancellingOrderId(null);
+      setOrderToCancel(null);
     }
   };
 
@@ -486,7 +499,15 @@ const Dashboard = () => {
                                       ? 'bg-green-100 text-green-700' 
                                       : 'bg-blue-100 text-blue-700'
                                 }`}>
-                                  {order.cancelledAt ? 'CANCELLED' : order.displayFulfillmentStatus.replace('_', ' ')}
+                                {order.cancelledAt ? (
+                                  'CANCELLED'
+                                ) : order.displayFulfillmentStatus === 'UNFULFILLED' ? (
+                                  'PROCESSING'
+                                ) : order.displayFulfillmentStatus === 'FULFILLED' ? (
+                                  'SHIPPED'
+                                ) : (
+                                  order.displayFulfillmentStatus.replace('_', ' ')
+                                )}
                                 </span>
                               </div>
                             </div>
@@ -527,19 +548,19 @@ const Dashboard = () => {
                                   {order.cancelledAt ? 'View Cancelled Order' : 'Track My Order'} <ArrowRight className="h-3 w-3" />
                                 </button>
                               
-                              {order.displayFulfillmentStatus === 'UNFULFILLED' && !order.cancelledAt && (
-                                <button 
-                                  onClick={() => handleCancelOrder(order.id)}
-                                  disabled={cancellingOrderId === order.id}
-                                  className="flex items-center gap-2 text-[10px] font-bold text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors disabled:opacity-50"
-                                >
-                                  {cancellingOrderId === order.id ? (
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                  ) : (
-                                    <X className="h-3 w-3" />
-                                  )}
-                                  Cancel Order
-                                </button>
+                              {(order.displayFulfillmentStatus === 'UNFULFILLED' || order.displayFulfillmentStatus === 'PENDING_FULFILLMENT' || order.displayFulfillmentStatus === 'OPEN') && !order.cancelledAt && (
+                                  <button 
+                                    onClick={() => confirmCancelOrder(order)}
+                                    disabled={cancellingOrderId === order.id}
+                                    className="flex items-center gap-2 text-[10px] font-bold text-red-500 uppercase tracking-widest hover:text-red-700 transition-colors disabled:opacity-50"
+                                  >
+                                    {cancellingOrderId === order.id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <X className="h-3 w-3" />
+                                    )}
+                                    Cancel Order
+                                  </button>
                               )}
                             </div>
                           </div>
@@ -594,6 +615,54 @@ const Dashboard = () => {
         order={selectedOrderForTracking} 
         onClose={() => setSelectedOrderForTracking(null)} 
       />
+
+      {/* CANCEL CONFIRMATION MODAL */}
+      <AnimatePresence>
+        {showCancelPrompt && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCancelPrompt(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-sm bg-white rounded-3xl p-8 shadow-2xl space-y-6"
+            >
+              <div className="text-center space-y-4">
+                <div className="mx-auto h-16 w-16 bg-red-50 rounded-full flex items-center justify-center text-red-500">
+                  <X className="h-8 w-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-display font-medium text-[#1A2E35]">Cancel Order?</h3>
+                  <p className="text-sm text-[#1A2E35]/60">
+                    Are you sure you want to cancel order <span className="font-bold">{orderToCancel?.name}</span>? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setShowCancelPrompt(false)}
+                  className="flex-1 px-6 py-4 rounded-xl border-2 border-[#F2EDE4] text-sm font-bold uppercase tracking-widest text-[#1A2E35]/40 hover:bg-[#FDFBF7] transition-all"
+                >
+                  Keep Order
+                </button>
+                <button 
+                  onClick={handleCancelOrder}
+                  className="flex-1 px-6 py-4 rounded-xl bg-red-500 text-white text-sm font-bold uppercase tracking-widest hover:bg-red-600 transition-all shadow-xl shadow-red-500/20"
+                >
+                  Confirm
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

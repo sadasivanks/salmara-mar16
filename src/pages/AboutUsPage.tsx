@@ -106,7 +106,7 @@ const AboutUsPage = () => {
               </div>
 
               <div className="pt-2">
-                <p className="font-display italic text-xl text-[#5A7A5C]">Dr. S. Mallikarjuna</p>
+                <p className="font-display italic text-xl text-[#5A7A5C]">Shamsuddin Ahmed Salmara</p>
                 <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1A2E35]/40">— Founder, Salmara Ayurveda</p>
               </div>
             </div>

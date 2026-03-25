@@ -142,8 +142,8 @@ const CUSTOMER_INVITE_MUTATION = `
 `;
 
 const ORDER_CANCEL_MUTATION = `
-  mutation orderCancel($orderId: ID!, $reason: OrderCancelReason!, $refund: Boolean!, $restock: Boolean!) {
-    orderCancel(orderId: $orderId, reason: $reason, refund: $refund, restock: $restock) {
+  mutation orderCancel($orderId: ID!, $reason: OrderCancelReason!, $refund: Boolean!, $restock: Boolean!, $notifyCustomer: Boolean) {
+    orderCancel(orderId: $orderId, reason: $reason, refund: $refund, restock: $restock, notifyCustomer: $notifyCustomer) {
       userErrors {
         field
         message
@@ -909,14 +909,22 @@ export async function updateProductReviewsInShopify(productId: string, reviews: 
 
 /**
  * Cancel a Shopify order via the Admin API.
+ * Requirements: order must be open and unfulfilled.
  */
-export async function cancelOrderViaAdmin(orderId: string): Promise<AdminApiResponse> {
+export async function cancelOrderViaAdmin(
+  orderId: string, 
+  reason: string = "CUSTOMER", 
+  restock: boolean = true,
+  refund: boolean = false,
+  notifyCustomer: boolean = true
+): Promise<AdminApiResponse> {
   try {
     const data = await adminApiRequest(ORDER_CANCEL_MUTATION, { 
       orderId: orderId,
-      reason: "CUSTOMER", 
-      restock: true,
-      refund: false 
+      reason: reason, 
+      restock: restock,
+      refund: refund,
+      notifyCustomer: notifyCustomer
     });
     
     if (data?.errors) {
