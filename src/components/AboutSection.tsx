@@ -142,7 +142,7 @@ const AboutSection = () => {
             {timeline.map((item, i) => (
               <div key={item.label} className="flex items-center flex-shrink-0 w-full lg:w-auto lg:flex-1 last:flex-none snap-center">
                 <div className="flex flex-col items-center lg:items-center text-center w-full lg:min-w-[100px]">
-                  <p className="font-display font-bold text-[#5A7A5C] text-2xl lg:text-3xl mb-1">{item.year}</p>
+                  <p className="font-display font-bold font-sans-clean text-[#5A7A5C] text-2xl lg:text-3xl mb-1">{item.year}</p>
                   <p className="font-sans-clean text-[#1A2E35]/60 text-xs md:text-sm tracking-wide">{item.label}</p>
                 </div>
                 
