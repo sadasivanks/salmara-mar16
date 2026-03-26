@@ -6,8 +6,7 @@ import aboutLab from "@/assets/about-lab.jpg";
 
 const timeline = [
   { year: "1997", label: "Origins" },
-  { year: "2005", label: "Certification" },
-  { year: "2005", label: "Clinic Opened" },
+  { year: "2005", label: "Certification & Clinic Opened" },
   { year: "2024", label: "PAN India Reach" },
 ];
 
@@ -132,24 +131,37 @@ const AboutSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="max-w-4xl mx-auto mt-10"
+          className="max-w-4xl mx-auto mt-16"
         >
+          {/* Desktop Grid Layout */}
+          <div className="hidden lg:grid grid-cols-3 gap-0 relative">
+            {/* Absolute Line Layer */}
+            <div className="absolute top-[22px] left-[15%] right-[15%] h-[1px] bg-[#C5A059]/20 -z-0" />
+            
+            {timeline.map((item) => (
+              <div key={item.label} className="flex flex-col items-center text-center relative z-10 px-4">
+                <div className="bg-[#F2EDE4] px-4">
+                  <p className="font-sans-clean font-bold text-[#5A7A5C] text-3xl mb-2">{item.year}</p>
+                </div>
+                <p className="font-sans-clean text-[#1A2E35]/60 text-sm tracking-wide max-w-[180px] leading-relaxed">
+                  {item.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile Slider Layout */}
           <div 
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex flex-nowrap lg:justify-between lg:items-center gap-0 lg:gap-4 overflow-x-auto no-scrollbar pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory"
+            className="lg:hidden flex flex-nowrap overflow-x-auto no-scrollbar pb-6 -mx-4 px-4 snap-x snap-mandatory"
           >
-            {timeline.map((item, i) => (
-              <div key={item.label} className="flex items-center flex-shrink-0 w-full lg:w-auto lg:flex-1 last:flex-none snap-center">
-                <div className="flex flex-col items-center lg:items-center text-center w-full lg:min-w-[100px]">
-                  <p className="font-display font-bold font-sans-clean text-[#5A7A5C] text-2xl lg:text-3xl mb-1">{item.year}</p>
-                  <p className="font-sans-clean text-[#1A2E35]/60 text-xs md:text-sm tracking-wide">{item.label}</p>
+            {timeline.map((item) => (
+              <div key={item.label} className="flex-shrink-0 w-full snap-center px-4">
+                <div className="flex flex-col items-center text-center">
+                  <p className="font-display font-bold text-[#5A7A5C] text-2xl mb-1">{item.year}</p>
+                  <p className="font-sans-clean text-[#1A2E35]/60 text-xs tracking-wide">{item.label}</p>
                 </div>
-                
-                {/* Connecting Line - Only on Desktop */}
-                {i < timeline.length - 1 && (
-                  <div className="hidden lg:block flex-1 mx-4 h-[1px] bg-[#C5A059]/30" />
-                )}
               </div>
             ))}
           </div>

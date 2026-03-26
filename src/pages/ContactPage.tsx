@@ -212,7 +212,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Clinic Concierge</p>
-                      <p className="text-[#1A2E35] font-sans-clean font-medium">+91 80 4932 2300</p>
+                      <p className="text-[#1A2E35] font-sans-clean font-medium">+91 93 5343 6373</p>
                     </div>
                   </div>
                   

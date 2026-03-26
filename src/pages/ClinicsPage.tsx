@@ -85,8 +85,8 @@ const ClinicsPage = () => {
     },
     {
       id: 5,
-      name: "Salmara Ayurveda - Ghatkopar",
-      address: "Ghatkopar - Mumbai / ಘಾಟ್ಕೋಪರ್ - ಮುಂಬೈ",
+      name: "Salmara Ayurveda - Mumbai",
+      address: "Ghatkhopar - Mumbai",
       googleMapsUrl: "https://share.google/YbwMw4fdmlXDEys0Y",
       embedQuery: "Salmara+Ayurveda+Ghatkopar+Mumbai",
       hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
@@ -97,7 +97,7 @@ const ClinicsPage = () => {
     },
     {
       id: 6,
-      name: "Salmara Ayurveda - Raichur",
+      name: "Salmara Ayurveda - Karnataka",
       address: "Raichur / ರಾಯಚೂರು",
       googleMapsUrl: "https://share.google/ghLXUmxbv8JFYkObN",
       embedQuery: "Salmara+Ayurveda+Raichur",
@@ -109,8 +109,8 @@ const ClinicsPage = () => {
     },
     {
       id: 7,
-      name: "Salmara Ayurveda - Calicut",
-      address: "Calicut - Kerala / ಕ್ಯಾಲಿಕಟ್ - ಕೇರಳ",
+      name: "Salmara Ayurveda - Kerala",
+      address: "Calicut - Kerala",
       googleMapsUrl: "https://share.google/s9H5ousUgqnkho1nD",
       embedQuery: "Salmara+Ayurveda+Calicut",
       hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
@@ -121,8 +121,8 @@ const ClinicsPage = () => {
     },
     {
       id: 8,
-      name: "Salmara Ayurveda - Kochi",
-      address: "Kochi - Kerala / ಕೊಚ್ಚಿ - ಕೇರಳ",
+      name: "Salmara Ayurveda - Kerala",
+      address: "Kochi - Kerala",
       googleMapsUrl: "https://share.google/YpXbo28Y2UE6WOwXM",
       embedQuery: "Salmara+Ayurveda+Kochi+Kerala",
       hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
@@ -135,7 +135,7 @@ const ClinicsPage = () => {
 
         {
       id: 9,
-      name: "Salmara Ayurveda - mumbai",
+      name: "Salmara Ayurveda - Maharashtra",
       address: "mumbai - maharashtra / ಕೊಚ್ಚಿ - ಕೇರಳ",
       googleMapsUrl: "https://share.google/3802DmHcGqYmQp9n7",
       embedQuery: "Salmara+Ayurveda+mumbai+maharashtra",
@@ -209,7 +209,7 @@ const ClinicsPage = () => {
     { q: "Is my booking confirmed immediately?", a: "Absolutely. Once you complete the 5-step booking process, you will receive an instant confirmation via email and SMS with all relevant details." },
     { q: "What if I need to reschedule?", a: "You can easily reschedule through your User Dashboard or the link in your confirmation email up to 4 hours before the appointment time." },
     { q: "Do you offer follow-up sessions?", a: "Yes, continuity of care is central to our philosophy. Your doctor will recommend a follow-up schedule tailored to your personal treatment plan." },
-    { q: "Do you provide treatment plans or product recommendations?", a: "Following your consultation, you will receive a personalized wellness protocol, which may include dietary guidance, lifestyle adjustments, and recommendations from our tested product range." }
+    // { q: "Do you provide treatment plans or product recommendations?", a: "Following your consultation, you will receive a personalized wellness protocol, which may include dietary guidance, lifestyle adjustments, and recommendations from our tested product range." }
   ];
 
   return (
@@ -239,7 +239,7 @@ const ClinicsPage = () => {
                 Personalized <br /> Ayurvedic Care, <br /> Near You.
               </h1>
               <p className="text-lg text-[#1A2E35]/70 font-sans-clean leading-relaxed mb-10">
-                Visit our certified clinics or book a virtual consultation with Salmara’s Ayurvedic experts. Science-backed guidance for a balanced life.
+                Visit our certified clinics or book a virtual consultation with Salmara’s Ayurvedic experts.
               </p>
               <a 
                 href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
@@ -372,7 +372,7 @@ const ClinicsPage = () => {
             <div className="grid lg:grid-cols-2 gap-16">
               <div className="space-y-8">
                 <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Available Clinics</h2>
-                <div className="space-y-6 max-h-[1000px] overflow-y-auto pr-4 custom-scrollbar scroll-smooth">
+                <div className="space-y-6 h-[600px] overflow-y-auto pr-4 custom-scrollbar scroll-smooth">
                   {filteredClinics.length > 0 ? (
                     filteredClinics.map((clinic) => (
                       <motion.div 
@@ -563,7 +563,7 @@ const ClinicsPage = () => {
         <section className="py-16 bg-white border-b border-[#F2EDE4] relative">
           <div className="container px-4">
             <div className="text-center mb-16">
-              <h2 className="text-2xl md:text-3xl font-display font-medium text-[#1A2E35]">Experience Seamless Care</h2>
+              <h2 className="text-2xl md:text-3xl font-display font-medium text-[#1A2E35]">Consultation Process</h2>
               <p className="text-[#1A2E35]/50 font-sans-clean mt-2 italic">A straightforward journey from booking to healing.</p>
             </div>
             

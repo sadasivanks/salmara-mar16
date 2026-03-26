@@ -152,7 +152,7 @@ const Header = () => {
 
       {/* Main Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-border/40 shadow-sm">
-        <div className="container mx-auto px-4 flex items-center justify-between h-16 lg:h-20">
+        <div className="w-full px-4 md:px-8 flex items-center justify-between h-16 lg:h-20">
           {/* Logo & Tagline */}
           <Link 
             to="/" 
