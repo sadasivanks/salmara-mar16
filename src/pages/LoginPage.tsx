@@ -9,7 +9,10 @@ import {
   getStoredSession, 
   createHybridCheckout,
   logCheckoutToTerminal,
-  updateCustomerCartId
+  updateCustomerCartId,
+  requestPasswordReset,
+  resetPassword,
+  verifyOtpViaProxy
 } from "@/lib/shopifyAdmin";
 import { syncShopifyCustomerToDb } from "@/lib/dbSync";
 import { useCartStore } from "@/stores/cartStore";
@@ -19,7 +22,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const LoginPage = () => {
-  const [view, setView] = useState<"login" | "register">("login");
+  const [view, setView] = useState<"login" | "register" | "forgot-password" | "verify-reset-otp" | "set-new-password" | "verify-registration-otp" | "otp">("login");
   const [loading, setLoading] = useState(false);
   const { cartId, setCartId, syncCart, clearCart, checkout } = useCartStore();
   const navigate = useNavigate();
@@ -32,6 +35,10 @@ const LoginPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [phoneHint, setPhoneHint] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   useEffect(() => {
     if (getStoredSession() && !redirect) {
@@ -90,6 +97,22 @@ const LoginPage = () => {
     try {
       const result = await loginViaProxy(email, password);
 
+      if (result.requiresOtp || result.requiresVerification) {
+        setPhoneHint(result.phoneHint || "");
+        if (result.requiresVerification) {
+          toast.info("Verification Required", { 
+            description: "Please verify your mobile number to complete registration." 
+          });
+          setView("verify-registration-otp");
+        } else {
+          toast.info("Secure Login", { 
+            description: "A verification code has been sent to your mobile." 
+          });
+          setView("otp");
+        }
+        return;
+      }
+
       if (!result.success) {
         const errorMsg = result.errors?.[0]?.message || "Invalid email or password.";
         throw new Error(errorMsg);
@@ -136,6 +159,155 @@ const LoginPage = () => {
     }
   };
 
+  const handleRequestReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const result = await requestPasswordReset(email);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Account not found or recovery unavailable.");
+      }
+      setPhoneHint(result.phoneHint || "");
+      toast.info("Verification Required", { 
+        description: `We've sent a recovery code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.` 
+      });
+      setView("verify-reset-otp");
+    } catch (error: any) {
+      toast.error("Recovery failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyResetOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      toast.error("Please enter a valid 6-digit code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await resetPassword(email, otp, ""); // Verify only
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Invalid or expired code.");
+      }
+      toast.success("Code verified successfully!");
+      setView("set-new-password");
+    } catch (error: any) {
+      toast.error("Verification failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await resetPassword(email, otp, newPassword);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Reset failed.");
+      }
+      toast.success("Password updated successfully!");
+      setView("login");
+      setPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setOtp("");
+    } catch (error: any) {
+      toast.error("Reset failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      toast.error("Please enter a valid 6-digit code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await verifyOtpViaProxy(email, otp);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Invalid or expired code.");
+      }
+
+      toast.success("Identity verified!");
+      
+      const currentCartId = cartId;
+      saveSession({
+        accessToken: "admin_proxy_mode",
+        user: result.user,
+        expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      });
+
+      if (result.user?.shopifyCartId) {
+        setCartId(result.user.shopifyCartId);
+        setTimeout(async () => {
+          await syncCart();
+        }, 500);
+      } else if (currentCartId) {
+        await updateCustomerCartId(result.user.id, currentCartId);
+        setCartId(currentCartId);
+      }
+      
+      await useWishlistStore.getState().syncWithShopify();
+      await handleSuccessfulAuth(result.user, currentCartId);
+    } catch (error: any) {
+      toast.error("Verification failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyRegistrationOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      toast.error("Please enter a valid 6-digit code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await verifyOtpViaProxy(email, otp);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Invalid or expired code.");
+      }
+
+      toast.success("Account verified successfully!");
+      
+      // Save session and log in
+      saveSession({
+        accessToken: "admin_proxy_mode",
+        user: result.user,
+        expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      });
+
+      const currentCartId = cartId;
+      if (result.user?.shopifyCartId) {
+        setCartId(result.user.shopifyCartId);
+        setTimeout(async () => {
+          await syncCart();
+        }, 500);
+      }
+
+      await handleSuccessfulAuth(result.user, currentCartId);
+    } catch (error: any) {
+      toast.error("Verification failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -146,6 +318,7 @@ const LoginPage = () => {
         email,
         password,
         phone,
+        isPending: true
       });
 
       if (!shopifyResult.success) {
@@ -170,36 +343,11 @@ const LoginPage = () => {
         }
       }
 
-      // Only clear cart if we are NOT redirecting to checkout/buy_now
-      const isRedirectingToCheckout = redirect === "checkout" || redirect === "buy_now";
-      
-      const currentCartId = cartId;
-      if (!isRedirectingToCheckout) {
-        clearCart();
-      }
-
-      const userData = {
-        id: customer?.id,
-        email: customer?.email,
-        name: `${customer?.firstName} ${customer?.lastName}`.trim(),
-        firstName: customer?.firstName,
-        lastName: customer?.lastName,
-        phone: customer?.phone
-      };
-
-      saveSession({
-        accessToken: "admin_proxy_mode",
-        user: userData,
-        expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      toast.success("Account created!", { 
+        description: "Please enter the verification code sent to your mobile." 
       });
-
-      if (customer?.id && currentCartId) {
-        await updateCustomerCartId(customer.id, currentCartId);
-        setCartId(currentCartId);
-      }
-
-      toast.success(`Welcome, ${firstName}! Your account is ready.`);
-      await handleSuccessfulAuth(userData, currentCartId);
+      setPhoneHint(phone.replace(/.(?=.{4})/g, '*'));
+      setView("verify-registration-otp");
     } catch (error: any) {
       toast.error("Registration failed", { description: error.message });
     } finally {
@@ -292,7 +440,13 @@ const LoginPage = () => {
                         <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 flex items-center gap-2">
                           <Lock className="h-3 w-3" /> Password
                         </label>
-                        <button type="button" className="text-[10px] font-bold text-[#5A7A5C] hover:underline uppercase tracking-widest">Forgot?</button>
+                        <button 
+                          type="button" 
+                          onClick={() => setView("forgot-password")}
+                          className="text-[10px] font-bold text-[#5A7A5C] hover:underline uppercase tracking-widest"
+                        >
+                          Forgot?
+                        </button>
                       </div>
                       <input 
                         type="password" 
@@ -322,6 +476,240 @@ const LoginPage = () => {
                         Create One Now
                       </button>
                     </p>
+                  </div>
+                </motion.div>
+              ) : view === "forgot-password" ? (
+                <motion.div
+                  key="forgot"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full"
+                >
+                  <div className="mb-10 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Account Recovery</span>
+                    </div>
+                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Reset Password</h2>
+                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">Enter your email to receive a recovery code.</p>
+                  </div>
+
+                  <form onSubmit={handleRequestReset} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 flex items-center gap-2">
+                        <Mail className="h-3 w-3" /> Email Address
+                      </label>
+                      <input 
+                        type="email" 
+                        required 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                    <button 
+                      disabled={loading} 
+                      className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-[#5A7A5C] transition-all duration-500 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
+                    >
+                      {loading && <Loader2 className="h-4 w-4 animate-spin" />} 
+                      {loading ? "Sending Code..." : "Get Recovery Code"}
+                    </button>
+                  </form>
+                  <div className="mt-8 text-center md:text-left">
+                    <button onClick={() => setView("login")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Back to Login</button>
+                  </div>
+                </motion.div>
+              ) : view === "verify-reset-otp" ? (
+                <motion.div
+                  key="verify-otp"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full"
+                >
+                  <div className="mb-10 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Verification</span>
+                    </div>
+                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Verify Code</h2>
+                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">
+                      Enter code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleVerifyResetOtp} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 text-center block">Recovery Code</label>
+                      <input 
+                        type="text" 
+                        maxLength={6}
+                        required
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                        placeholder="000000"
+                      />
+                    </div>
+                    <button 
+                      disabled={loading} 
+                      className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-[#5A7A5C] transition-all duration-500 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
+                    >
+                      {loading && <Loader2 className="h-4 w-4 animate-spin" />} 
+                      {loading ? "Verifying..." : "Verify Code"}
+                    </button>
+                  </form>
+                  <div className="mt-8 text-center md:text-left">
+                    <button onClick={() => setView("forgot-password")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Change Email</button>
+                  </div>
+                </motion.div>
+              ) : view === "set-new-password" ? (
+                <motion.div
+                  key="set-pwd"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full"
+                >
+                  <div className="mb-10 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Reset</span>
+                    </div>
+                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">New Password</h2>
+                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">Create a strong new password.</p>
+                  </div>
+
+                  <form onSubmit={handleConfirmReset} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 flex items-center gap-2">
+                        <Lock className="h-3 w-3" /> New Password
+                      </label>
+                      <input 
+                        type="password" 
+                        required 
+                        value={newPassword} 
+                        onChange={(e) => setNewPassword(e.target.value)} 
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 flex items-center gap-2">
+                        <Lock className="h-3 w-3" /> Confirm New Password
+                      </label>
+                      <input 
+                        type="password" 
+                        required 
+                        value={confirmNewPassword} 
+                        onChange={(e) => setConfirmNewPassword(e.target.value)} 
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <button 
+                      disabled={loading} 
+                      className="w-full bg-[#1A2E35] text-white py-4 mt-4 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-[#5A7A5C] transition-all duration-500 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
+                    >
+                      {loading && <Loader2 className="h-4 w-4 animate-spin" />} 
+                      {loading ? "Updating..." : "Update Password"}
+                    </button>
+                  </form>
+                </motion.div>
+              ) : view === "verify-registration-otp" ? (
+                <motion.div
+                  key="verify-reg-otp"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full"
+                >
+                  <div className="mb-10 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">New Account Verification</span>
+                    </div>
+                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Verify Your Account</h2>
+                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">
+                      Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleVerifyRegistrationOtp} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 text-center block">Verification Code</label>
+                      <input 
+                        type="text" 
+                        maxLength={6}
+                        required
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                        placeholder="000000"
+                      />
+                    </div>
+                    <button 
+                      disabled={loading} 
+                      className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-[#5A7A5C] transition-all duration-500 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
+                    >
+                      {loading && <Loader2 className="h-4 w-4 animate-spin" />} 
+                      {loading ? "Verifying..." : "Complete Registration"}
+                    </button>
+                  </form>
+                  <div className="mt-8 text-center md:text-left">
+                    <button onClick={() => setView("register")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Edit Registration Details</button>
+                  </div>
+                </motion.div>
+              ) : view === "otp" ? (
+                <motion.div
+                  key="otp"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full"
+                >
+                  <div className="mb-10 text-center md:text-left">
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Verification</span>
+                    </div>
+                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Confirm Identity</h2>
+                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">
+                      Enter code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleVerifyOtp} className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 text-center block">Verification Code</label>
+                      <input 
+                        type="text" 
+                        maxLength={6}
+                        required
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                        placeholder="000000"
+                        autoFocus
+                      />
+                    </div>
+                    <button 
+                      disabled={loading} 
+                      className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3 hover:bg-[#5A7A5C] transition-all duration-500 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
+                    >
+                      {loading && <Loader2 className="h-4 w-4 animate-spin" />} 
+                      {loading ? "Verifying..." : "Verify & Sign In"}
+                    </button>
+                  </form>
+                  <div className="mt-8 text-center md:text-left">
+                    <button onClick={() => setView("login")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Back to Login</button>
                   </div>
                 </motion.div>
               ) : (

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
 import { saveSession } from "@/lib/shopifyAdmin";
-import { createCustomerViaAdmin, loginViaProxy, verifyOtpViaProxy, updateCustomerCartId } from "@/lib/shopifyAdmin";
+import { createCustomerViaAdmin, loginViaProxy, verifyOtpViaProxy, updateCustomerCartId, requestPasswordReset, resetPassword } from "@/lib/shopifyAdmin";
 import { syncShopifyCustomerToDb } from "@/lib/dbSync";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
@@ -14,7 +14,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = "login" }) => {
-  const [view, setView] = useState<"login" | "register" | "otp">(initialView);
+  const [view, setView] = useState<"login" | "register" | "otp" | "forgot-password" | "verify-reset-otp" | "set-new-password" | "verify-registration-otp">(initialView);
   const [loading, setLoading] = useState(false);
   const { cartId, setCartId, syncCart, clearCart } = useCartStore();
   
@@ -26,6 +26,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [phoneHint, setPhoneHint] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   if (!isOpen) return null;
 
@@ -35,18 +37,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     try {
       const result = await loginViaProxy(email, password);
 
+      if (result.requiresOtp || result.requiresVerification) {
+        setPhoneHint(result.phoneHint || "");
+        if (result.requiresVerification) {
+          toast.info("Verification Required", { 
+            description: "Please verify your mobile number to complete registration." 
+          });
+          setView("verify-registration-otp");
+        } else {
+          toast.info("Verification Required", { 
+            description: `We've sent a 6-digit code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.` 
+          });
+          setView("otp");
+        }
+        return;
+      }
+
       if (!result.success) {
         const errorMsg = result.errors?.[0]?.message || "Invalid email or password.";
         throw new Error(errorMsg);
-      }
-
-      if (result.requiresOtp) {
-        setPhoneHint(result.phoneHint || "");
-        toast.info("Verification Required", { 
-          description: `We've sent a 6-digit code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.` 
-        });
-        setView("otp");
-        return;
       }
 
       await completeLogin(result.user);
@@ -107,6 +116,98 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     toast.success(`Welcome back, ${userData?.name}!`);
     onClose();
   };
+  
+  const handleRequestReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const result = await requestPasswordReset(email);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Account not found or recovery unavailable.");
+      }
+      setPhoneHint(result.phoneHint || "");
+      toast.info("Verification Required", { 
+        description: `We've sent a recovery code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.` 
+      });
+      setView("verify-reset-otp");
+    } catch (error: any) {
+      toast.error("Recovery failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyResetOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      toast.error("Please enter a valid 6-digit code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await resetPassword(email, otp, ""); // Call with empty password just to verify OTP
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Invalid or expired code.");
+      }
+      toast.success("Code verified successfully!");
+      setView("set-new-password");
+    } catch (error: any) {
+      toast.error("Verification failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword !== confirmNewPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await resetPassword(email, otp, newPassword);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Reset failed.");
+      }
+      toast.success("Password updated successfully!");
+      setView("login");
+      setPassword(""); // Clear current password state
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setOtp("");
+    } catch (error: any) {
+      toast.error("Reset failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyRegistrationOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length < 6) {
+      toast.error("Please enter the full 6-digit code");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await verifyOtpViaProxy(email, otp);
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Verification failed");
+      }
+      toast.success("Account verified successfully!");
+      await completeLogin(result.user);
+    } catch (error: any) {
+      toast.error("Verification failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,6 +230,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
         email,
         password,
         phone: formattedPhone,
+        isPending: true
       });
 
       if (!shopifyResult.success) {
@@ -140,65 +242,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
 
       // 3. Sync to local database
       if (customer) {
-        console.log("Shopify customer created successfully:", customer);
-        console.log("Triggering local DB sync for:", customer.email);
-        
         try {
-          const dbResult = await syncShopifyCustomerToDb({
+          await syncShopifyCustomerToDb({
             id: customer.id,
             email: customer.email,
             firstName: customer.firstName,
             lastName: customer.lastName,
             phone: customer.phone,
-            password: password // Pass plan text password for hashing in dbSync
+            password: password
           });
-
-          if (!dbResult.success) {
-            console.error("Critical: Supabase Sync Failed:", dbResult.error);
-            toast.error("Account created in Shopify, but database sync failed.", { 
-              description: dbResult.error,
-              duration: 6000 
-            });
-          } else {
-            console.log("Supabase Sync Successful. Result:", dbResult);
-            if (dbResult.existed) {
-              console.log("User already existed in database.");
-            }
-          }
         } catch (syncErr: any) {
           console.error("Unexpected error during DB sync call:", syncErr);
-          toast.error("Database sync encountered an unexpected error.");
         }
       }
 
-      // 4. Save current local cart to the new account
-      const currentCartId = cartId;
-      clearCart();
-
-      const userData = {
-        id: customer?.id,
-        email: customer?.email,
-        name: `${customer?.firstName} ${customer?.lastName}`.trim(),
-        firstName: customer?.firstName,
-        lastName: customer?.lastName,
-        phone: customer?.phone
-      };
-
-      // Account created! Automagically log them in
-      saveSession({
-        accessToken: "admin_proxy_mode",
-        user: userData,
-        expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+      toast.success("Account created!", { 
+        description: "Please enter the verification code sent to your mobile." 
       });
-
-      if (customer?.id && currentCartId) {
-        console.log("Saving guest cart to new account:", currentCartId);
-        await updateCustomerCartId(customer.id, currentCartId);
-        setCartId(currentCartId);
-      }
-
-      toast.success(`Welcome, ${firstName}! Your account is ready.`);
-      onClose();
+      setPhoneHint(phone.replace(/.(?=.{4})/g, '*'));
+      setView("verify-registration-otp");
       
     } catch (error: any) {
       toast.error("Registration failed", { description: error.message });
@@ -253,7 +315,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                     <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Password</label>
+                    <div className="flex justify-between items-center ml-1">
+                      <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60">Password</label>
+                      <button 
+                        type="button" 
+                        onClick={() => setView("forgot-password")}
+                        className="text-[10px] font-bold text-[#5A7A5C] hover:underline uppercase tracking-widest"
+                      >
+                        Forgot?
+                      </button>
+                    </div>
                     <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
                   </div>
                   <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
@@ -307,6 +378,165 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                     <div className="h-3 w-[1px] bg-[#F2EDE4]" />
                     <button onClick={() => setView("login")} className="text-[10px] font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Back to Login</button>
                   </div>
+                </div>
+              </motion.div>
+            ) : view === "forgot-password" ? (
+              <motion.div 
+                key="forgot" 
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: 20 }} 
+                transition={{ duration: 0.3 }} 
+                className="flex flex-col items-center"
+              >
+                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Account Recovery</span>
+                </div>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Reset Password</h2>
+                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">
+                  Enter your email to receive a secure recovery code via SMS.
+                </p>
+                <form onSubmit={handleRequestReset} className="w-full space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Email Address</label>
+                    <input 
+                      type="email" 
+                      required 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
+                    {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Sending Code..." : "Get Recovery Code"}
+                  </button>
+                </form>
+                <button onClick={() => setView("login")} className="mt-6 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Back to Login</button>
+              </motion.div>
+            ) : view === "verify-reset-otp" ? (
+              <motion.div 
+                key="verify-otp" 
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: 20 }} 
+                transition={{ duration: 0.3 }} 
+                className="flex flex-col items-center"
+              >
+                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Verification</span>
+                </div>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Verify Code</h2>
+                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">
+                  Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>.
+                </p>
+                <form onSubmit={handleVerifyResetOtp} className="w-full space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 text-center block">Recovery Code</label>
+                    <input 
+                      type="text" 
+                      maxLength={6}
+                      required
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                      placeholder="000000"
+                    />
+                  </div>
+                  <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
+                    {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Verifying..." : "Verify Code"}
+                  </button>
+                </form>
+                <button onClick={() => setView("forgot-password")} className="mt-6 text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline">Change Email</button>
+              </motion.div>
+            ) : view === "set-new-password" ? (
+              <motion.div 
+                key="set-pwd" 
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: 20 }} 
+                transition={{ duration: 0.3 }} 
+                className="flex flex-col items-center"
+              >
+                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Reset</span>
+                </div>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">New Password</h2>
+                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-6 text-center max-w-[280px]">
+                  Create a strong new password for your account.
+                </p>
+                <form onSubmit={handleConfirmReset} className="w-full space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">New Password</label>
+                    <input 
+                      type="password" 
+                      required 
+                      value={newPassword} 
+                      onChange={(e) => setNewPassword(e.target.value)} 
+                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      required 
+                      value={confirmNewPassword} 
+                      onChange={(e) => setConfirmNewPassword(e.target.value)} 
+                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
+                    {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Updating..." : "Update Password"}
+                  </button>
+                </form>
+              </motion.div>
+            ) : view === "verify-registration-otp" ? (
+              <motion.div 
+                key="verify-reg-otp" 
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: 20 }} 
+                transition={{ duration: 0.3 }} 
+                className="flex flex-col items-center"
+              >
+                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">New Account Verification</span>
+                </div>
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Verify Account</h2>
+                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">
+                  Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
+                </p>
+                
+                <form onSubmit={handleVerifyRegistrationOtp} className="w-full space-y-6">
+                  <div className="flex justify-center">
+                    <input 
+                      type="text" 
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                      className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                      placeholder="000000"
+                    />
+                  </div>
+                  
+                  <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
+                    {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Verifying..." : "Complete Registration"}
+                  </button>
+                </form>
+                
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  <button onClick={() => setView("register")} className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline">Edit Details</button>
                 </div>
               </motion.div>
             ) : (

@@ -102,6 +102,7 @@ const CUSTOMER_CREATE_MUTATION = `
         firstName
         lastName
         phone
+        tags
       }
       userErrors {
         field
@@ -144,6 +145,7 @@ const CUSTOMER_UPDATE_MUTATION = `
         firstName
         lastName
         phone
+        tags
       }
       userErrors {
         field
@@ -475,38 +477,42 @@ export async function createCustomerViaAdmin(input: {
   email: string;
   password?: string;
   phone?: string;
+  isPending?: boolean;
 }): Promise<AdminApiResponse> {
   try {
-    const data = await adminApiRequest(CUSTOMER_CREATE_MUTATION, {
-      input: {
-        firstName: input.firstName,
-        lastName: input.lastName,
-        email: input.email,
-        phone: input.phone || undefined,
-        emailMarketingConsent: {
-          marketingState: "SUBSCRIBED",
-          marketingOptInLevel: "SINGLE_OPT_IN",
-        },
-        metafields: input.password ? [{
-          namespace: "custom_auth",
-          key: "password",
-          value: input.password,
-          type: "single_line_text_field"
-        }] : undefined
-      },
+    const response = await fetch('/api/shopify-register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          phone: input.phone || undefined,
+          emailMarketingConsent: {
+            marketingState: "SUBSCRIBED",
+            marketingOptInLevel: "SINGLE_OPT_IN",
+          },
+          tags: input.isPending ? ["pending_verification"] : undefined,
+          metafields: input.password ? [{
+            namespace: "custom_auth",
+            key: "password",
+            value: input.password,
+            type: "single_line_text_field"
+          }] : undefined
+        }
+      }),
     });
 
-    if (data?.errors) {
-      return { success: false, errors: data.errors };
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, errors: errorData.errors || [{ message: "Registration failed" }] };
     }
 
-    const userErrors = data?.data?.customerCreate?.userErrors || [];
-    if (userErrors.length > 0) {
-      return { success: false, errors: userErrors };
-    }
-
-    return { success: true, customer: data.data.customerCreate.customer };
+    const result = await response.json();
+    return { success: true, customer: result.customer };
   } catch (error: any) {
+    console.error("Registration proxy error:", error);
     return { success: false, errors: [{ message: error.message }] };
   }
 }
@@ -515,7 +521,7 @@ export async function createCustomerViaAdmin(input: {
  * Custom login via the Vite proxy endpoint /api/shopify-login
  * This uses the Admin API to verify passwords stored in metafields.
  */
-export async function loginViaProxy(email: string, password: string): Promise<{ success: boolean; user?: any; errors?: any[]; requiresOtp?: boolean; email?: string; phoneHint?: string }> {
+export async function loginViaProxy(email: string, password: string): Promise<{ success: boolean; user?: any; errors?: any[]; requiresOtp?: boolean; requiresVerification?: boolean; email?: string; phoneHint?: string }> {
   try {
     const response = await fetch('/api/shopify-login', {
       method: 'POST',
@@ -543,6 +549,38 @@ export async function verifyOtpViaProxy(email: string, otp: string): Promise<{ s
 
     const data = await response.json();
     return data;
+  } catch (error: any) {
+    return { success: false, errors: [{ message: error.message }] };
+  }
+}
+
+/**
+ * Request a password reset OTP via SMS.
+ */
+export async function requestPasswordReset(email: string): Promise<{ success: boolean; phoneHint?: string; errors?: any[] }> {
+  try {
+    const response = await fetch('/api/shopify-request-reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    return await response.json();
+  } catch (error: any) {
+    return { success: false, errors: [{ message: error.message }] };
+  }
+}
+
+/**
+ * Reset password using OTP and new password.
+ */
+export async function resetPassword(email: string, otp: string, newPassword: string): Promise<{ success: boolean; errors?: any[] }> {
+  try {
+    const response = await fetch('/api/shopify-reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp, newPassword }),
+    });
+    return await response.json();
   } catch (error: any) {
     return { success: false, errors: [{ message: error.message }] };
   }

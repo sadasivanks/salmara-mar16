@@ -96,6 +96,113 @@ function shopifyAdminProxy(): Plugin {
         }
       });
 
+      // --- 1b. Registration Proxy (Atomic Creation + OTP) ---
+      server.middlewares.use("/api/shopify-register", async (req, res) => {
+        if (req.method !== "POST") {
+          res.writeHead(405, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+
+        let body = "";
+        for await (const chunk of req) body += chunk;
+
+        try {
+          const { input } = JSON.parse(body);
+          if (!adminToken) throw new Error("SHOPIFY_ADMIN_API_ACCESS_TOKEN is missing");
+
+          // 1. Create Customer with pending tag
+          const createMutation = `
+            mutation customerCreate($input: CustomerInput!) {
+              customerCreate(input: $input) {
+                customer { id email phone tags }
+                userErrors { field message }
+              }
+            }
+          `;
+
+          const createRes = await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({ query: createMutation, variables: { input } }),
+          });
+
+          const createData = await createRes.json() as any;
+          const customer = createData?.data?.customerCreate?.customer;
+          const errors = createData?.data?.customerCreate?.userErrors;
+
+          if (errors?.length > 0 || !customer) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: false, errors: errors || [{ message: "Creation failed" }] }));
+            return;
+          }
+
+          // 2. Generate OTP
+          const otp = Math.floor(100000 + Math.random() * 900000).toString();
+          const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+          // 3. Store OTP in Metafields
+          const updateMutation = `
+            mutation update($input: CustomerInput!) {
+              customerUpdate(input: $input) { customer { id } }
+            }
+          `;
+          await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({
+              query: updateMutation,
+              variables: {
+                input: {
+                  id: customer.id,
+                  metafields: [
+                    { namespace: "custom_auth", key: "otp", value: otp, type: "single_line_text_field" },
+                    { namespace: "custom_auth", key: "otp_expires", value: otpExpiry, type: "single_line_text_field" }
+                  ]
+                }
+              }
+            }),
+          });
+
+          console.log(`\n📦 [REGISTRATION] New User: ${customer.email}`);
+          console.log(`🔑 [REGISTRATION] Generated OTP: ${otp}\n`);
+
+          // 4. Send SMS via Edumarc
+          if (customer.phone) {
+            const smsApiKey = "56682895f69247d386c1c38121485c36";
+            const senderId = "SLMAYU";
+            const templateId = "1707176959332051773";
+            const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
+            const formattedPhone = customer.phone.replace(/^\+/, '');
+
+            console.log(`[AUTH] Sending registration OTP to ${formattedPhone}...`);
+            try {
+              const smsRes = await secureFetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'apikey': smsApiKey },
+                body: JSON.stringify({
+                  message: smsMessage,
+                  senderId: senderId,
+                  number: [formattedPhone],
+                  templateId: templateId
+                })
+              });
+              const smsData = await smsRes.json() as any;
+              console.log(`[AUTH] Registration SMS API Response:`, JSON.stringify(smsData));
+            } catch (smsErr) {
+              console.error("[AUTH ERROR] Registration SMS delivery failed:", smsErr);
+            }
+          }
+
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: true, customer }));
+        } catch (error: any) {
+          console.error("[Shopify Register Proxy Error]", error);
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+
       // --- 2. Login Proxy ---
       server.middlewares.use("/api/shopify-login", async (req, res) => {
         if (req.method !== "POST") {
@@ -123,6 +230,7 @@ function shopifyAdminProxy(): Plugin {
                     firstName
                     lastName
                     phone
+                    tags
                     password: metafield(namespace: "custom_auth", key: "password") { value }
                     cartId: metafield(namespace: "custom_auth", key: "cart_id") { value }
                     cartJson: metafield(namespace: "custom_auth", key: "cart_json") { value }
@@ -155,9 +263,15 @@ function shopifyAdminProxy(): Plugin {
             return;
           }
 
-          // --- OTP Logic ---
+          // Generate OTP
           const otp = Math.floor(100000 + Math.random() * 900000).toString();
           const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+          // Check if verification is required
+          const isPending = customer.tags?.includes("pending_verification");
+          if (isPending) {
+            console.log(`[LOGIN PROXY] Unverified user login blocked: ${email}`);
+          }
 
           const updateMetaMutation = `
             mutation customerUpdate($input: CustomerInput!) {
@@ -239,6 +353,7 @@ function shopifyAdminProxy(): Plugin {
           res.end(JSON.stringify({
             success: true,
             requiresOtp: true,
+            requiresVerification: isPending,
             email: customer.email,
             phoneHint: customerPhone.replace(/.(?=.{4})/g, '*')
           }));
@@ -277,6 +392,7 @@ function shopifyAdminProxy(): Plugin {
                     firstName
                     lastName
                     phone
+                    tags
                     otp: metafield(namespace: "custom_auth", key: "otp") { value }
                     otpExpires: metafield(namespace: "custom_auth", key: "otp_expires") { value }
                     cartId: metafield(namespace: "custom_auth", key: "cart_id") { value }
@@ -307,7 +423,12 @@ function shopifyAdminProxy(): Plugin {
             return;
           }
 
-          // Clear OTP
+          // Clear OTP and optionally remove pending tag
+          const isPending = customer.tags?.includes("pending_verification");
+          const updatedTags = isPending 
+            ? customer.tags.filter((t: string) => t !== "pending_verification")
+            : undefined;
+
           const clearMutation = `
             mutation customerUpdate($input: CustomerInput!) {
               customerUpdate(input: $input) { customer { id } }
@@ -321,6 +442,7 @@ function shopifyAdminProxy(): Plugin {
               variables: {
                 input: {
                   id: customer.id,
+                  tags: updatedTags,
                   metafields: [
                     { namespace: "custom_auth", key: "otp", value: "", type: "single_line_text_field" },
                     { namespace: "custom_auth", key: "otp_expires", value: "", type: "single_line_text_field" }
@@ -832,6 +954,167 @@ function shopifyAdminProxy(): Plugin {
           res.end(JSON.stringify(data));
         } catch (error: any) {
           console.error("[Shopify Sync Cart Proxy Error]", error);
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+
+      // --- 11. Request Password Reset Proxy ---
+      server.middlewares.use("/api/shopify-request-reset", async (req, res) => {
+        if (req.method !== "POST") {
+          res.writeHead(405, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+        let body = "";
+        for await (const chunk of req) body += chunk;
+        try {
+          const { email } = JSON.parse(body);
+          if (!adminToken) throw new Error("SHOPIFY_ADMIN_API_ACCESS_TOKEN is missing");
+          
+          const customerQuery = `
+            query getCustomerByEmail($query: String!) {
+              customers(first: 1, query: $query) {
+                edges { node { id email phone } }
+              }
+            }
+          `;
+          const response = await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({ query: customerQuery, variables: { query: `email:${email}` } }),
+          });
+          const data = await response.json() as any;
+          const customer = data?.data?.customers?.edges?.[0]?.node;
+
+          if (!customer) {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: "Account not found with this email." }] }));
+            return;
+          }
+          if (!customer.phone) {
+            res.writeHead(400, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: "No phone number linked to this account for recovery." }] }));
+            return;
+          }
+
+          const otp = Math.floor(100000 + Math.random() * 900000).toString();
+          const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+          await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({
+              query: `mutation update($input: CustomerInput!) { customerUpdate(input: $input) { customer { id } } }`,
+              variables: {
+                input: {
+                  id: customer.id,
+                  metafields: [
+                    { namespace: "custom_auth", key: "otp", value: otp, type: "single_line_text_field" },
+                    { namespace: "custom_auth", key: "otp_expires", value: otpExpiry, type: "single_line_text_field" }
+                  ]
+                }
+              }
+            }),
+          });
+
+          // Send SMS via Edumarc
+          const smsApiKey = "56682895f69247d386c1c38121485c36";
+          const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
+          const formattedPhone = customer.phone.replace(/^\+/, '');
+          
+          try {
+            await secureFetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'apikey': smsApiKey },
+              body: JSON.stringify({
+                message: smsMessage,
+                senderId: "SLMAYU",
+                number: [formattedPhone],
+                templateId: "1707176959332051773"
+              })
+            });
+          } catch (smsErr) {
+            console.error("[RESET PWD PROXY] SMS failed:", smsErr);
+          }
+
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({
+            success: true,
+            email: customer.email,
+            phoneHint: customer.phone.replace(/.(?=.{4})/g, '*')
+          }));
+        } catch (error: any) {
+          console.error("[RESET PWD PROXY ERROR]", error);
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+
+      // --- 12. Reset Password Proxy ---
+      server.middlewares.use("/api/shopify-reset-password", async (req, res) => {
+        if (req.method !== "POST") {
+          res.writeHead(405, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+        let body = "";
+        for await (const chunk of req) body += chunk;
+        try {
+          const { email, otp, newPassword } = JSON.parse(body);
+          if (!adminToken) throw new Error("SHOPIFY_ADMIN_API_ACCESS_TOKEN is missing");
+
+          const query = `
+            query getOtp($query: String!) {
+              customers(first: 1, query: $query) {
+                edges { node { 
+                  id 
+                  otp: metafield(namespace: "custom_auth", key: "otp") { value }
+                  otpExpires: metafield(namespace: "custom_auth", key: "otp_expires") { value }
+                } }
+              }
+            }
+          `;
+          const response = await secureFetch(shopifyUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+            body: JSON.stringify({ query, variables: { query: `email:${email}` } }),
+          });
+          const data = await response.json() as any;
+          const customer = data?.data?.customers?.edges?.[0]?.node;
+
+          if (!customer || customer.otp?.value !== otp || new Date() > new Date(customer.otpExpires?.value)) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ errors: [{ message: "Invalid or expired verification code." }] }));
+            return;
+          }
+
+          if (newPassword) {
+            await secureFetch(shopifyUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+              body: JSON.stringify({
+                query: `mutation update($input: CustomerInput!) { customerUpdate(input: $input) { customer { id } } }`,
+                variables: {
+                  input: {
+                    id: customer.id,
+                    metafields: [
+                      { namespace: "custom_auth", key: "password", value: newPassword, type: "single_line_text_field" },
+                      { namespace: "custom_auth", key: "otp", value: "", type: "single_line_text_field" },
+                      { namespace: "custom_auth", key: "otp_expires", value: "", type: "single_line_text_field" }
+                    ]
+                  }
+                }
+              }),
+            });
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: "Password updated successfully." }));
+          } else {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ success: true, message: "OTP verified." }));
+          }
+        } catch (error: any) {
+          console.error("[RESET CONFIRM PROXY ERROR]", error);
           res.writeHead(500, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ error: error.message }));
         }
