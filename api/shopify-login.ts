@@ -47,6 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               firstName
               lastName
               phone
+              tags
               password: metafield(namespace: "custom_auth", key: "password") {
                 value
               }
@@ -146,6 +147,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: "Failed to securely store OTP" });
     }
 
+    const isPending = (customer.tags || []).includes("pending_verification");
+    console.log(`\n🔑 [PRODUCTION LOGIN] User: ${customer.email} ${isPending ? '(PENDING)' : ''}`);
+    console.log(`🔑 [PRODUCTION LOGIN] Generated OTP: ${otp}\n`);
+
     // 5. Send Real SMS via Edumarc
     const smsApiKey = "56682895f69247d386c1c38121485c36";
     const senderId = "SLMAYU";
@@ -198,6 +203,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).json({
       success: true,
       requiresOtp: true,
+      requiresVerification: isPending,
       email: customer.email,
       phoneHint: customerPhone.replace(/.(?=.{4})/g, '*') // e.g. ******1234
     });
