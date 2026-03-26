@@ -486,7 +486,6 @@ export async function createCustomerViaAdmin(input: {
         emailMarketingConsent: {
           marketingState: "SUBSCRIBED",
           marketingOptInLevel: "SINGLE_OPT_IN",
-          consentUpdatedAt: new Date().toISOString()
         },
         metafields: input.password ? [{
           namespace: "custom_auth",
