@@ -49,13 +49,22 @@ const Footer = () => (
         <div>
           <h4 className="font-display font-bold text-xl mb-8">Legal</h4>
           <ul className="space-y-4">
-            {["Terms & Conditions", "Privacy Policy", "Shipping Policy", "Refund Policy"].map((link) => (
-              <li key={link}>
-                <a href="#" className="text-white/90 hover:text-white transition-colors text-base font-body">
-                  {link}
-                </a>
-              </li>
-            ))}
+            {["Terms & Conditions", "Privacy Policy", "Legacy", "Shipping Policy"].map((label) => {
+              const href = label === "Legacy" ? "/about" : "#";
+              return (
+                <li key={label}>
+                  {href === "#" ? (
+                    <a href={href} className="text-white/90 hover:text-white transition-colors text-base font-body">
+                      {label}
+                    </a>
+                  ) : (
+                    <Link to={href} className="text-white/90 hover:text-white transition-colors text-base font-body">
+                      {label}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
 
