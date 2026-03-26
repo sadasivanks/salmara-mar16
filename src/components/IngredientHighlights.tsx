@@ -1,9 +1,10 @@
 import { motion, useInView } from "framer-motion";
+import { Image } from "@/components/ui/Image";
 import { useRef } from "react";
-import tulsi from "@/assets/tulsi_dark.png";
-import guggul from "@/assets/guggul_dark.png";
-import triphala from "@/assets/triphala_dark.png";
-import ashwagandha from "@/assets/ashwagandha_dark.png";
+import tulsi from "@/assets/tulsi_dark.jpg";
+import guggul from "@/assets/guggul_dark.jpg";
+import triphala from "@/assets/triphala_dark.jpg";
+import ashwagandha from "@/assets/ashwagandha_dark.jpg";
 
 const ingredients = [
   {
@@ -59,7 +60,7 @@ const IngredientHighlights = () => {
               <div className="relative mb-6">
                 {/* Circular Image Container */}
                 <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full overflow-hidden border border-[#C5A059]/40 shadow-sm transition-all duration-500 group-hover:border-[#C5A059] group-hover:shadow-md">
-                  <img 
+                  <Image 
                     src={item.image} 
                     alt={item.name} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

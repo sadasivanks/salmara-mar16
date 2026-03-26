@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Image } from "@/components/ui/Image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
@@ -8,6 +9,7 @@ import {
   FlaskConical, MapPin, ArrowRight, ChevronRight,
   HandHeart, Users, Activity, History, Trophy, X, Maximize2
 } from "lucide-react";
+import SEO from "@/components/SEO";
 
 // Award Images
 import awardIMG7909 from "@/awards/IMG_7909.JPG";
@@ -26,6 +28,10 @@ const AboutUsPage = () => {
   const [selectedAward, setSelectedAward] = useState<{title: string, img: string} | null>(null);
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="Our Story & Legacy | Traditional Ayurvedic Wisdom" 
+        description="Founded in 1996, Salmara Ayurveda bridges ancestral knowledge with modern science. Learn about our founding journey, clinical impact, and commitment to purity."
+      />
       <Header />
       
       <main className="relative overflow-x-hidden">
@@ -81,7 +87,7 @@ const AboutUsPage = () => {
             {/* Image Column - Compact but Premium */}
             <div className="w-full md:w-1/4 flex-shrink-0">
               <div className="relative">
-                <img 
+                <Image 
                   src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1974&auto=format&fit=crop" 
                   alt="Founder" 
                   className="rounded-xl grayscale hover:grayscale-0 transition-all duration-700 shadow-lg w-full max-w-[200px] mx-auto md:max-w-none"
@@ -284,7 +290,7 @@ const AboutUsPage = () => {
                     className="bg-white rounded-3xl overflow-hidden border border-[#F2EDE4] shadow-sm group cursor-pointer"
                   >
                     <div className="aspect-[4/5] bg-gray-100 relative">
-                      <img src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" />
+                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" />
                       
                       {/* Hover Overlay */}
                       <div className="absolute inset-0 bg-[#1A2E35]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -369,19 +375,19 @@ const AboutUsPage = () => {
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-8 border border-[#F2EDE4] rounded-2xl text-center">
-              <h4 className="text-lg font-display font-bold text-[#1A2E35] mb-1">GMP Certified</h4>
+              <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">GMP Certified</h3>
               <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-4">Quality Council of India</p>
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Ensuring our manufacturing products are consistently produced and controlled according to quality standards.</p>
             </div>
             
             <div className="p-8 border border-[#F2EDE4] rounded-2xl text-center">
-              <h4 className="text-lg font-display font-bold text-[#1A2E35] mb-1">ISO 9001:2015</h4>
+              <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">ISO 9001:2015</h3>
               <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-4">International Standards Organization</p>
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Recognized standard for Quality Management Systems, focused on customer satisfaction and quality delivery PAN India.</p>
             </div>
             
             <div className="p-8 border border-[#F2EDE4] rounded-2xl text-center">
-              <h4 className="text-lg font-display font-bold text-[#1A2E35] mb-1">AYUSH License</h4>
+              <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">AYUSH License</h3>
               <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-4">Ministry of AYUSH, Govt. of India</p>
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Full regulatory compliance for traditional Ayurvedic formulations and clinical procedures.</p>
             </div>
@@ -398,7 +404,7 @@ const AboutUsPage = () => {
               {/* Left visuals */}
               <div className="w-full lg:w-1/2 relative">
                 <div className="relative z-10 rounded-[2rem] overflow-hidden shadow-2xl max-h-[300px] md:max-h-[400px]">
-                  <img 
+                  <Image 
                     src={aboutLab || "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?q=80&w=2070&auto=format&fit=crop"} 
                     alt="Salmara Labs" 
                     className="w-full h-full object-cover grayscale-[30%] hover:grayscale-0 transition-all duration-700"
@@ -478,7 +484,7 @@ const AboutUsPage = () => {
 
                       {/* Content */}
                       <div className="space-y-3">
-                        <h4 className="font-display font-bold text-[#1A2E35] text-lg leading-tight group-hover:text-[#5A7A5C] transition-colors">{item.title}</h4>
+                        <h3 className="font-display font-bold text-[#1A2E35] text-lg leading-tight group-hover:text-[#5A7A5C] transition-colors">{item.title}</h3>
                         <p className="text-sm text-[#1A2E35]/60 font-sans-clean leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
@@ -581,12 +587,13 @@ const AboutUsPage = () => {
                 onClick={() => setSelectedAward(null)}
                 className="absolute top-0 -right-4 md:-right-12 p-2 text-white/50 hover:text-white transition-colors"
                 title="Close"
+                aria-label="Close award details"
               >
                 <X className="h-8 w-8" />
               </button>
               
               <div className="w-full h-full overflow-hidden rounded-2xl bg-[#1A2E35]/20 flex items-center justify-center">
-                <img 
+                <Image 
                   src={selectedAward.img} 
                   alt={selectedAward.title} 
                   className="max-w-full max-h-full object-contain shadow-2xl"
@@ -594,7 +601,7 @@ const AboutUsPage = () => {
               </div>
               
               <div className="text-center text-white space-y-2">
-                <h4 className="text-2xl font-display">{selectedAward.title}</h4>
+                <h2 className="text-2xl font-display">{selectedAward.title}</h2>
                 <p className="text-white/40 text-[10px] uppercase tracking-[0.3em] font-bold">Salmara Ayurveda Achievements</p>
               </div>
             </motion.div>

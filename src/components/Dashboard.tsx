@@ -36,9 +36,10 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
+import { Image } from "@/components/ui/Image";
 
 
-const logo = "/salamara_icon.png";
+const logo = "/salamara_icon.jpg";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -248,15 +249,16 @@ const Dashboard = () => {
     <div className="flex min-h-screen bg-[#FDFBF7]">
       {/* SIDEBAR */}
       <aside className="w-72 bg-[#1A1A1A] text-white flex flex-col shrink-0 sticky top-0 h-screen overflow-y-auto z-50">
-        <div className="p-8 pb-12 space-y-4">
+        <div className="p-8 pb-12 space-y-8">
           <button 
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-all group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back
           </button>
-          <div className="flex items-center gap-3">
-            <span className="font-display font-medium text-xl tracking-tight text-white/90">My Dashboard</span>
+          <div className="flex flex-col gap-4">
+            <img src={logo} alt="Salmara Admin" className="h-12 w-auto brightness-0 invert opacity-90" />
+            <span className="font-display font-medium text-lg tracking-tight text-white/60">Wellness Dashboard</span>
           </div>
         </div>
         <nav className="flex-1 px-4 space-y-2">
@@ -484,7 +486,7 @@ const Dashboard = () => {
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                           <div className="space-y-4">
                             <div className="flex items-center gap-4">
-                              <span className="text-lg font-sans-clean font-bold text-[#1A2E35]">{order.name}</span>
+                              <span className="text-lg font-sans-clean font-bold text-[#1A2E35]">{order.name.startsWith('#') ? order.name : `#${order.name}`}</span>
                             </div>
                             
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -579,13 +581,10 @@ const Dashboard = () => {
                           {order.lineItems.edges.slice(0, 4).map((edge: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-4 p-2 bg-[#F8F9FA] rounded-2xl border border-[#F2EDE4] flex-1 max-w-[280px]">
                               <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">
-                                <img 
+                                <Image 
                                   src={edge.node.image?.url || logo || "/placeholder.svg"} 
                                   alt={edge.node.title} 
                                   className="w-full h-full object-cover" 
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).src = logo || "/placeholder.svg";
-                                  }}
                                 />
                               </div>
                               <div className="min-w-0">
@@ -652,7 +651,7 @@ const Dashboard = () => {
                 <div className="space-y-2">
                   <h3 className="text-xl font-display font-medium text-[#1A2E35]">Cancel Order?</h3>
                   <p className="text-sm text-[#1A2E35]/60">
-                    Are you sure you want to cancel order <span className="font-bold">{orderToCancel?.name}</span>? This action cannot be undone.
+                    Are you sure you want to cancel order <span className="font-bold">{orderToCancel?.name.startsWith('#') ? orderToCancel?.name : `#${orderToCancel?.name}`}</span>? This action cannot be undone.
                   </p>
                 </div>
               </div>
@@ -741,7 +740,7 @@ const TrackingModal = ({ order, onClose }: { order: any; onClose: () => void }) 
           <div className="relative flex items-center justify-between">
             <div>
               <p className="text-[9px] uppercase tracking-[0.3em] text-white/40 font-bold mb-0.5">Tracking Order</p>
-              <h2 className="text-2xl font-display font-medium">{order.name}</h2>
+              <h2 className="text-2xl font-sans-clean font-bold text-white">{order.name.startsWith('#') ? order.name : `#${order.name}`}</h2>
             </div>
             <button 
               onClick={onClose}
@@ -851,7 +850,7 @@ const DashboardCart = ({
           <div key={item.variantId} className="flex gap-6 p-6 border border-[#F2EDE4] rounded-2xl group hover:border-[#5A7A5C]/30 transition-all">
             <div className="w-24 h-24 bg-[#F8F9FA] rounded-xl overflow-hidden flex-shrink-0">
               {item.product.node.images?.edges?.[0]?.node && (
-                <img src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               )}
             </div>
             <div className="flex-1">

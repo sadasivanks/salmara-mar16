@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Image } from "@/components/ui/Image";
 import { 
   Search, 
   Plus, 
@@ -220,8 +221,8 @@ const AdminTestimonials = () => {
                   <tr key={item.id} className="hover:bg-[#FDFBF7]/50 transition-colors group">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-[#5A7A5C] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-                          {item.image_url ? <img src={item.image_url} alt="" className="w-full h-full rounded-full object-cover" /> : item.name[0]}
+                        <div className="h-10 w-10 rounded-full bg-[#5A7A5C] flex items-center justify-center text-white text-[10px] font-bold shrink-0 overflow-hidden">
+                          {item.image_url ? <Image src={item.image_url} alt="" className="w-full h-full rounded-full object-cover" /> : item.name[0]}
                         </div>
                         <div>
                           <p className="text-sm font-bold text-[#1A2E35]">{item.name}</p>

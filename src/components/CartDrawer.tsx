@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Image } from "@/components/ui/Image";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { getStoredSession, logCheckoutToTerminal } from "@/lib/shopifyAdmin";
@@ -57,7 +58,7 @@ export const CartDrawer = () => {
     <>
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <button className="p-2 text-foreground/70 hover:text-primary transition-colors relative" aria-label="Cart">
+          <button className="p-2 text-foreground/70 hover:text-primary transition-colors relative" aria-label={`Shopping Cart ${totalItems > 0 ? `(${totalItems} items)` : '(empty)'}`}>
             <ShoppingCart className="h-5 w-5" />
             {totalItems > 0 && (
               <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground text-[10px] font-sans-clean font-bold rounded-full h-4 w-4 flex items-center justify-center">
@@ -89,7 +90,7 @@ export const CartDrawer = () => {
                       <div key={item.variantId} className="flex gap-4 p-2 border border-border rounded-lg">
                         <div className="w-16 h-16 bg-secondary rounded-md overflow-hidden flex-shrink-0">
                           {item.product.node.images?.edges?.[0]?.node && (
-                            <img src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover" />
+                            <Image src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover" />
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -102,15 +103,27 @@ export const CartDrawer = () => {
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                          <button onClick={() => removeItem(item.variantId)} className="p-1 text-muted-foreground hover:text-destructive transition-colors">
+                          <button 
+                            onClick={() => removeItem(item.variantId)} 
+                            className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+                            aria-label={`Remove ${item.product.node.title} from cart`}
+                          >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                           <div className="flex items-center gap-1">
-                            <button onClick={() => updateQuantity(item.variantId, item.quantity - 1)} className="h-6 w-6 flex items-center justify-center border border-border rounded text-xs hover:bg-secondary transition-colors">
+                            <button 
+                              onClick={() => updateQuantity(item.variantId, item.quantity - 1)} 
+                              className="h-6 w-6 flex items-center justify-center border border-border rounded text-xs hover:bg-secondary transition-colors"
+                              aria-label="Decrease quantity"
+                            >
                               <Minus className="h-3 w-3" />
                             </button>
                             <span className="w-6 text-center text-xs font-sans-clean">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.variantId, item.quantity + 1)} className="h-6 w-6 flex items-center justify-center border border-border rounded text-xs hover:bg-secondary transition-colors">
+                            <button 
+                              onClick={() => updateQuantity(item.variantId, item.quantity + 1)} 
+                              className="h-6 w-6 flex items-center justify-center border border-border rounded text-xs hover:bg-secondary transition-colors"
+                              aria-label="Increase quantity"
+                            >
                               <Plus className="h-3 w-3" />
                             </button>
                           </div>

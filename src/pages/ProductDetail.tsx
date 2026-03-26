@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {
   fetchProductByHandleViaAdmin,
   checkCustomerHasPurchased,
@@ -37,6 +38,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useReviewStore } from "@/stores/reviewStore";
 import { useQuestionStore } from "@/stores/questionStore";
+import { Image } from "@/components/ui/Image";
+import AddressSelectionModal from "@/components/AddressSelectionModal";
+import SEO from "@/components/SEO";
 
 const faqs = [
   { q: "Is this suitable for daily use?", a: "Yes, this formulation is designed for consistent support. However, we always recommend following the dosage directed by your practitioner." },
@@ -45,7 +49,6 @@ const faqs = [
   { q: "Is it safe during pregnancy/breastfeeding?", a: "We recommend consulting your healthcare provider before starting any new wellness regimen during pregnancy or lactation." },
   { q: "What is your return policy?", a: "We accept returns for damaged items within 7 days of delivery. For more details, please visit our dedicated returns policy page." },
 ];
-import AddressSelectionModal from "@/components/AddressSelectionModal";
 
 const ProductDetail = () => {
   const navigate = useNavigate();
@@ -337,8 +340,38 @@ const ProductDetail = () => {
     setZoomPosition({ x, y });
   };
 
+  const currentUrl = window.location.href;
+  const productDescription = product.description?.substring(0, 160) || "";
+  const productImage = images[0]?.node?.url || "";
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.title,
+    "image": images[0]?.node?.url,
+    "description": product.description,
+    "sku": selectedVariant?.sku || "",
+    "brand": {
+      "@type": "Brand",
+      "name": "Salmara Ayurveda"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": currentUrl,
+      "priceCurrency": selectedVariant?.price.currencyCode || "INR",
+      "price": selectedVariant?.price.amount,
+      "availability": selectedVariant?.availableForSale ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#FDFBF7]">
+    <div className="min-h-screen bg-white">
+      <SEO 
+        title={product.title}
+        description={product.description}
+        image={images[0]?.node?.url}
+        jsonLd={productJsonLd}
+      />
       <Header />
       
       <main className="pt-4 md:pt-8 pb-0 md:pb-24 overflow-x-hidden">
@@ -363,7 +396,7 @@ const ProductDetail = () => {
                   className="aspect-square bg-white rounded-3xl overflow-hidden border border-[#F2EDE4] flex items-center justify-center shadow-lg mb-6 relative cursor-zoom-in"
                 >
                   {images[selectedImage]?.node ? (
-                    <motion.img 
+                    <Image 
                       src={images[selectedImage].node.url} 
                       alt={images[selectedImage].node.altText || product.title} 
                       className="w-full h-full object-cover transition-transform duration-200 ease-out"
@@ -398,7 +431,7 @@ const ProductDetail = () => {
                         onClick={() => setSelectedImage(i)}
                         className={`w-20 h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all ${i === selectedImage ? 'border-[#5A7A5C]' : 'border-[#F2EDE4] hover:border-[#5A7A5C]/30'}`}
                       >
-                        <img src={img.node.url} alt={img.node.altText || ''} className="w-full h-full object-cover" />
+                         <Image src={img.node.url} alt={`${product.title} view ${i + 1}`} className="w-full h-full object-cover" />
                       </button>
                     ))}
                   </div>
@@ -493,11 +526,21 @@ const ProductDetail = () => {
               <div className="space-y-4 pt-6 border-t border-[#F2EDE4]">
                 <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
                   <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[56px] md:w-32 justify-between shrink-0">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors">
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))} 
+                      className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
+                      aria-label="Decrease quantity"
+                    >
                       <Minus className="h-4 w-4" />
                     </button>
-                    <span className="text-center font-display font-medium text-[#1A2E35] min-w-[3ch]">{quantity}</span>
-                    <button onClick={() => setQuantity(quantity + 1)} className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors">
+                    <span className="w-12 text-center font-display font-medium text-[#1A2E35]">
+                      {quantity}
+                    </span>
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)} 
+                      className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
+                      aria-label="Increase quantity"
+                    >
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
@@ -539,7 +582,7 @@ const ProductDetail = () => {
                          <Leaf className="h-4 w-4 text-[#5A7A5C]" />
                       </div>
                       <div>
-                        <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h4>
+                        <h2 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h2>
                         <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
                           "{getMetafieldValue('doctorsinsight')}"
                         </p>
@@ -602,7 +645,7 @@ const ProductDetail = () => {
                         <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
                           <Leaf className="h-6 w-6 text-[#5A7A5C]" />
                         </div>
-                        <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-loose">{ing}</h4>
+                        <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-loose">{ing}</h3>
                       </div>
                     ))
                   ) : (
@@ -636,14 +679,14 @@ const ProductDetail = () => {
               <div className="flex gap-6">
                 <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">01</div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Dosage</h4>
+                  <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Dosage</h3>
                   <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">{getMetafieldValue('dosage') || "-"}</p>
                 </div>
               </div>
               <div className="flex gap-6">
                 <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">02</div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Timing & Usage</h4>
+                  <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Timing & Usage</h3>
                   <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">{getMetafieldValue('usage') || "-"}</p>
                 </div>
               </div>

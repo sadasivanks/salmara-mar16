@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from "react";
+import { Image } from "@/components/ui/Image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import clinicImg from "@/assets/clinics-page.png";
+import clinicImg from "@/assets/clinics-page.jpg";
 import { 
   Search, 
   MapPin, 
@@ -23,6 +24,8 @@ import {
   ArrowLeft,
   Filter
 } from "lucide-react";
+import SEO from "@/components/SEO";
+import { siteConfig } from "@/config/site.config";
 
 const ClinicsPage = () => {
   const navigate = useNavigate();
@@ -34,130 +37,13 @@ const ClinicsPage = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [selectedClinicId, setSelectedClinicId] = useState<number>(1);
 
-  const clinics = [
-    {
-      id: 1,
-      name: "Salmara Ayurveda - Bangalore",
-      address: "Bangalore - Rajajinagar / ಬೆಂಗಳೂರು - ರಾಜಾಜಿನಗರ",
-      googleMapsUrl: "https://maps.app.goo.gl/1Eo81kBhyswaBi1W6",
-      embedQuery: "Salmara+Ayurveda+Rajajinagar+Bangalore",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Bengaluru",
-      type: "In-Person",
-      specialties: ["Pain Relief", "Liver Detox"]
-    },
-    {
-      id: 2,
-      name: "Salmara Ayurveda - Puttur",
-      address: "Puttur - D.K / ಪುತ್ತೂರು - ದ.ಕ",
-      googleMapsUrl: "https://maps.app.goo.gl/3oEEbpH7h8w8Uyx2A",
-      embedQuery: "Salmara+Ayurveda+Puttur",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Puttur",
-      type: "In-Person",
-      specialties: ["Women's Wellness", "Digestion"]
-    },
-    {
-      id: 3,
-      name: "Salmara Ayurveda - Mysore",
-      address: "Mysore - Saraswatipuram / ಮೈಸೂರು - ಸರಸ್ವತೀಪುರಂ",
-      googleMapsUrl: "https://maps.app.goo.gl/XRr29xvW9GJF3QDH6",
-      embedQuery: "Salmara+Ayurveda+Saraswatipuram+Mysore",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Mysuru",
-      type: "In-Person",
-      specialties: ["Immunity", "Skin Care"]
-    },
-    {
-      id: 4,
-      name: "Salmara Ayurveda - Hubli",
-      address: "Hubli - Vidyanagar / ಹುಬ್ಬಳ್ಳಿ - ವಿದ್ಯಾನಗರ",
-      googleMapsUrl: "https://maps.app.goo.gl/v1Gz1a5R36etHVoY9",
-      embedQuery: "Salmara+Ayurveda+Vidyanagar+Hubli",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Hubli",
-      type: "In-Person",
-      specialties: ["Stress Management", "General Wellness"]
-    },
-    {
-      id: 5,
-      name: "Salmara Ayurveda - Mumbai",
-      address: "Ghatkhopar - Mumbai",
-      googleMapsUrl: "https://maps.app.goo.gl/UgViepQWXFDqHKWdA",
-      embedQuery: "Salmara+Ayurveda+Ghatkopar+Mumbai",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Mumbai",
-      type: "In-Person",
-      specialties: ["Pain Relief", "Digestive Health"]
-    },
-    {
-      id: 6,
-      name: "Salmara Ayurveda - Karnataka",
-      address: "Raichur / ರಾಯಚೂರು",
-      googleMapsUrl: "https://maps.app.goo.gl/mSogFZUFa53PZcFM6",
-      embedQuery: "Salmara+Ayurveda+Raichur",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Raichur",
-      type: "In-Person",
-      specialties: ["General Wellness", "Pain Relief"]
-    },
-    {
-      id: 7,
-      name: "Salmara Ayurveda - Kerala",
-      address: "Calicut - Kerala",
-      googleMapsUrl: "https://maps.app.goo.gl/rtBx6qRTHyHQPTr86",
-      embedQuery: "Salmara+Ayurveda+Calicut",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Kozhikode",
-      type: "In-Person",
-      specialties: ["Stress Management", "Immunity"]
-    },
-    {
-      id: 8,
-      name: "Salmara Ayurveda - Kerala",
-      address: "Kochi - Kerala",
-      googleMapsUrl: "https://maps.app.goo.gl/EaRZ3naE1KW4gz1x5",
-      embedQuery: "Salmara+Ayurveda+Kochi+Kerala",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Kochi",
-      type: "In-Person",
-      specialties: ["Pain Relief", "Skin Care"]
-    },
 
 
     //     {
     //   id: 9,
     //   name: "Salmara Ayurveda - Maharashtra",
     //   address: "mumbai - maharashtra / ಕೊಚ್ಚಿ - ಕೇರಳ",
-    //   googleMapsUrl: "https://share.google/3802DmHcGqYmQp9n7",
-    //   embedQuery: "Salmara+Ayurveda+mumbai+maharashtra",
-    //   hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-    //   availability: "Monday to Saturday",
-    //   city: "mumbai",
-    //   type: "In-Person",
-    //   specialties: ["Pain Relief", "Skin Care"]
-    // },
-    {
-      id: 10,
-      name: "Salmara Virtual Clinic",
-      address: "Online - Consultation",
-      googleMapsUrl: "https://wa.me/919353436373",
-      embedQuery: "India",
-      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
-      availability: "Monday to Saturday",
-      city: "Digital",
-      type: "Virtual",
-      specialties: ["Immunity", "Skin Care", "Stress Management"]
-    }
-  ];
+  const clinics = siteConfig.clinics;
 
   const filteredClinics = useMemo(() => {
     return clinics.filter(clinic => {
@@ -214,13 +100,34 @@ const ClinicsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="Ayurvedic Clinics Near Me | Certified Practitioners" 
+        description="Visit our authentic Ayurvedic clinics in Bangalore, Mysore, Hubli, and beyond. Personalized consultations with expert doctors for holistic health management."
+        jsonLd={clinics.filter(c => c.type !== 'Virtual').map(clinic => ({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          "name": clinic.name,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": clinic.streetAddress,
+            "addressLocality": clinic.city,
+            "addressRegion": clinic.state,
+            "postalCode": clinic.zip,
+            "addressCountry": clinic.country
+          },
+          "telephone": siteConfig.contact.phone,
+          "url": window.location.href,
+          "openingHours": "Mo-Sa 10:00-18:00",
+          "image": clinicImg
+        }))}
+      />
       <Header />
       
       <main className="relative overflow-x-hidden">
         {/* 1) Hero Section */}
         <section className="relative pt-12 pb-0 md:pt-16 md:pb-0 bg-[#F2EDE4] overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block">
-            <img 
+            <Image 
               // src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop" 
               src={clinicImg}
               alt="Ayurvedic Consultation" 

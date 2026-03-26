@@ -1,9 +1,10 @@
 import { motion, useInView } from "framer-motion";
+import { Image } from "@/components/ui/Image";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import neemImg from "@/assets/neem_dark.png";
-import meditationImg from "@/assets/meditation_dark.png";
-import skincareImg from "@/assets/skincare-wellness.png";
+import neemImg from "@/assets/neem_dark.jpg";
+import meditationImg from "@/assets/meditation_dark.jpg";
+import skincareImg from "@/assets/skincare-wellness.jpg";
 
 const tips = [
   {
@@ -52,7 +53,7 @@ const DailyTipsSection = () => {
               className="group bg-[#FDFBF7] rounded-xl overflow-hidden border border-[#F2EDE4] hover:shadow-xl transition-all duration-500"
             >
               <div className="aspect-[16/9] overflow-hidden">
-                <img 
+                <Image 
                   src={tip.image} 
                   alt={tip.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

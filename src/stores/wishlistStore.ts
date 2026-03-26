@@ -22,7 +22,7 @@ interface WishlistState {
   removeItem: (variantId: string) => Promise<void>;
   toggleItem: (product: ShopifyProduct, variantId: string) => Promise<void>;
   isInWishlist: (variantId: string) => boolean;
-  clearWishlist: () => void;
+  clearWishlist: () => Promise<void>;
 }
 
 export const useWishlistStore = create<WishlistState>()(
@@ -106,8 +106,16 @@ export const useWishlistStore = create<WishlistState>()(
         return get().items.some(item => item.variantId === variantId);
       },
       
-      clearWishlist: () => {
+      clearWishlist: async () => {
+        const session = getStoredSession();
         set({ items: [] });
+        if (session?.user?.id) {
+          try {
+            await updateCustomerWishlist(session.user.id, []);
+          } catch (error) {
+            console.error("Failed to clear remote wishlist:", error);
+          }
+        }
       },
     }),
     {

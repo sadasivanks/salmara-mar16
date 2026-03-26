@@ -306,7 +306,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Access</span>
@@ -325,7 +325,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                         onClick={() => setView("forgot-password")}
                         className="text-[10px] font-bold text-[#5A7A5C] hover:underline tracking-widest"
                       >
-                        Forgot Password
+                        Forgot your password?
                       </button>
                     </div>
                     <div className="relative">
@@ -360,7 +360,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Identity Verification</span>
@@ -407,7 +407,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Account Recovery</span>
@@ -443,7 +443,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Verification</span>
@@ -480,7 +480,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Reset</span>
@@ -544,7 +544,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">New Account Verification</span>
@@ -584,7 +584,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 transition={{ duration: 0.3 }} 
                 className="flex flex-col items-center"
               >
-                <img src="/salamara_icon.png" alt="Salmara" className="h-10 w-auto mb-4" />
+                <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Join Salmara</span>

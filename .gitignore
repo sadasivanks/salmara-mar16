@@ -35,3 +35,8 @@ test.json
 output.json
 vite.config.ts.timestamp*
 
+# Debug & build output files
+build_log.txt
+tsc_output.txt
+test_db.js
+

@@ -31,6 +31,8 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
 import AddressSelectionModal from "@/components/AddressSelectionModal";
 import { useNavigate } from "react-router-dom";
+import { Image } from "@/components/ui/Image";
+import SEO from "@/components/SEO";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -249,6 +251,10 @@ const ShopPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="Shop Ayurvedic Formulations | Natural Wellness Remedies" 
+        description="Browse our curated collection of Ayurvedic remedies. From joint mobility to liver care, find traditional formulations backed by clinical evidence."
+      />
       <Header />
       
       <main className="overflow-x-hidden">
@@ -334,6 +340,7 @@ const ShopPage = () => {
                   {/* Mobile Filter Toggle Button */}
                   <button 
                     onClick={() => setShowMobileFilters(!showMobileFilters)}
+                    aria-label={showMobileFilters ? "Hide filters" : "Show filters"}
                     className={`lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${
                       showMobileFilters || selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" 
                       ? 'bg-[#5A7A5C] border-[#5A7A5C] text-white' 
@@ -402,6 +409,8 @@ const ShopPage = () => {
                   <div className="flex items-center gap-2 px-3 py-1 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
                     <button 
                       onClick={() => setInStockOnly(!inStockOnly)}
+                      aria-label="Toggle in-stock only items"
+                      aria-pressed={inStockOnly}
                       className={`h-4 w-8 rounded-full transition-all relative ${inStockOnly ? 'bg-[#5A7A5C]' : 'bg-[#F2EDE4]'}`}
                     >
                       <div className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${inStockOnly ? 'left-[18px]' : 'left-0.5 shadow-sm'}`} />
@@ -510,7 +519,7 @@ const ShopPage = () => {
                       <Link to={`/product/${product.node.handle}`}>
                         <div className="relative aspect-square bg-gradient-to-br from-secondary to-sand-warm flex items-center justify-center overflow-hidden">
                           {image ? (
-                            <img src={image.url} alt={image.altText || product.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <Image src={image.url} alt={image.altText || product.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           ) : (
                             <Leaf className="h-16 w-16 text-primary/20" />
                           )}
@@ -524,6 +533,7 @@ const ShopPage = () => {
                           e.stopPropagation();
                           if (variant) await toggleItem(product, variant.id);
                         }}
+                        aria-label={variant && isInWishlist(variant.id) ? `Remove ${product.node.title} from wishlist` : `Add ${product.node.title} to wishlist`}
                         className={`absolute top-4 right-4 p-2.5 rounded-full backdrop-blur-md border transition-all z-20 shadow-sm ${
                           variant && isInWishlist(variant.id) 
                             ? 'bg-red-500 border-red-500 text-white' 
@@ -578,7 +588,7 @@ const ShopPage = () => {
                             </button>
                             <Link
                               to={`/product/${product.node.handle}`}
-                              title="Opens the full product page"
+                              aria-label={`View details for ${product.node.title}`}
                               className="px-4 py-2.5 rounded-lg border border-[#5A7A5C] text-[#5A7A5C] font-sans-clean text-xs font-semibold hover:bg-[#5A7A5C] hover:text-white transition-all flex items-center justify-center whitespace-nowrap"
                             >
                               Details
@@ -614,21 +624,21 @@ const ShopPage = () => {
                 <div className="w-12 h-12 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center mx-auto text-[#5A7A5C]">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">GMP Certified</h4>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">GMP Certified</h3>
                 <p className="text-[11px] text-[#1A2E35]/40 leading-relaxed font-sans-clean">Manufactured in clinical-grade environments under strict Ayurvedic manufacturing standards.</p>
               </div>
               <div className="text-center space-y-4 text-center">
                 <div className="w-12 h-12 bg-[#C5A059]/5 rounded-2xl flex items-center justify-center mx-auto text-[#C5A059]">
                   <CheckCircle2 className="h-6 w-6" />
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">Batch Integrity</h4>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">Batch Integrity</h3>
                 <p className="text-[11px] text-[#1A2E35]/40 leading-relaxed font-sans-clean">Every batch undergoes consistency checks for purity, potency, and standardized extraction.</p>
               </div>
               <div className="text-center space-y-4">
                 <div className="w-12 h-12 bg-blue-500/5 rounded-2xl flex items-center justify-center mx-auto text-blue-500">
                   <Package className="h-6 w-6" />
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">Full Transparency</h4>
+                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">Full Transparency</h3>
                 <p className="text-[11px] text-[#1A2E35]/40 leading-relaxed font-sans-clean">Clearly labeled botanical names and concentration ratios for zero-guesswork wellness.</p>
               </div>
             </div>

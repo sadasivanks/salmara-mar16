@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Image } from "@/components/ui/Image";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -55,7 +56,7 @@ const AboutSection = () => {
             className="relative"
           >
             <div className="rounded-2xl overflow-hidden shadow-2xl">
-              <img 
+              <Image 
                 src={aboutLab} 
                 alt="Salmara Laboratory" 
                 className="w-full aspect-[4/3] object-cover"
@@ -171,8 +172,16 @@ const AboutSection = () => {
             {timeline.map((_, i) => (
               <div 
                 key={i}
-                className={`h-1.5 transition-all duration-300 rounded-full ${activeSlide === i ? 'w-6 bg-[#5A7A5C]' : 'w-1.5 bg-[#5A7A5C]/20'}`}
-              />
+                className="h-1.5 w-6 rounded-full relative overflow-hidden bg-[#5A7A5C]/10"
+              >
+                <div 
+                  className="absolute inset-0 bg-[#5A7A5C] transition-transform duration-500 ease-out origin-left"
+                  style={{ 
+                    transform: activeSlide === i ? 'scaleX(1)' : 'scaleX(0.25)',
+                    opacity: activeSlide === i ? 1 : 0.2
+                  }}
+                />
+              </div>
             ))}
           </div>
         </motion.div>

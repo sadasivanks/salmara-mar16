@@ -16,9 +16,12 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
+import { siteConfig } from "@/config/site.config";
 
 const ContactPage = () => {
-  const [formState, setFormState] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState("");
   const [activeRoute, setActiveRoute] = useState<'support' | 'clinic' | 'affiliate'>('support');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -59,6 +62,10 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="Get in Touch | Ayurvedic Consultation & Support" 
+        description="Connecting with Salmara is the first step in your wellness journey. Contact us for product inquiries, clinic appointments, or business partnerships."
+      />
       <Header />
       
       <main>
@@ -104,7 +111,7 @@ const ContactPage = () => {
               </div>
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#1A2E35]/10 rounded-t-[2.5rem]" />
               
-              <h3 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">General Enquiries</h3>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">General Enquiries</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
                 For questions about products, orders, or website support.
               </p>
@@ -112,11 +119,10 @@ const ContactPage = () => {
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
                 <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Primary Email</p>
                 <a 
-                  href="mailto:support@salmaraherbals.com" 
+                  href={`mailto:${siteConfig.contact.email}`} 
                   className="bg-[#5A7A5C] text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#5A7A5C]/90 transition-all shadow-lg shadow-[#5A7A5C]/10 break-all sm:break-normal"
                 >
-                  support@salmaraherbals.com 
-                  {/* <Mail className="h-3 w-3 shrink-0" /> */}
+                  {siteConfig.contact.email}
                 </a>
               </div>
             </motion.div>
@@ -133,7 +139,7 @@ const ContactPage = () => {
               </div>
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#1A2E35]/10 rounded-t-[2.5rem]" />
 
-              <h3 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Clinic & Consultations</h3>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Clinic & Consultations</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
                 For appointments, doctor availability, or treatment info.
               </p>
@@ -141,7 +147,7 @@ const ContactPage = () => {
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
                 <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Secure Booking</p>
                 <a 
-                  href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+                  href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-[#1A2E35] text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/10"
@@ -163,7 +169,7 @@ const ContactPage = () => {
               </div>
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#1A2E35]/10 rounded-t-[2.5rem]" />
 
-              <h3 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Affiliate & Partnerships</h3>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Affiliate & Partnerships</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
                 For collaborations, commissions, or marketing tie-ups.
               </p>
@@ -201,8 +207,8 @@ const ContactPage = () => {
                       <Mail className="h-5 w-5 text-[#5A7A5C]" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Direct Email</p>
-                      <p className="text-[#1A2E35] font-sans-clean font-medium">wellness@salmara.com</p>
+                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h3>
+                      <p className="text-[#1A2E35] font-sans-clean font-medium">{siteConfig.contact.email}</p>
                     </div>
                   </div>
                   
@@ -212,7 +218,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Clinic Concierge</p>
-                      <p className="text-[#1A2E35] font-sans-clean font-medium">+91 93 5343 6373</p>
+                      <p className="text-[#1A2E35] font-sans-clean font-medium">{siteConfig.contact.phone}</p>
                     </div>
                   </div>
                   
@@ -232,10 +238,10 @@ const ContactPage = () => {
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                       <Send className="h-20 w-20 rotate-12" />
                     </div>
-                    <h4 className="font-display font-medium text-[#1A2E35] mb-2">Need a faster response?</h4>
+                    <h3 className="font-display font-medium text-[#1A2E35] mb-2">Need a faster response?</h3>
                     <p className="text-xs text-[#1A2E35]/50 leading-relaxed mb-6 font-sans-clean">Chat with our experts on WhatsApp for immediate product guidance.</p>
                     <a 
-                      href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
+                      href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-bold text-[#5A7A5C] uppercase tracking-[0.2em] flex items-center gap-2 hover:translate-x-1 transition-transform"
@@ -259,7 +265,7 @@ const ContactPage = () => {
                       <div className="h-20 w-20 bg-[#5A7A5C] rounded-full flex items-center justify-center text-white mx-auto mb-8 shadow-xl shadow-[#5A7A5C]/20">
                         <CheckCircle2 className="h-10 w-10" />
                       </div>
-                      <h3 className="text-2xl font-display font-medium text-[#1A2E35] mb-4">Message Transmitted</h3>
+                      <h2 className="text-2xl font-display font-medium text-[#1A2E35] mb-4">Message Transmitted</h2>
                       <p className="text-sm text-[#1A2E35]/60 font-sans-clean max-w-xs mx-auto mb-10">We've received your inquiry. A Salmara representative will be in touch shortly.</p>
                       <button 
                         onClick={() => setFormState('idle')}
@@ -280,36 +286,44 @@ const ContactPage = () => {
                       <div className="space-y-6">
                         <div className="grid sm:grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Full Name</label>
+                            <label htmlFor="fullName" className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Full Name</label>
                             <input 
+                              id="fullName"
                               type="text" 
                               required
+                              aria-required="true"
                               placeholder="e.g. Advait Sharma"
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Email Address</label>
+                            <label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Email Address</label>
                             <input 
+                              id="email"
                               type="email" 
                               required
+                              aria-required="true"
                               placeholder="name@example.com"
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Phone Number</label>
+                            <label htmlFor="phone" className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Phone Number</label>
                             <input 
+                              id="phone"
                               type="tel" 
                               required
+                              aria-required="true"
                               placeholder="e.g. +91 99999 99999"
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
                             />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Category of Query</label>
+                            <label htmlFor="category" className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">Category of Query</label>
                             <select 
+                              id="category"
                               required
+                              aria-required="true"
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors appearance-none cursor-pointer"
                             >
                               <option value="" disabled selected>Select Category</option>
@@ -323,9 +337,11 @@ const ContactPage = () => {
                         </div>
                         
                         <div className="space-y-2">
-                          <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">How can we help?</label>
+                          <label htmlFor="message" className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 ml-1">How can we help?</label>
                           <textarea 
+                            id="message"
                             required
+                            aria-required="true"
                             rows={5}
                             placeholder="Tell us about your inquiry..."
                             className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors resize-none"

@@ -210,6 +210,7 @@ const FeaturedProducts = () => {
                             ? 'bg-red-500 border-red-500 text-white' 
                             : 'bg-white/80 border-[#F2EDE4] text-[#1A2E35] hover:bg-white'
                         }`}
+                         aria-label={variant && isInWishlist(variant.id) ? 'Remove from wishlist' : 'Add to wishlist'}
                       >
                         <Heart className={`h-3.5 w-3.5 ${variant && isInWishlist(variant.id) ? 'fill-white' : ''}`} />
                       </button>

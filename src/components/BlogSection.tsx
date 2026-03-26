@@ -1,9 +1,10 @@
 import { motion, useInView } from "framer-motion";
+import { Image } from "@/components/ui/Image";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import tulsiImg from "@/assets/tulsi_dark.png";
-import ashwagandhaImg from "@/assets/ashwagandha_dark.png";
-import triphalaImg from "@/assets/triphala_dark.png";
+import tulsiImg from "@/assets/tulsi_dark.jpg";
+import ashwagandhaImg from "@/assets/ashwagandha_dark.jpg";
+import triphalaImg from "@/assets/triphala_dark.jpg";
 
 const posts = [
   {
@@ -52,7 +53,7 @@ const BlogSection = () => {
               className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <div className="aspect-[16/9] overflow-hidden">
-                <img 
+                <Image 
                   src={post.image} 
                   alt={post.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

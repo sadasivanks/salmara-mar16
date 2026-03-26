@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, PlayCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronDown, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import heroHerbs from "@/assets/hero-ayurveda.jpg";
 import heroConsultation from "@/assets/consultation.jpg";
-import heroProduct from "@/assets/skincare-wellness.png";
+import heroProduct from "@/assets/skincare-wellness.jpg";
 
 const badges = [
   "GMP\nCERTIFIED",
@@ -61,6 +61,11 @@ const HeroSection = () => {
               src={slides[currentSlide].url} 
               alt="Salmara Hero" 
               className="w-full h-full object-cover brightness-[0.7]"
+              width="1920"
+              height="1080"
+              loading={currentSlide === 0 ? "eager" : "lazy"}
+              {...({ fetchpriority: currentSlide === 0 ? "high" : "auto" } as any)}
+              decoding="async"
             />
             {/* Global Gradient Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/90 via-[#1A2E35]/40 to-transparent" />

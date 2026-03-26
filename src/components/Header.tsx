@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Search, User, Menu, X, Phone, Leaf, Package, UserCircle, Heart } from "lucide-react";
-import { CartDrawer } from "@/components/CartDrawer";
-import { AuthModal } from "@/components/AuthModal";
+const CartDrawer = lazy(() => import("@/components/CartDrawer").then(m => ({ default: m.CartDrawer })));
+const AuthModal = lazy(() => import("@/components/AuthModal").then(m => ({ default: m.AuthModal })));
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -9,15 +9,17 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useNavigate } from "react-router-dom";
 import { fetchProductsViaAdmin, getStoredSession, logoutViaAdmin, type ShopifyProduct } from "@/lib/shopifyAdmin";
+import { Image } from "@/components/ui/Image";
+import { siteConfig } from "@/config/site.config";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-const logo = "/salamara_icon.png";
+const logo = "/salamara_icon.jpg";
 
 const navItems = [
   { label: "About Us", href: "/about" },
   { label: "Shop Now", href: "/shop" },
   { label: "Clinics", href: "/clinics" },
-//   { label: "Blog", href: "/#blog" },
-  { label: "Book Appointment", href: "https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.", external: true },
+  { label: "Book Appointment", href: `https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.`, external: true },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -164,8 +166,8 @@ const Header = () => {
             }}
             className="flex items-center gap-4 shrink-0 group"
           >
-            <img src={logo} alt="Salmara Logo" className="h-10 md:h-14 w-auto drop-shadow-sm transition-transform group-hover:scale-105" />
-            <div className="hidden lg:flex flex-col border-l border-[#F2EDE4] pl-4">
+            <img src={siteConfig.logo} alt={`${siteConfig.name} Logo`} className="h-14 md:h-20 w-auto drop-shadow-sm" />
+            <div className="hidden lg:flex flex-col border-l-2 border-[#F2EDE4] pl-6 py-1">
               <span className="text-[10px] md:text-sm font-display font-medium text-[#1A2E35] leading-tight tracking-wide">
                 Rediscover Wellness Through
               </span>
@@ -241,7 +243,7 @@ const Header = () => {
                   if (searchOpen) setSearchQuery("");
                 }}
                 className={`p-2 transition-colors duration-300 ${searchOpen ? 'text-[#5A7A5C]' : 'text-foreground/70 hover:text-primary'}`}
-                aria-label="Search"
+                aria-label={searchOpen ? "Close search" : "Open search"}
               >
                 {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
               </button>
@@ -267,7 +269,7 @@ const Header = () => {
                         >
                           <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#F2EDE4]/50 shrink-0">
                             {product.node.images.edges[0]?.node?.url ? (
-                              <img src={product.node.images.edges[0].node.url} alt="" className="w-full h-full object-cover" />
+                              <Image src={product.node.images.edges[0].node.url} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <Leaf className="w-5 h-5 m-2.5 text-[#5A7A5C]/30" />
                             )}
@@ -301,7 +303,7 @@ const Header = () => {
             <Link 
               to="/wishlist" 
               className={`p-2 text-foreground/70 hover:text-red-500 transition-colors relative group ${searchOpen ? 'hidden sm:block' : ''}`}
-              aria-label="Wishlist"
+              aria-label={`Wishlist ${wishlistCount > 0 ? `(${wishlistCount} items)` : ''}`}
             >
               <Heart className="h-5 w-5 group-hover:scale-110 transition-transform" />
               {user && wishlistCount > 0 && (
@@ -311,7 +313,9 @@ const Header = () => {
               )}
             </Link>
 
-            <CartDrawer />
+            <Suspense fallback={<div className="h-9 w-9" />}>
+              <CartDrawer />
+            </Suspense>
             
             {user ? (
               <div className={`hidden sm:flex items-center gap-4 ${searchOpen ? 'md:flex' : ''}`}>
@@ -345,13 +349,121 @@ const Header = () => {
               </button>
             )}
 
-            <button
-              onClick={() => setMobileOpen(true)}
-              className={`p-2 text-foreground/70 hover:text-primary transition-colors xl:hidden ${searchOpen ? 'hidden' : ''}`}
-              aria-label="Menu"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <button
+                  className={`p-2 text-foreground/70 hover:text-primary transition-colors xl:hidden ${searchOpen ? 'hidden' : ''}`}
+                  aria-label="Open main menu"
+                >
+                  <Menu className="h-6 w-6" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80 p-0 bg-white border-none shadow-2xl">
+                <SheetHeader className="p-4 border-b border-border">
+                  <SheetTitle className="font-display text-lg font-semibold text-foreground text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col h-full overflow-y-auto">
+                  <nav className="p-4 space-y-1">
+                    {navItems.map((item) => (
+                      item.external ? (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
+                        >
+                          {item.label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.label}
+                          to={item.href}
+                          onClick={(e) => {
+                            const isHomePage = window.location.pathname === "/";
+                            const hrefHasHash = item.href.includes("#");
+                            const targetIsHomeHash = item.href.startsWith("/#");
+
+                            if (hrefHasHash && (isHomePage || !targetIsHomeHash)) {
+                              const hash = item.href.split("#")[1];
+                              scrollToSection(e as any, `#${hash}`);
+                            } else {
+                              setMobileOpen(false);
+                            }
+                          }}
+                          className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
+                        >
+                          {item.label}
+                        </Link>
+                      )
+                    ))}
+                  </nav>
+                  
+                  <div className="p-4 border-t border-border">
+                    <p className="text-xs font-sans-clean font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                      Shop by Concern
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {shopByConcern.map((concern) => (
+                        <Link
+                          key={concern}
+                          to="/shop"
+                          onClick={() => setMobileOpen(false)}
+                          className="px-3 py-1.5 text-xs font-sans-clean bg-secondary text-foreground rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                        >
+                          {concern}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-4 border-t border-border space-y-2 mb-20">
+                    {user ? (
+                      <div className="px-3 py-3 space-y-4">
+                        <Link 
+                          to="/dashboard"
+                          onClick={() => setMobileOpen(false)}
+                          className="flex items-center gap-3 p-3 bg-[#FDFBF7] rounded-xl border border-[#F2EDE4] hover:bg-[#5A7A5C]/5 transition-colors"
+                        >
+                          <UserCircle className="h-5 w-5 text-[#5A7A5C]" />
+                          <div className="flex flex-col">
+                            <span className="text-sm font-sans-clean font-bold text-[#1A2E35]">{user.name || 'User'}</span>
+                            <span className="text-[10px] text-[#1A2E35]/40">{user.email}</span>
+                          </div>
+                        </Link>
+                        <button 
+                          onClick={() => {
+                            handleLogout();
+                            setMobileOpen(false);
+                          }}
+                          className="w-full text-left px-3 pt-2 text-xs font-bold text-red-600 uppercase tracking-widest"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          setMobileOpen(false);
+                          setAuthView("login");
+                          setAuthOpen(true);
+                        }}
+                        className="flex items-center w-full gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
+                      >
+                        <User className="h-4 w-4" /> Login
+                      </button>
+                    )}
+                    <Link 
+                      to="/contact" 
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
+                    >
+                      <Phone className="h-4 w-4" /> Contact Us
+                    </Link>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
@@ -359,139 +471,14 @@ const Header = () => {
       </header>
 
       {/* Auth Modal */}
-      <AuthModal 
-        isOpen={authOpen}
-        onClose={() => setAuthOpen(false)}
-        initialView={authView}
-      />
+      <Suspense fallback={null}>
+        <AuthModal 
+          isOpen={authOpen}
+          onClose={() => setAuthOpen(false)}
+          initialView={authView}
+        />
+      </Suspense>
 
-      {/* Mobile Slide-Out */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
-              onClick={() => setMobileOpen(false)}
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-80 bg-white z-50 shadow-2xl overflow-y-auto"
-            >
-              <div className="flex items-center justify-between p-4 border-b border-border">
-                <span className="font-display text-lg font-semibold text-foreground">Menu</span>
-                <button onClick={() => setMobileOpen(false)} className="p-2 text-foreground/70">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <nav className="p-4 space-y-1">
-                {navItems.map((item) => (
-                  item.external ? (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      key={item.label}
-                      to={item.href}
-                      onClick={(e) => {
-                        const isHomePage = window.location.pathname === "/";
-                        const hrefHasHash = item.href.includes("#");
-                        const targetIsHomeHash = item.href.startsWith("/#");
-
-                        if (hrefHasHash && (isHomePage || !targetIsHomeHash)) {
-                          const hash = item.href.split("#")[1];
-                          scrollToSection(e as any, `#${hash}`);
-                        } else {
-                          setMobileOpen(false);
-                        }
-                      }}
-                      className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  )
-                ))}
-              </nav>
-              <div className="p-4 border-t border-border">
-                <p className="text-xs font-sans-clean font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Shop by Concern
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {shopByConcern.map((concern) => (
-                    <Link
-                      key={concern}
-                      to="/shop"
-                      onClick={() => setMobileOpen(false)}
-                      className="px-3 py-1.5 text-xs font-sans-clean bg-secondary text-foreground rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
-                    >
-                      {concern}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              <div className="p-4 border-t border-border space-y-2">
-                {user ? (
-                  <div className="px-3 py-3 space-y-4">
-                    <Link 
-                      to="/dashboard"
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 p-3 bg-[#FDFBF7] rounded-xl border border-[#F2EDE4] hover:bg-[#5A7A5C]/5 transition-colors"
-                    >
-                      <UserCircle className="h-5 w-5 text-[#5A7A5C]" />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-sans-clean font-bold text-[#1A2E35]">{user.name || 'User'}</span>
-                        <span className="text-[10px] text-[#1A2E35]/40">{user.email}</span>
-                      </div>
-                    </Link>
-                    <button 
-                      onClick={() => {
-                        handleLogout();
-                        setMobileOpen(false);
-                      }}
-                      className="w-full text-left px-3 pt-2 text-xs font-bold text-red-600 uppercase tracking-widest"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <button 
-                    onClick={() => {
-                      setMobileOpen(false);
-                      setAuthView("login");
-                      setAuthOpen(true);
-                    }}
-                    className="flex items-center w-full gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
-                  >
-                    <User className="h-4 w-4" /> Login
-                  </button>
-                )}
-                {/* <a href="#" className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary">
-                  <Package className="h-4 w-4" /> Track Order
-                </a> */}
-                <Link 
-                  to="/" 
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
-                >
-                  <Phone className="h-4 w-4" /> Contact Us
-                </Link>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </>
   );
 };

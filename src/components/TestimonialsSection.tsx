@@ -2,6 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { Star, BadgeCheck, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Image } from "@/components/ui/Image";
 
 interface Testimonial {
   id: string | number;
@@ -105,7 +106,7 @@ const TestimonialsSection = () => {
                     <div className="flex items-end justify-between mt-auto">
                       <div className="flex items-center gap-3">
                         {t.image_url ? (
-                          <img src={t.image_url} alt="" className="h-10 w-10 rounded-full object-cover border border-[#F2EDE4]" />
+                          <Image src={t.image_url} alt="" className="h-10 w-10 rounded-full object-cover border border-[#F2EDE4]" />
                         ) : (
                           <div className="h-10 w-10 rounded-full bg-[#5A7A5C] flex items-center justify-center text-white text-[10px] font-bold">
                             {t.name[0]}

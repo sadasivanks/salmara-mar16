@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Image } from "@/components/ui/Image";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
@@ -20,6 +21,7 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 const LoginPage = () => {
   const [view, setView] = useState<"login" | "register" | "forgot-password" | "verify-reset-otp" | "set-new-password" | "verify-registration-otp" | "otp">("login");
@@ -360,6 +362,10 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col">
+      <SEO 
+        title="Secure Access | Log In to Your Salmara Account" 
+        description="Access your personal wellness dashboard, track orders, and manage your Ayurvedic health journey securely with Salmara."
+      />
       <Header />
       <main className="flex-1 flex items-center justify-center p-4 py-12 md:py-20 overflow-x-hidden">
         <div className="w-full max-w-6xl flex flex-col md:flex-row bg-white rounded-[40px] shadow-2xl overflow-hidden border border-[#F2EDE4]">
@@ -377,7 +383,7 @@ const LoginPage = () => {
                 <span className="text-sm font-sans-clean font-medium">Back to Shop</span>
               </button>
               
-              <img src="/salamara_icon.png" alt="Salmara" className="h-16 w-auto brightness-0 invert mb-8" />
+              {/* <img src="/salamara_icon.jpg" alt="Salmara" className="h-20 w-auto brightness-0 invert mb-8" /> */}
               <h1 className="text-4xl lg:text-5xl font-display font-medium text-white leading-tight mb-6">
                 Your Journey to <br />
                 <span className="italic">Authentic Wellness.</span>
@@ -402,7 +408,7 @@ const LoginPage = () => {
           {/* Right Side: Form */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white">
             <div className="md:hidden flex justify-center mb-8">
-               <img src="/salamara_icon.png" alt="Salmara" className="h-12 w-auto" />
+               <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto" />
             </div>
 
             <AnimatePresence mode="wait">
@@ -448,7 +454,7 @@ const LoginPage = () => {
                           onClick={() => setView("forgot-password")}
                           className="text-[10px] font-bold text-[#5A7A5C] hover:underline tracking-widest"
                         >
-                          Forgot Password
+                          Forgot your password?
                         </button>
                       </div>
                       <div className="relative">

@@ -41,6 +41,7 @@ const FloatingButtons = () => {
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
             onClick={scrollToTop}
             title="Scroll to Top"
+            aria-label="Back to top"
             className="bg-[#1A2E35] text-white p-3 rounded-full shadow-2xl transition-all duration-300 hover:bg-[#5A7A5C] hover:scale-110 group relative flex items-center justify-center border border-white/10"
           >
             <ChevronUp className="h-5 w-5" />
@@ -52,13 +53,10 @@ const FloatingButtons = () => {
       </AnimatePresence>
 
       {buttons.map((btn) => {
-        const isPhone = (btn as any).isPhone;
-        
         return (
           <a
             key={btn.label}
-            href={isPhone ? undefined : btn.href}
-            style={{ cursor: isPhone ? 'default' : 'pointer' }}
+            href={btn.href}
             target={btn.href?.startsWith("http") ? "_blank" : undefined}
             rel="noopener noreferrer"
             className={`${btn.color} text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 group relative flex items-center justify-center`}

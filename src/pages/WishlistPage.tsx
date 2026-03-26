@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
+import { Image } from "@/components/ui/Image";
+import SEO from "@/components/SEO";
 
 import { getStoredSession } from "@/lib/shopifyAdmin";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +50,10 @@ const WishlistPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="My Wishlist | Favourite Ayurvedic Remedies" 
+        description="Keep track of your preferred Ayurvedic formulations. Save your favorites and start your journey towards natural wellness."
+      />
       <Header />
       
       <main className="container mx-auto px-4 py-24 md:py-32">
@@ -68,11 +74,7 @@ const WishlistPage = () => {
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                onClick={() => {
-                  if (confirm("Are you sure you want to clear your wishlist?")) {
-                    clearWishlist();
-                  }
-                }}
+                onClick={() => clearWishlist()}
                 className="text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors border-b border-transparent hover:border-red-500 pb-1"
               >
                 Clear All

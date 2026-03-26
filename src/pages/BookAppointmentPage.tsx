@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Image } from "@/components/ui/Image";
+import SEO from "@/components/SEO";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
@@ -55,6 +57,10 @@ const BookAppointmentPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="Book an Appointment | Personalised Ayurvedic Consultation" 
+        description="Experience personalized Ayurvedic care from our expert practitioners. Take the first step towards balanced, long-term health with Salmara Ayurveda."
+      />
       <Header />
       
       <main className="pt-32 pb-24 bg-[#F8F9FA]">
@@ -247,7 +253,7 @@ const BookAppointmentPage = () => {
                       <div className="absolute top-0 left-0 w-2 h-full bg-[#5A7A5C]/10 group-hover:bg-[#5A7A5C] transition-all" />
                       
                       <div className="h-32 w-32 md:h-40 md:w-40 rounded-2xl overflow-hidden shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-500">
-                        <img src={dr.image} alt={dr.name} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" />
+                        <Image src={dr.image} alt={dr.name} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" />
                       </div>
                       <div className="flex-1 space-y-4">
                         <div className="flex items-center justify-between">
@@ -297,7 +303,7 @@ const BookAppointmentPage = () => {
                         <div className="h-10 w-10 bg-[#5A7A5C]/10 rounded-xl flex items-center justify-center text-[#5A7A5C]">
                           <User className="h-5 w-5" />
                         </div>
-                        <h3 className="text-2xl font-display font-medium text-[#1A2E35]">Patient Details</h3>
+                        <h2 className="text-2xl font-display font-medium text-[#1A2E35]">Patient Details</h2>
                       </div>
                       
                       <div className="grid md:grid-cols-2 gap-10">
@@ -348,7 +354,7 @@ const BookAppointmentPage = () => {
                     <div className="bg-[#1A2E35] text-white p-10 rounded-[2.5rem] shadow-2xl shadow-[#1A2E35]/20 space-y-10 border border-white/5 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-bl-[4rem] -mr-8 -mt-8" />
                       
-                      <h3 className="text-xl font-display font-medium border-b border-white/10 pb-6">Summary</h3>
+                      <h2 className="text-xl font-display font-medium border-b border-white/10 pb-6">Summary</h2>
                       <div className="space-y-8">
                         <div className="flex gap-4">
                           <div className="h-11 w-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0 border border-white/10">
@@ -370,7 +376,7 @@ const BookAppointmentPage = () => {
                         </div>
                         <div className="flex gap-4">
                           <div className="h-11 w-11 bg-white/10 rounded-xl flex items-center justify-center shrink-0 border border-white/10 overflow-hidden shadow-inner">
-                            <img src={selection.doctor?.image} className="w-full h-full object-cover grayscale-[30%]" />
+                            <Image src={selection.doctor?.image} alt={selection.doctor?.name} className="w-full h-full object-cover grayscale-[30%]" />
                           </div>
                           <div>
                             <p className="text-[9px] font-bold opacity-30 uppercase tracking-[0.2em] mb-1">Selected Expert</p>

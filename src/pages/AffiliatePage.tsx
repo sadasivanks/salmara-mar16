@@ -4,10 +4,15 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import SEO from "@/components/SEO";
 
 const AffiliatePage = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
+      <SEO 
+        title="Join Our Affiliate Program | Promote Wellness with Salmara" 
+        description="Partner with a leading Ayurvedic brand. Join the Salmara Wellness Network and earn commissions while promoting authentic, certified herbal remedies."
+      />
       <Header />
       
       <main className="min-h-[40vh] md:min-h-[60vh] flex items-center justify-center relative overflow-hidden pt-4 md:pt-16">
