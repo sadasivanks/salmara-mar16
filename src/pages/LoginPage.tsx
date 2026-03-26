@@ -145,7 +145,7 @@ const LoginPage = () => {
         lastName,
         email,
         password,
-        phone: phone || undefined,
+        phone,
       });
 
       if (!shopifyResult.success) {
@@ -363,9 +363,16 @@ const LoginPage = () => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 flex items-center gap-2">
-                        <Phone className="h-3 w-3" /> Phone (Optional)
+                        <Phone className="h-3 w-3" /> Phone
                       </label>
-                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
+                      <input 
+                        type="tel" 
+                        required 
+                        value={phone} 
+                        onChange={(e) => setPhone(e.target.value)} 
+                        className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                        placeholder="+91 00000 00000"
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1 flex items-center gap-2">
