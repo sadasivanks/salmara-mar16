@@ -369,9 +369,11 @@ const ClinicsPage = () => {
 
           {/* Clinic Cards & Map Grid */}
           <section className="py-16 container px-4">
+            <div className="mb-10">
+              <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Available Clinics</h2>
+            </div>
             <div className="grid lg:grid-cols-2 gap-16">
-              <div className="space-y-8">
-                <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Available Clinics</h2>
+              <div className="h-full">
                 <div className="space-y-6 h-[600px] overflow-y-auto pr-4 custom-scrollbar scroll-smooth">
                   {filteredClinics.length > 0 ? (
                     filteredClinics.map((clinic) => (
@@ -380,11 +382,10 @@ const ClinicsPage = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         onClick={() => clinic.type !== 'Virtual' && setSelectedClinicId(clinic.id)}
-                        whileHover={{ scale: 1.01 }}
-                        className={`p-8 rounded-2xl shadow-sm border transition-all cursor-pointer relative overflow-hidden ${
+                        className={`p-8 rounded-2xl shadow-sm border transition-all relative overflow-hidden ${
                           selectedClinicId === clinic.id 
                             ? 'bg-white border-[#5A7A5C] ring-1 ring-[#5A7A5C]/20 ring-offset-0' 
-                            : 'bg-white border-[#F2EDE4] group hover:border-[#5A7A5C]/40'
+                            : 'bg-white border-[#F2EDE4] group'
                         }`}
                       >
                         {selectedClinicId === clinic.id && clinic.type !== 'Virtual' && (
