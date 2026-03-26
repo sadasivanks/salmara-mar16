@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, Eye, EyeOff } from "lucide-react";
 import { saveSession } from "@/lib/shopifyAdmin";
 import { createCustomerViaAdmin, loginViaProxy, verifyOtpViaProxy, updateCustomerCartId, requestPasswordReset, resetPassword } from "@/lib/shopifyAdmin";
 import { syncShopifyCustomerToDb } from "@/lib/dbSync";
@@ -28,6 +28,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [phoneHint, setPhoneHint] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   if (!isOpen) return null;
 
@@ -320,12 +323,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       <button 
                         type="button" 
                         onClick={() => setView("forgot-password")}
-                        className="text-[10px] font-bold text-[#5A7A5C] hover:underline uppercase tracking-widest"
+                        className="text-[10px] font-bold text-[#5A7A5C] hover:underline tracking-widest"
                       >
-                        Forgot?
+                        Forgot Password
                       </button>
                     </div>
-                    <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
+                    <div className="relative">
+                      <input 
+                        type={showPassword ? "text" : "password"} 
+                        required 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 pr-12 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#1A2E35]/40 hover:text-[#5A7A5C] transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
                   <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Authenticating..." : "Login"}
@@ -472,27 +490,45 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                   Create a strong new password for your account.
                 </p>
                 <form onSubmit={handleConfirmReset} className="w-full space-y-4">
-                  <div className="space-y-2">
+                   <div className="space-y-2 w-full">
                     <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">New Password</label>
-                    <input 
-                      type="password" 
-                      required 
-                      value={newPassword} 
-                      onChange={(e) => setNewPassword(e.target.value)} 
-                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <input 
+                        type={showNewPassword ? "text" : "password"} 
+                        required 
+                        value={newPassword} 
+                        onChange={(e) => setNewPassword(e.target.value)} 
+                        className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 pr-12 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#1A2E35]/40 hover:text-[#5A7A5C] transition-colors"
+                      >
+                        {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 w-full">
                     <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Confirm New Password</label>
-                    <input 
-                      type="password" 
-                      required 
-                      value={confirmNewPassword} 
-                      onChange={(e) => setConfirmNewPassword(e.target.value)} 
-                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <input 
+                        type={showConfirmPassword ? "text" : "password"} 
+                        required 
+                        value={confirmNewPassword} 
+                        onChange={(e) => setConfirmNewPassword(e.target.value)} 
+                        className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 pr-12 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                        placeholder="••••••••"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#1A2E35]/40 hover:text-[#5A7A5C] transition-colors"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
                   <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Updating..." : "Update Password"}
@@ -535,9 +571,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                   </button>
                 </form>
                 
-                <div className="mt-8 flex flex-col items-center gap-4">
+                {/* <div className="mt-8 flex flex-col items-center gap-4">
                   <button onClick={() => setView("register")} className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline">Edit Details</button>
-                </div>
+                </div> */}
               </motion.div>
             ) : (
               <motion.div 
@@ -580,9 +616,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
                     />
                   </div>
-                  <div className="space-y-2">
+                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/60 ml-1">Password</label>
-                    <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" />
+                    <div className="relative">
+                      <input 
+                        type={showPassword ? "text" : "password"} 
+                        required 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        placeholder="••••••••" 
+                        className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 pr-12 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md" 
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#1A2E35]/40 hover:text-[#5A7A5C] transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
                   <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />} {loading ? "Creating Account..." : "Register"}
