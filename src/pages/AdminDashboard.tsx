@@ -167,7 +167,7 @@ const AdminDashboard = () => {
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#C5A059]/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-[#C5A059]/20 transition-all duration-700" />
           <div className="space-y-4 relative z-10">
              <p className="text-[#C5A059] text-[10px] font-bold uppercase tracking-[0.3em]">Next Steps</p>
-             <h4 className="text-2xl font-display font-medium">Ready for your next campaign?</h4>
+             <h4 className="text-2xl font-display font-medium text-white">Ready for your next campaign?</h4>
              <p className="text-[#F2EDE4]/40 text-sm italic leading-relaxed">
                 Export your current subscriber list to reach out with personalized Ayurvedic wisdom.
              </p>

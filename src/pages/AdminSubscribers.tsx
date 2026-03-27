@@ -248,12 +248,10 @@ const AdminSubscribers = () => {
           </table>
         </div>
         
-        <div className="p-8 bg-[#FDFBF7]/30 border-t border-[#F2EDE4] flex justify-between items-center">
-           <p className="text-[10px] font-bold text-[#1A2E35]/20 uppercase tracking-widest">Showing {filteredSubscribers.length} of {subscribers.length} entries</p>
-           <div className="flex gap-2">
-             <button disabled className="px-4 py-2 border border-[#F2EDE4] rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/20">Prev</button>
-             <button disabled className="px-4 py-2 border border-[#F2EDE4] rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/20">Next</button>
-           </div>
+        <div className="p-8 bg-[#FDFBF7]/30 border-t border-[#F2EDE4]">
+           <p className="text-[10px] font-bold text-[#1A2E35]/20 uppercase tracking-widest text-center italic">
+             End of list — Showing all {filteredSubscribers.length} subscribers
+           </p>
         </div>
       </div>
     </div>

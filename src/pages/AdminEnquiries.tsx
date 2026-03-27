@@ -22,6 +22,7 @@ interface Enquiry {
   phone_number: string;
   category: string;
   user_text: string;
+  status?: 'active' | 'inactive';
   created_at: string;
 }
 
@@ -44,6 +45,23 @@ const AdminEnquiries = () => {
       toast.error("Failed to fetch enquiries");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (id: number, currentStatus?: string) => {
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    try {
+      const { error } = await supabase
+        .from("contact_us")
+        .update({ status: newStatus })
+        .eq("id", id);
+      
+      if (error) throw error;
+      setEnquiries(prev => prev.map(e => e.id === id ? { ...e, status: newStatus as any } : e));
+      toast.success(`Marked as ${newStatus}`);
+    } catch (error: any) {
+      console.error("Status update error:", error);
+      toast.error("Status update failed. Please ensure 'status' column exists in Supabase.");
     }
   };
 
@@ -151,6 +169,7 @@ const AdminEnquiries = () => {
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 italic">Sender</th>
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 italic">Contact Info</th>
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 italic">Message</th>
+                <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 italic">Status</th>
                 <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 italic text-right">Actions</th>
               </tr>
             </thead>
@@ -218,14 +237,35 @@ const AdminEnquiries = () => {
                         </p>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-right">
+                    <td className="px-8 py-6">
                       <button 
-                        onClick={() => handleDelete(item.id)}
-                        className="p-2 text-[#1A2E35]/20 hover:text-red-500 transition-colors"
-                        title="Delete enquiry"
+                        onClick={() => handleToggleStatus(item.id, item.status)}
+                        className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border transition-all ${
+                          item.status === 'active'
+                            ? 'text-emerald-600 bg-emerald-50 border-emerald-100 italic'
+                            : 'text-red-500 bg-red-50 border-red-100 opacity-50'
+                        }`}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {item.status === 'active' ? 'Active' : 'Inactive'}
                       </button>
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex justify-end gap-2">
+                        <a 
+                          href={`mailto:${item.email}?subject=Regarding your enquiry at Salmara Ayurveda`}
+                          className="p-2 text-[#1A2E35]/20 hover:text-[#5A7A5C] transition-colors"
+                          title="Reply via Email"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </a>
+                        <button 
+                          onClick={() => handleDelete(item.id)}
+                          className="p-2 text-[#1A2E35]/20 hover:text-red-500 transition-colors"
+                          title="Delete enquiry"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -234,14 +274,10 @@ const AdminEnquiries = () => {
           </table>
         </div>
         
-        <div className="p-8 bg-[#FDFBF7]/30 border-t border-[#F2EDE4] flex justify-between items-center">
-           <p className="text-[10px] font-bold text-[#1A2E35]/20 uppercase tracking-widest">
-             Showing {filteredEnquiries.length} of {enquiries.length} entries
+        <div className="p-8 bg-[#FDFBF7]/30 border-t border-[#F2EDE4]">
+           <p className="text-[10px] font-bold text-[#1A2E35]/20 uppercase tracking-widest text-center italic">
+             End of list — Showing all {filteredEnquiries.length} enquiries
            </p>
-           <div className="flex gap-2">
-             <button disabled className="px-4 py-2 border border-[#F2EDE4] rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/20">Prev</button>
-             <button disabled className="px-4 py-2 border border-[#F2EDE4] rounded-lg text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/20">Next</button>
-           </div>
         </div>
       </div>
     </div>

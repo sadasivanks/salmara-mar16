@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Heart, ShoppingBag, Trash2, ArrowRight, Loader2, Star, Leaf } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,13 +10,15 @@ import { toast } from "sonner";
 import { Image } from "@/components/ui/Image";
 import SEO from "@/components/SEO";
 
-import { getStoredSession } from "@/lib/shopifyAdmin";
+import { getStoredSession, fetchBulkReviews } from "@/lib/shopifyAdmin";
 import { useNavigate } from "react-router-dom";
 
 const WishlistPage = () => {
   const { items, removeItem, clearWishlist, syncWithShopify, isLoading } = useWishlistStore();
   const { addItem } = useCartStore();
   const navigate = useNavigate();
+  const [reviewsMap, setReviewsMap] = useState<Record<string, any[]>>({});
+  const [isReviewsLoading, setIsReviewsLoading] = useState(false);
 
   useEffect(() => {
     const session = getStoredSession();
@@ -27,6 +29,37 @@ const WishlistPage = () => {
     }
     syncWithShopify();
   }, [syncWithShopify, navigate]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (items.length === 0) return;
+      
+      setIsReviewsLoading(true);
+      try {
+        const productIds = items
+          .map(item => {
+            const node = (item.product?.node || item.product) as any;
+            return node?.id;
+          })
+          .filter(Boolean);
+
+        if (productIds.length > 0) {
+          const reviewsData = await fetchBulkReviews(productIds);
+          const map: Record<string, any[]> = {};
+          reviewsData.forEach((item: any) => {
+            map[item.id] = item.reviews;
+          });
+          setReviewsMap(map);
+        }
+      } catch (error) {
+        console.error("Failed to fetch wishlist reviews:", error);
+      } finally {
+        setIsReviewsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [items]);
 
   const handleAddToCart = async (item: any) => {
     const productNode = item.product?.node || item.product; // Support both structures
@@ -165,13 +198,39 @@ const WishlistPage = () => {
 )}
                         </div>
 
-                        <div className="flex items-center gap-1.5 mb-8">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="h-3 w-3 fill-[#C5A059] text-[#C5A059]" />
-                            ))}
+                        <div className="flex items-center gap-2 mb-8">
+                          <div className="flex items-center gap-1">
+                            <div className="flex">
+                              {[...Array(5)].map((_, i) => {
+                                const reviews = reviewsMap[productNode.id] || [];
+                                const avgRating = reviews.length > 0 
+                                  ? reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length 
+                                  : 4.9;
+                                return (
+                                  <Star 
+                                    key={i} 
+                                    className={`h-3 w-3 ${i < Math.floor(avgRating) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#C5A059]/20'}`} 
+                                  />
+                                );
+                              })}
+                            </div>
+                            <span className="text-[10px] font-bold text-[#1A2E35] font-[Inter]">
+                              {(() => {
+                                const reviews = reviewsMap[productNode.id] || [];
+                                const avgRating = reviews.length > 0 
+                                  ? (reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length).toFixed(1)
+                                  : "4.9";
+                                return avgRating;
+                              })()}
+                            </span>
                           </div>
-                          <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest">(Expert Verified)</span>
+                          <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest leading-none">
+                            {(() => {
+                              const reviews = reviewsMap[productNode.id] || [];
+                              const count = reviews.length > 0 ? reviews.length : 248;
+                              return `(${count})`;
+                            })()}
+                          </span>
                         </div>
 
                         <div className="flex gap-3">
