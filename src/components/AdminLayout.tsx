@@ -54,27 +54,22 @@ const AdminLayout = () => {
             </button>
             <div className="hidden sm:flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1A2E35]/40">
               <span>Admin</span>
-              <span className="text-[#1A2E35]/10">/</span>
-              <span className="text-[#1A2E35]">Console</span>
+              
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-6">
             {/* Search */}
-            <div className="hidden md:flex items-center gap-2 bg-[#FDFBF7] border border-[#F2EDE4] rounded-2xl px-4 py-2 w-64 focus-within:border-[#5A7A5C] transition-all group">
+            {/* <div className="hidden md:flex items-center gap-2 bg-[#FDFBF7] border border-[#F2EDE4] rounded-2xl px-4 py-2 w-64 focus-within:border-[#5A7A5C] transition-all group">
               <Search className="h-4 w-4 text-[#1A2E35]/30 group-focus-within:text-[#5A7A5C]" />
               <input 
                 type="text" 
                 placeholder="Search..." 
                 className="bg-transparent border-none outline-none text-sm w-full placeholder:text-[#1A2E35]/20 font-medium"
               />
-            </div>
+            </div> */}
 
-            {/* Notifications */}
-            <button className="relative p-2 text-[#1A2E35]/40 hover:text-[#5A7A5C] transition-colors group">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2 w-2 bg-[#5A7A5C] rounded-full ring-2 ring-white" />
-            </button>
+        
 
             {/* Profile Dropdown */}
             <div className="relative">

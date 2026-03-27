@@ -128,7 +128,7 @@ const AdminSubscribers = () => {
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Total Reach</p>
-              <p className="text-2xl font-display font-medium text-[#1A2E35]">{subscribers.length}</p>
+              <p className="text-2xl font-[Inter] font-semibold text-[#1A2E35] tracking-tight">{subscribers.length}</p>
             </div>
          </div>
          <div className="bg-white p-6 rounded-3xl border border-[#F2EDE4] flex items-center gap-4">
@@ -137,10 +137,10 @@ const AdminSubscribers = () => {
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Active Now</p>
-              <p className="text-2xl font-display font-medium text-[#1A2E35]">100%</p>
+             <p className="text-2xl font-[Inter] font-semibold text-[#1A2E35] tracking-tight">100%</p>
             </div>
          </div>
-         <div className="bg-white p-6 rounded-3xl border border-[#F2EDE4] flex items-center gap-4">
+         {/* <div className="bg-white p-6 rounded-3xl border border-[#F2EDE4] flex items-center gap-4">
             <div className="h-12 w-12 rounded-2xl bg-[#5A7A5C]/5 flex items-center justify-center text-[#5A7A5C]">
               <Calendar className="h-6 w-6" />
             </div>
@@ -148,7 +148,7 @@ const AdminSubscribers = () => {
               <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Growth rate</p>
               <p className="text-2xl font-display font-medium text-[#1A2E35]">+14%</p>
             </div>
-         </div>
+         </div> */}
       </div>
 
       <div className="bg-white rounded-[2.5rem] border border-[#F2EDE4] shadow-sm overflow-hidden min-h-[500px]">
@@ -163,9 +163,9 @@ const AdminSubscribers = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="px-6 py-2 border border-[#F2EDE4] rounded-2xl text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/60 hover:border-[#5A7A5C] hover:text-[#5A7A5C] transition-all flex items-center gap-2">
+          {/* <button className="px-6 py-2 border border-[#F2EDE4] rounded-2xl text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/60 hover:border-[#5A7A5C] hover:text-[#5A7A5C] transition-all flex items-center gap-2">
             <Filter className="h-3 w-3" /> All Lists
-          </button>
+          </button> */}
         </div>
 
         <div className="overflow-x-auto">
@@ -232,17 +232,14 @@ const AdminSubscribers = () => {
                       <span className="text-[10px] font-bold text-[#1A2E35]/20 uppercase tracking-widest">Direct Website</span>
                     </td>
                     <td className="px-8 py-6 text-right">
-                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-[#1A2E35]/20 hover:text-[#5A7A5C] transition-colors">
-                          <ExternalLink className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(item.id)}
-                          className="p-2 text-[#1A2E35]/20 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                       </div>
+                  <div className="flex items-center justify-end">
+                  <button 
+                    onClick={() => handleDelete(item.id)}
+                    className="p-2 text-[#1A2E35]/20 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
                     </td>
                   </tr>
                 ))

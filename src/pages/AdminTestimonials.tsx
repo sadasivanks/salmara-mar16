@@ -182,9 +182,9 @@ const AdminTestimonials = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="px-6 py-2 border border-[#F2EDE4] rounded-2xl text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/60 hover:border-[#5A7A5C] hover:text-[#5A7A5C] transition-all flex items-center gap-2">
+          {/* <button className="px-6 py-2 border border-[#F2EDE4] rounded-2xl text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/60 hover:border-[#5A7A5C] hover:text-[#5A7A5C] transition-all flex items-center gap-2">
             <Filter className="h-3 w-3" /> Filter
-          </button>
+          </button> */}
         </div>
 
         <div className="overflow-x-auto">

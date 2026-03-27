@@ -84,7 +84,7 @@ const AdminDashboard = () => {
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/20">Active Database</div>
           </div>
           <p className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-2">Total Testimonials</p>
-          <h3 className="text-5xl font-display font-medium text-[#1A2E35]">
+         <h3 className="text-5xl font-[Inter] font-semibold text-[#1A2E35] tracking-tight">
             {loading ? "..." : stats.testimonials}
           </h3>
           <div className="mt-6 flex items-center gap-2 text-emerald-600 text-[10px] font-bold">
@@ -106,7 +106,8 @@ const AdminDashboard = () => {
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/20">Active Subscribers</div>
           </div>
           <p className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-2">Subscribed Users</p>
-          <h3 className="text-5xl font-display font-medium text-[#1A2E35]">
+
+          <h3 className="text-5xl font-[Inter] font-semibold text-[#1A2E35] tracking-tight">
             {loading ? "..." : stats.subscribers}
           </h3>
           <div className="mt-6 flex items-center gap-2 text-[#5A7A5C] text-[10px] font-bold uppercase italic tracking-widest">
