@@ -202,7 +202,7 @@ const AboutUsPage = () => {
             </div>
 
             {/* Impact Block */}
-            <div className="mt-16 md:mt-24 bg-[#1A2E35] rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
+            {/* <div className="mt-16 md:mt-24 bg-[#1A2E35] rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
               <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#5A7A5C_0%,transparent_50%)]" />
               </div>
@@ -243,8 +243,61 @@ const AboutUsPage = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
+            <div className="mt-16 md:mt-24 bg-herbal-dark rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
+{/* <div className="mt-16 md:mt-24 bg-[#1A2E35] rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden"> */}
+  <div className="absolute inset-0 opacity-10 pointer-events-none">
+    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--gold)/0.1),transparent_60%)]" />
+  </div>
+  
+  <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
+    
+    <div className="space-y-4">
+      <h3 className="text-2xl md:text-4xl font-display border-b border-white/10 pb-4">
+        Our Impact
+      </h3>
+      <p className="text-white/60 font-sans-clean italic">
+        "Our journey from one clinic to eight cities. From local practice to a national movement."
+      </p>
+      <p className="text-[10px] uppercase tracking-widest text-white/40 pt-4 leading-relaxed">
+        Our founder also serves as Jilla Adhyaksha (District President) of Karnataka Paramparika Vaidya Sangha.
+      </p>
+    </div>
+    
+    <div className="lg:col-span-2 grid grid-cols-2 gap-8 md:gap-12">
+      {[
+        { val: "26+", label: "Ancestral Products" },
+        { val: "8", label: "Cities Presence" },
+        { val: "100+", label: "Medical Camps" },
+        { val: "100k+", label: "Lives Healed" },
+      ].map((stat, idx) => (
+        <div key={idx} className="space-y-1">
+          <div className="text-3xl md:text-5xl font-display text-[#C5A059]">
+            {stat.val}
+          </div>
+          <div className="text-xs md:text-sm uppercase tracking-widest text-white/60 font-bold">
+            {stat.label}
+          </div>
+        </div>
+      ))}
 
+      <div className="col-span-2 pt-4 border-t border-white/5">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-[#C5A059]/20 rounded-xl text-[#C5A059]">
+            <Trophy className="h-6 w-6" />
+          </div>
+          <div>
+            <div className="text-lg font-bold text-white">Karnataka's No.1</div>
+            <div className="text-xs text-white/60 uppercase tracking-widest">
+              Non-surgical piles treatment
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
             {/* Awards Hybrid Logic */}
             <div className="mt-24">
               <div className="text-center mb-12">

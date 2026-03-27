@@ -72,13 +72,13 @@ const WhyChooseUs = () => {
             rel="noopener noreferrer"
             className="w-full sm:w-auto bg-[#5A7A5C] hover:bg-[#4A634B] text-white px-10 py-5 rounded-lg shadow-lg font-sans-clean font-bold text-sm transition-all duration-300 transform hover:-translate-y-1 text-center"
           >
-            Book Appointment
+            BOOK APPOINTMENT
           </a>
           <Link
             to="/shop"
             className="w-full sm:w-auto border-2 border-[#5A7A5C]/20 hover:border-[#5A7A5C] text-[#5A7A5C] px-10 py-5 rounded-lg font-sans-clean font-bold text-sm transition-all duration-300 text-center"
           >
-            Shop Now
+            SHOP NOW
           </Link>
         </motion.div>
       </div>

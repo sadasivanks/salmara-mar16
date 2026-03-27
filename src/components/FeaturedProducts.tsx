@@ -7,6 +7,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
 import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { Image } from "@/components/ui/Image";
 
 const FeaturedProducts = () => {
   const navigate = useNavigate();
@@ -104,9 +105,10 @@ const FeaturedProducts = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-[#5A7A5C] font-sans-clean text-sm uppercase tracking-[0.3em] mb-4">Pure Potency</p>
+          <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">Pure Potency</p>
+          {/* <p className="text-[#5A7A5C] font-sans-clean text-sm uppercase tracking-[0.3em] mb-4">Pure Potency</p> */}
           <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">
-            Best-Loved <span className="italic">Formulations</span>
+            Best Loved <span>Formulations</span>
           </h2>
           <div className="w-24 h-1 bg-[#F2EDE4] mx-auto mt-6" />
         </motion.div>
@@ -156,19 +158,20 @@ const FeaturedProducts = () => {
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#F2EDE4]/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     <Link to={`/product/${product.node.handle}`} className="block relative mb-6 rounded-2xl overflow-hidden bg-[#FDFBF7] aspect-square">
-                      {image ? (
-                        <motion.img 
-                          src={image.url} 
-                          alt={image.altText || product.node.title} 
-                          className="w-full h-full object-cover"
-                          whileHover={{ scale: 1.1 }}
-                          transition={{ duration: 0.8 }}
-                        />
+                      <div className="relative aspect-[4/5] overflow-hidden">
+              {image ? (
+                <Image 
+                  src={image.url} 
+                  alt={image.altText || product.node.title} 
+                  fill={true}
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Leaf className="h-12 w-12 text-[#5A7A5C]/20" />
                         </div>
                       )}
+                      </div>
                       
                       {/* Premium Badges Container */}
                       <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
@@ -257,31 +260,43 @@ const FeaturedProducts = () => {
                         )}
                       </div>
                       
-                      <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed mb-6 line-clamp-2 h-8">
+                      <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed mb-6 line-clamp-2 h-10">
                         {product.node.description}
                       </p>
-
-                      <div className="flex gap-2">
+                      {!variant?.availableForSale ? (
                         <button
-                          onClick={() => handleAddToCart(product)}
-                          disabled={!variant?.availableForSale || addingId === product.node.id}
-                          className="flex-1 bg-[#1A2E35] text-white py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-2"
+                          disabled
+                          className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest flex items-center justify-center cursor-not-allowed"
                         >
-                          {addingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Add to Cart"}
+                          Sold Out
                         </button>
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleBuyNow(product);
-                          }}
-                          disabled={buyingId === product.node.id || !variant?.availableForSale}
-                          className="flex-1 border border-[#1A2E35]/10 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                        >
-                          {buyingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-                          {buyingId === product.node.id ? "Redirecting..." : (!variant?.availableForSale ? "Sold Out" : "Buy Now")}
-                        </button>
-                      </div>
+                      ) : (                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleAddToCart(product)}
+                            disabled={addingId === product.node.id}
+                            className="flex-1 border border-[#1A2E35]/10 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] transition-all flex items-center justify-center gap-2 group/btn"
+                          >
+                            {addingId === product.node.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin text-[#5A7A5C]" />
+                            ) : (
+                              <ShoppingCart className="h-3 w-3 text-[#1A2E35]/40 group-hover/btn:text-[#5A7A5C] transition-colors" />
+                            )}
+                            {addingId === product.node.id ? "Adding..." : "Add to Cart"}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleBuyNow(product);
+                            }}
+                            disabled={buyingId === product.node.id}
+                            className="flex-1 bg-[#1A2E35] text-white py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#5A7A5C] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[#1A2E35]/10"
+                          >
+                            {buyingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+                            {buyingId === product.node.id ? "Redirecting..." : "Buy Now"}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 );
@@ -291,14 +306,32 @@ const FeaturedProducts = () => {
         </div>
       )}
 
-      <div className="mt-10 flex flex-col items-center">
+      {/* <div className="mt-10 flex flex-col items-center">
         <Link 
           to="/shop" 
           className="bg-[#5A7A5C] text-white px-8 py-3.5 rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[#1A2E35] transition-all shadow-lg shadow-[#5A7A5C]/20"
         >
           View All Products
         </Link>
-      </div>
+      </div> */}
+      <div className="mt-10 flex flex-col items-center">
+  <Link 
+    to="/shop" 
+    className="bg-[#5A7A5C] text-white 
+    px-8 py-3.5 
+    rounded-2xl   /* 👈 updated curve */
+
+    font-bold uppercase tracking-widest text-[10px] 
+
+    hover:bg-[#1A2E35] 
+    transition-all duration-300 
+    transform hover:scale-105 active:scale-95 
+
+    shadow-lg shadow-[#5A7A5C]/20"
+  >
+    View All Products
+  </Link>
+</div>
 
       {/* Address Selection Modal */}
       {selectedProductForCheckout && (

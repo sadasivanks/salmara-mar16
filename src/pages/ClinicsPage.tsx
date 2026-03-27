@@ -156,6 +156,7 @@ const ClinicsPage = () => {
               >
                 Book Appointment
               </a>
+              <br/>
             </motion.div>
           </div>
         </section>

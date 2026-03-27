@@ -302,13 +302,13 @@ const Dashboard = () => {
             <User className="h-5 w-5" />
             Profile Settings
           </button>
-          <Link 
+          {/* <Link 
             to="/" 
             className="w-full flex items-center gap-4 px-4 py-3.5 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all"
           >
             <Home className="h-5 w-5" />
             Back to Home
-          </Link>
+          </Link> */}
         </nav>
 
         <div className="p-4 mt-auto">
@@ -486,7 +486,9 @@ const Dashboard = () => {
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                           <div className="space-y-4">
                             <div className="flex items-center gap-4">
-                              <span className="text-lg font-sans-clean font-bold text-[#1A2E35]">{order.name.startsWith('#') ? order.name : `#${order.name}`}</span>
+                              {/* <span className="text-lg font-sans-clean font-bold text-[#1A2E35]"> */}
+                              <span className="text-xl md:text-2xl font-inter font-semibold text-[#1A2E35]">
+                                {order.name.startsWith('#') ? order.name : `#${order.name}`}</span>
                             </div>
                             
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -533,14 +535,15 @@ const Dashboard = () => {
                               </div>
                               <div className="flex items-center gap-2">
                                 <ShoppingBag className="h-4 w-4" />
-                                {order.lineItems.edges.length} {order.lineItems.edges.length === 1 ? 'Item' : 'Items'}
+                                <span className="font-sans-clean">{order.lineItems.edges.length}</span> {order.lineItems.edges.length === 1 ? 'Item' : 'Items'}
                               </div>
                             </div>
                           </div>
 
                           <div className="flex flex-col items-end gap-2 text-right">
                             <p className="text-[10px] uppercase tracking-widest font-bold text-[#1A2E35]/40">Total Amount</p>
-                            <p className="text-2xl font-sans-clean font-bold text-[#1A2E35]">
+                            {/* <p className="text-2xl font-sans-clean font-bold text-[#1A2E35]"> */}
+                             <p className="text-3xl md:text-4xl font-inter font-bold text-[#1A2E35] tracking-tight">
                               {order.totalPriceSet.shopMoney.currencyCode === 'INR' ? '₹' : order.totalPriceSet.shopMoney.currencyCode}{' '}
                               {parseFloat(order.totalPriceSet.shopMoney.amount).toFixed(2)}
                             </p>
@@ -740,7 +743,9 @@ const TrackingModal = ({ order, onClose }: { order: any; onClose: () => void }) 
           <div className="relative flex items-center justify-between">
             <div>
               <p className="text-[9px] uppercase tracking-[0.3em] text-white/40 font-bold mb-0.5">Tracking Order</p>
-              <h2 className="text-2xl font-sans-clean font-bold text-white">{order.name.startsWith('#') ? order.name : `#${order.name}`}</h2>
+              {/* <h2 className="text-2xl font-sans-clean font-bold text-white"> */}
+              <h2 className="text-3xl font-inter font-bold text-white tracking-tight">
+                {order.name.startsWith('#') ? order.name : `#${order.name}`}</h2>
             </div>
             <button 
               onClick={onClose}
@@ -857,14 +862,17 @@ const DashboardCart = ({
               <h4 className="font-display font-medium text-[#1A2E35] text-lg">{item.product.node.title}</h4>
               <p className="text-xs text-[#1A2E35]/40 font-sans-clean mt-1">{item.variantTitle !== "Default Title" ? item.variantTitle : 'Standard Pack'}</p>
               <div className="flex items-center justify-between mt-4">
-                <p className="font-display font-bold text-[#1A2E35]">
+                {/* <p className="font-display font-bold text-[#1A2E35]"> */}
+                <p className="text-lg md:text-xl font-inter font-semibold text-[#1A2E35]">
                   {item.price.currencyCode === 'INR' ? '₹' : item.price.currencyCode} {parseFloat(item.price.amount).toFixed(2)}
                 </p>
                 <div className="flex items-center gap-3 bg-[#F8F9FA] rounded-lg px-2">
                   <button onClick={() => updateQuantity(item.variantId, item.quantity - 1)} className="p-2 text-[#1A2E35]/30 hover:text-[#1A2E35]">
                     <Minus className="h-3 w-3" />
                   </button>
-                  <span className="w-6 text-center text-xs font-bold text-[#1A2E35]">{item.quantity}</span>
+                  {/* <span className="w-6 text-center text-xs font-bold text-[#1A2E35]"> */}
+                  <span className="w-6 text-center text-sm font-inter font-semibold text-[#1A2E35]">
+                    {item.quantity}</span>
                   <button onClick={() => updateQuantity(item.variantId, item.quantity + 1)} className="p-2 text-[#1A2E35]/30 hover:text-[#1A2E35]">
                     <Plus className="h-3 w-3" />
                   </button>
@@ -879,7 +887,7 @@ const DashboardCart = ({
       </div>
       <div className="pt-8 border-t border-[#F2EDE4] space-y-8">
         {/* ADDRESS SELECTION */}
-        {addresses.length > 0 && (
+        {/* {addresses.length > 0 && (
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">Select Shipping Address</h3>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -908,12 +916,13 @@ const DashboardCart = ({
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 pt-8 border-t border-[#F2EDE4]">
           <div className="text-center md:text-left">
             <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-widest mb-1">Subtotal Estimate</p>
-            <p className="text-3xl font-display font-bold text-[#1A2E35]">
+            {/* <p className="text-3xl font-display font-bold text-[#1A2E35]"> */}
+            <p className="text-4xl md:text-5xl font-inter font-bold text-[#1A2E35] tracking-tight">
               {items[0]?.price.currencyCode === 'INR' ? '₹' : items[0]?.price.currencyCode} {totalPrice.toFixed(2)}
             </p>
           </div>

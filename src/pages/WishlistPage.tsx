@@ -56,7 +56,7 @@ const WishlistPage = () => {
       />
       <Header />
       
-      <main className="container mx-auto px-4 py-24 md:py-32">
+      <main className="container mx-auto px-4 py-24 md:py-12">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <motion.div
@@ -66,7 +66,7 @@ const WishlistPage = () => {
             >
               <p className="text-[#5A7A5C] font-sans-clean text-sm uppercase tracking-[0.3em] mb-4">Your Favorites</p>
               <h1 className="text-4xl md:text-6xl font-display font-medium text-[#1A2E35]">
-                Saved <span className="italic">Formulations</span>
+                Saved <span>Formulations</span>
               </h1>
             </motion.div>
 
@@ -158,11 +158,11 @@ const WishlistPage = () => {
                               {productNode.productType}
                             </p>
                           </div>
-                          {variant && (
-                            <span className="text-lg font-display font-medium text-[#1A2E35]">
-                              ₹{parseInt(variant.price.amount)}
-                            </span>
-                          )}
+                        {variant && (
+  <span className="text-lg font-medium text-[#1A2E35] font-[Inter]">
+    ₹{parseInt(variant.price.amount)}
+  </span>
+)}
                         </div>
 
                         <div className="flex items-center gap-1.5 mb-8">
@@ -175,12 +175,13 @@ const WishlistPage = () => {
                         </div>
 
                         <div className="flex gap-3">
-                          <button
-                            onClick={() => handleAddToCart(item)}
-                            className="flex-1 bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#1A2E35]/5"
-                          >
-                            <ShoppingBag className="h-3.5 w-3.5" /> Move to Cart
-                          </button>
+                            <button
+                              onClick={() => handleAddToCart(item)}
+                              disabled={!variant?.availableForSale}
+                              className="flex-1 bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#1A2E35]/5 disabled:opacity-50"
+                            >
+                              {!variant?.availableForSale ? "Sold Out" : <><ShoppingBag className="h-3.5 w-3.5" /> Move to Cart</>}
+                            </button>
                         </div>
                       </div>
                     </motion.div>

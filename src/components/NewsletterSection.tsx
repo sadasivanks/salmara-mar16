@@ -79,7 +79,7 @@ const NewsletterSection = () => {
               disabled={loading}
               className="bg-primary hover:bg-herbal-dark text-primary-foreground px-6 py-3 rounded-lg font-sans-clean font-semibold text-sm transition-all duration-300 shrink-0 flex items-center gap-2 disabled:opacity-70"
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Subscribe"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "SUBSCRIBE"}
             </button>
           </form>
         </motion.div>

@@ -1,12 +1,13 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, ArrowRight, Heart } from "lucide-react";
+import { Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, ArrowRight, Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { type ShopifyProduct } from "@/lib/shopifyAdmin";
 import { fetchProductsViaAdmin } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
+import { Image } from "@/components/ui/Image";
 
 const ProductList = () => {
   const ref = useRef(null);
@@ -101,12 +102,11 @@ const ProductList = () => {
                 >
                   <Link to={`/product/${product.node.handle}`} className="block relative mb-6 rounded-2xl overflow-hidden bg-[#FDFBF7] aspect-square">
                     {image ? (
-                      <motion.img 
+                      <Image 
                         src={image.url} 
                         alt={image.altText || product.node.title} 
-                        className="w-full h-full object-cover"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.8 }}
+                        fill={true}
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -199,17 +199,31 @@ const ProductList = () => {
                       )}
                     </div>
                     
-                    <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed mb-6 line-clamp-2 h-8">
+                    <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed mb-6 line-clamp-2 h-10">
                       {product.node.description}
                     </p>
 
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      disabled={!variant?.availableForSale || addingId === product.node.id}
-                      className="w-full bg-[#1A2E35] text-white py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-2"
-                    >
-                      {addingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Add to Cart"}
-                    </button>
+                    {!variant?.availableForSale ? (
+                      <button
+                        disabled
+                        className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest flex items-center justify-center cursor-not-allowed"
+                      >
+                        Sold Out
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        disabled={addingId === product.node.id}
+                        className="w-full border border-[#1A2E35]/10 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] transition-all flex items-center justify-center gap-2 group/btn"
+                      >
+                        {addingId === product.node.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin text-[#5A7A5C]" />
+                        ) : (
+                          <ShoppingCart className="h-3 w-3 text-[#1A2E35]/40 group-hover/btn:text-[#5A7A5C] transition-colors" />
+                        )}
+                        {addingId === product.node.id ? "Adding..." : "Add to Cart"}
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               );

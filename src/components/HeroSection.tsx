@@ -114,22 +114,52 @@ const HeroSection = () => {
             </p>
  
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-center md:items-start">
-              <Link
-                to="/shop"
-                className="w-full sm:w-auto bg-white text-[#1A2E35] px-10 py-4 sm:py-5 font-sans-clean font-bold text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#F2EDE4] hover:scale-105 shadow-xl shadow-black/20 text-center"
-              >
-                Shop Now
-              </Link>
-              <a 
-                href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group w-full sm:w-auto border border-white/60 text-white px-10 py-4 sm:py-5 font-sans-clean font-bold text-xs sm:text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white hover:text-[#1A2E35] block shadow-xl text-center"
-              >
-                <span className="flex items-center justify-center gap-2">
-                  Book Consultation <PlayCircle className="h-4 w-4 hidden group-hover:block animate-pulse" />
-                </span>
-              </a>
+         <Link
+  to="/shop"
+  className="w-full sm:w-auto 
+  bg-white text-[#1A2E35] 
+
+  hover:bg-[#5A7A5C] 
+  hover:text-white 
+
+  active:bg-[#4A634B] 
+  active:text-white 
+
+  px-10 py-4 sm:py-5 
+  rounded-lg 
+  font-sans-clean font-bold text-xs sm:text-sm 
+  tracking-[0.2em] uppercase 
+
+  transition-all duration-300 
+  transform hover:scale-105 active:scale-95 
+
+  shadow-xl shadow-black/20 
+  text-center"
+>
+  Shop Now
+</Link>
+           <a 
+  href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products."
+  target="_blank"
+  rel="noopener noreferrer"
+  className="group w-full sm:w-auto 
+  border border-white/60 text-white 
+
+  px-10 py-4 sm:py-5 
+  rounded-xl sm:rounded-2xl   /* 👈 curve added */
+
+  font-sans-clean font-bold text-xs sm:text-sm tracking-[0.2em] uppercase 
+
+  transition-all duration-300 
+  hover:bg-white hover:text-[#1A2E35] 
+  transform hover:scale-105 active:scale-95 
+
+  block shadow-xl text-center"
+>
+  <span className="flex items-center justify-center gap-2">
+    Book Consultation
+  </span>
+</a>
             </div>
           </motion.div>
         </div>

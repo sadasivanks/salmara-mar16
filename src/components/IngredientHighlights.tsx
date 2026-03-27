@@ -9,22 +9,22 @@ import ashwagandha from "@/assets/ashwagandha_dark.jpg";
 const ingredients = [
   {
     name: "Tulsi",
-    benefit: "Strengthens Immunity.",
+    benefit: "Strengthens Immunity",
     image: tulsi,
   },
   {
     name: "Guggul",
-    benefit: "Supports joint flexibility.",
+    benefit: "Supports joint flexibility",
     image: guggul,
   },
   {
     name: "Triphala",
-    benefit: "Enhances digestion.",
+    benefit: "Enhances digestion",
     image: triphala,
   },
   {
     name: "Ashwagandha",
-    benefit: "Reduces stress and improves vitality.",
+    benefit: "Reduces stress and improves vitality",
     image: ashwagandha,
   },
 ];
@@ -42,7 +42,8 @@ const IngredientHighlights = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] mb-4">Pure Ingredients</p>
+          <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">Pure Ingredients</p>
+          {/* <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] mb-4">Pure Ingredients</p> */}
           <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35]">
             The Science of Nature
           </h2>
@@ -72,7 +73,7 @@ const IngredientHighlights = () => {
                 {item.name}
               </h3>
               <p className="text-[#1A2E35]/60 text-sm font-body leading-relaxed max-w-[180px]">
-                {item.benefit}.
+                {item.benefit}
               </p>
             </motion.div>
           ))}

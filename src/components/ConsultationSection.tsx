@@ -72,14 +72,14 @@ const ConsultationSection = () => {
               ))}
             </div>
 
-            <a 
-              href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-accent hover:bg-gold text-accent-foreground px-8 py-3.5 rounded-lg font-sans-clean font-semibold text-sm transition-all duration-300 hover:shadow-lg"
-            >
-              <Calendar className="h-4 w-4" /> Book Appointment
-            </a>
+       <a 
+  href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation."
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 bg-[#C5A059] hover:bg-[#B48F48] text-white px-12 py-4 rounded-lg font-sans-clean font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:shadow-xl shadow-lg"
+>
+  Book Appointment
+</a>
           </motion.div>
 
           <motion.div

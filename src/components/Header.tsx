@@ -325,7 +325,7 @@ const Header = () => {
                 >
                   <User className="h-4 w-4 text-[#5A7A5C] group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-sans-clean font-medium text-[#1A2E35]">
-                    {user.name || user.email?.split('@')[0]}
+                  {(user.name ?.split('@')[0])?.slice(0, 15)}
                   </span>
                 </Link>
                 <button 
@@ -453,13 +453,13 @@ const Header = () => {
                         <User className="h-4 w-4" /> Login
                       </button>
                     )}
-                    <Link 
+                    {/* <Link 
                       to="/contact" 
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
                     >
                       <Phone className="h-4 w-4" /> Contact Us
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
               </SheetContent>

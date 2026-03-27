@@ -116,21 +116,17 @@
   h4,
   h5,
   h6 {
-    font-family: 'Playfair Display', serif;
+    @apply font-display tracking-tight text-[#1A2E35];
   }
 }
 
 @layer utilities {
-  .font-display {
+  .font-display, .font-playfair {
     font-family: 'Playfair Display', serif;
   }
 
-  .font-body {
+  .font-body, .font-lora, .font-sans-clean {
     font-family: 'Lora', serif;
-  }
-
-  .font-sans-clean {
-    font-family: 'Inter', sans-serif;
   }
 
   .no-scrollbar::-webkit-scrollbar {

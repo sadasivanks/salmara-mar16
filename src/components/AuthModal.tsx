@@ -31,6 +31,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  // Timer logic for Resend OTP
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
   if (!isOpen) return null;
 
@@ -116,7 +128,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
       setCartId(currentCartId);
     }
 
-    toast.success(`Welcome back, ${userData?.name}!`);
+    toast.success(`Registration successful!`);
     onClose();
   };
   
@@ -271,7 +283,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
       setLoading(false);
     }
   };
-
+  
+  const handleResendOtp = async () => {
+    if (resendTimer > 0) return;
+    
+    setLoading(true);
+    try {
+      // Re-use loginViaProxy to trigger a new OTP (works for both login and pending registration)
+      const result = await loginViaProxy(email, password);
+      if (!result.success && !result.requiresOtp && !result.requiresVerification) {
+        throw new Error(result.errors?.[0]?.message || "Failed to resend code");
+      }
+      
+      toast.success("OTP Resent Successfully", {
+        description: `A new 6-digit code has been sent to ${result.phoneHint || email}.`
+      });
+      setResendTimer(120); // 2 minute cooldown
+      setOtp(""); // Clear previous OTP
+    } catch (error: any) {
+      toast.error("Resend failed", { description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
@@ -378,7 +412,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       maxLength={6}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                      className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                      className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                       placeholder="000000"
                       autoFocus
                     />
@@ -392,9 +426,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                 <div className="mt-8 flex flex-col items-center gap-4">
                   <p className="text-xs text-[#1A2E35]/40 font-sans-clean">Didn't receive the code?</p>
                   <div className="flex items-center gap-4">
-                    <button onClick={handleLogin} className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline">Resend Code</button>
+                    <button 
+                      type="button"
+                      disabled={loading || resendTimer > 0} 
+                      onClick={handleResendOtp} 
+                      className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline disabled:opacity-50 disabled:no-underline"
+                    >
+                      {resendTimer > 0 ? `Resend in ${Math.floor(resendTimer / 60)}:${(resendTimer % 60).toString().padStart(2, '0')}` : "Resend Code"}
+                    </button>
                     <div className="h-3 w-[1px] bg-[#F2EDE4]" />
-                    <button onClick={() => setView("login")} className="text-[10px] font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Back to Login</button>
+                   <button onClick={() => setView("login")} className="text-[10px] font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Back to Login</button>
                   </div>
                 </div>
               </motion.div>
@@ -461,7 +502,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       required
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                      className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                       placeholder="000000"
                     />
                   </div>
@@ -561,7 +602,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       maxLength={6}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                      className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
+                      className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                       placeholder="000000"
                     />
                   </div>
@@ -571,10 +612,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                   </button>
                 </form>
                 
-                {/* <div className="mt-8 flex flex-col items-center gap-4">
-                  <button onClick={() => setView("register")} className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline">Edit Details</button>
-                </div> */}
-              </motion.div>
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  <p className="text-xs text-[#1A2E35]/40 font-sans-clean">Didn't receive the code?</p>
+                  <div className="flex items-center gap-4">
+                    <button 
+                      type="button"
+                      disabled={loading || resendTimer > 0} 
+                      onClick={handleResendOtp} 
+                      className="text-[10px] font-bold text-[#5A7A5C] uppercase tracking-widest hover:underline disabled:opacity-50 disabled:no-underline"
+                    >
+                      {resendTimer > 0 ? `Resend in ${Math.floor(resendTimer / 60)}:${(resendTimer % 60).toString().padStart(2, '0')}` : "Resend Code"}
+                    </button>
+                    <div className="h-3 w-[1px] bg-[#F2EDE4]" />
+                    {/* <button onClick={() => setView("register")} className="text-[10px] font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Edit Details</button> */}
+                  </div>
+                </div>
+             </motion.div>
             ) : (
               <motion.div 
                 key="register" 

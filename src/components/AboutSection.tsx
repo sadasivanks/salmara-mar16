@@ -79,7 +79,7 @@ const AboutSection = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] mb-4">OUR HERITAGE</p>
+            <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">OUR HERITAGE</p>
             <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35] mb-8 leading-tight">
               The Salmara Story
             </h2>

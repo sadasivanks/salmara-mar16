@@ -524,47 +524,58 @@ const ProductDetail = () => {
               )}
 
               <div className="space-y-4 pt-6 border-t border-[#F2EDE4]">
-                <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
-                  <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[56px] md:w-32 justify-between shrink-0">
-                    <button 
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))} 
-                      className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="w-12 text-center font-display font-medium text-[#1A2E35]">
-                      {quantity}
-                    </span>
-                    <button 
-                      onClick={() => setQuantity(quantity + 1)} 
-                      className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
+                {!selectedVariant?.availableForSale ? (
                   <button
-                    onClick={handleAddToCart}
-                    disabled={isLoading || !selectedVariant?.availableForSale}
-                    className="flex-1 bg-[#5A7A5C] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#4A634B] active:scale-[0.98] transition-all shadow-lg shadow-[#5A7A5C]/20 flex items-center justify-center gap-3 disabled:opacity-50 disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
+                    disabled
+                    className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 min-h-[64px] rounded-xl font-bold uppercase tracking-widest text-sm cursor-not-allowed flex items-center justify-center shadow-inner"
                   >
-                    {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
-                      !selectedVariant?.availableForSale ? "Sold Out" : <><ShoppingCart className="h-5 w-5" /> Add to Cart</>
-                    )}
+                    Sold Out
                   </button>
-                </div>
-                
-                <button 
-                  onClick={handleBuyNow}
-                  disabled={isBuyingNow || !selectedVariant?.availableForSale}
-                  className="w-full bg-[#1A2E35] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:bg-[#f2f2f2] disabled:text-gray-400 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
-                >
-                  {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
-                  {isBuyingNow ? "Redirecting..." : (!selectedVariant?.availableForSale ? "Sold Out" : "Buy Now Direct")}
-                </button>
+                ) : (
+                  <>
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+                      <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[56px] md:w-32 justify-between shrink-0">
+                        <button 
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))} 
+                          className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="w-12 text-center font-display font-medium text-[#1A2E35]">
+                          {quantity}
+                        </span>
+                        <button 
+                          onClick={() => setQuantity(quantity + 1)} 
+                          className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <button
+                        onClick={handleAddToCart}
+                        disabled={isLoading}
+                        className="flex-1 border border-[#5A7A5C] text-[#5A7A5C] min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#5A7A5C] hover:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <><ShoppingCart className="h-5 w-5" /> Add to Cart</>
+                        )}
+                      </button>
+                    </div>
+                    
+                    <button 
+                      onClick={handleBuyNow}
+                      disabled={isBuyingNow}
+                      className="w-full bg-[#1A2E35] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
+                    >
+                      {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : "Buy Now Direct"}
+                    </button>
+                  </>
+                )}
               </div>
-
               <div className="pt-8 space-y-4">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1">Detailed Description</label>
                 <div 

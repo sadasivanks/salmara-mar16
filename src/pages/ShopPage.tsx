@@ -44,6 +44,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 // Assuming getStoredSession is available or will be added - REMOVED as no longer needed
 // import { loginViaProxy, createCustomerViaAdmin, saveSession } from "@/lib/shopifyAdmin"; 
 
@@ -64,6 +66,13 @@ const priceRanges = [
   { label: "Over ₹2,000", value: "2000-plus" },
 ];
 
+const sortByLabels: Record<string, string> = {
+  "Bestselling": "Bestselling",
+  "Price: Low to High": "Price: Low to High",
+  "Price: High to Low": "Price: High to Low",
+  "Newest First": "Newest First",
+  "Doctor Recommended": "Doctor Recommended"
+};
 const ShopPage = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -71,9 +80,9 @@ const ShopPage = () => {
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [selectedProductForCheckout, setSelectedProductForCheckout] = useState<ShopifyProduct | null>(null);
-  
+
   const navigate = useNavigate();
-  
+
   // Filter & Sort State
   const [selectedConcern, setSelectedConcern] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
@@ -82,10 +91,10 @@ const ShopPage = () => {
   const [sortBy, setSortBy] = useState("Bestselling");
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  
+
   const { addItem, isLoading: isCartStoreLoading } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
-  
+
   const gridRef = useRef(null);
   const isGridInView = useInView(gridRef, { once: true, margin: "-100px" });
 
@@ -116,17 +125,17 @@ const ShopPage = () => {
       // 1. Concern Filter (Search in description or tags)
       if (selectedConcern) {
         const query = selectedConcern.toLowerCase();
-        const matchesConcern = p.node.description.toLowerCase().includes(query) || 
+        const matchesConcern = p.node.description.toLowerCase().includes(query) ||
                                p.node.title.toLowerCase().includes(query) ||
                                p.node.tags.some(t => t.toLowerCase().includes(query));
         if (!matchesConcern) return false;
       }
-      
+
       // 2. Category Filter
       if (selectedCategory !== "All Categories" && p.node.productType !== selectedCategory) {
         return false;
       }
-      
+
       // 3. Price Filter
       const price = parseFloat(p.node.variants.edges[0]?.node?.price.amount || "0");
       if (selectedPriceRange !== "all") {
@@ -137,7 +146,7 @@ const ShopPage = () => {
           if (price < parseFloat(min) || price > parseFloat(max)) return false;
         }
       }
-      
+
       // 4. Availability Filter
       if (inStockOnly && !p.node.variants.edges.some(v => {
         // Since we mapped Admin API inventoryQuantity to availableForSale in shopifyAdmin.ts
@@ -149,18 +158,18 @@ const ShopPage = () => {
       })) {
         return false;
       }
-      
+
       // 5. Search Query
       if (searchQuery && !p.node.title.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
-      
+
       return true;
     }).sort((a, b) => {
       // Sorting Logic
       const priceA = parseFloat(a.node.variants.edges[0]?.node?.price.amount || "0");
       const priceB = parseFloat(b.node.variants.edges[0]?.node?.price.amount || "0");
-      
+
       if (sortBy === "Price: Low to High") return priceA - priceB;
       if (sortBy === "Price: High to Low") return priceB - priceA;
       if (sortBy === "Newest First") return b.node.id.localeCompare(a.node.id); // Simple ID fallback for mock "newest"
@@ -178,7 +187,7 @@ const ShopPage = () => {
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
     if (!variant) return;
-    
+
     setAddingId(product.node.id);
     try {
       await addItem({
@@ -202,7 +211,7 @@ const ShopPage = () => {
       toast.error("Product unavailable", { description: "This product has no available variants." });
       return;
     }
-    
+
     const session = getStoredSession();
     if (!session?.user) {
       toast.info("Please sign in to proceed with direct checkout");
@@ -216,17 +225,17 @@ const ShopPage = () => {
 
   const onAddressSelect = async (address: Address | null) => {
     if (!selectedProductForCheckout) return;
-    
+
     const variant = selectedProductForCheckout.node.variants.edges[0]?.node;
     if (!variant) return;
 
     setBuyingId(selectedProductForCheckout.node.id); // Also set buyingId for card loader
-    
+
     try {
       const session = getStoredSession();
       const lineItems = [{ variantId: variant.id, quantity: 1 }];
       const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email, address);
-      
+
       if (result.success && result.checkoutUrl) {
         window.location.href = result.checkoutUrl;
       } else {
@@ -251,17 +260,17 @@ const ShopPage = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
-      <SEO 
-        title="Shop Ayurvedic Formulations | Natural Wellness Remedies" 
+      <SEO
+        title="Shop Ayurvedic Formulations | Natural Wellness Remedies"
         description="Browse our curated collection of Ayurvedic remedies. From joint mobility to liver care, find traditional formulations backed by clinical evidence."
       />
       <Header />
-      
+
       <main className="overflow-x-hidden">
         {/* 1) Hero Section */}
         <section className="relative min-h-[60vh] md:h-[60vh] py-20 md:py-0 flex items-center justify-center bg-[#1A2E35] overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35] via-[#1A2E35]/90 to-[#1A2E35]/80" />
-          
+
           <div className="container px-4 relative z-10 text-center max-w-4xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -274,7 +283,7 @@ const ShopPage = () => {
               <p className="text-white/80 text-xs sm:text-sm md:text-xl font-body leading-relaxed mb-10 max-w-2xl mx-auto px-4">
                 From muscle relief oils to immunity blends, each Salmara formulation is crafted under GMP-certified conditions and tested with quality standards for consistent results.
               </p>
-              <button 
+              <button
                 onClick={() => {
                   document.getElementById('product-grid')?.scrollIntoView({ behavior: 'smooth' });
                 }}
@@ -293,15 +302,15 @@ const ShopPage = () => {
               <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-4">Find What Fits Your Wellness</h2>
               <p className="text-[#1A2E35]/40 text-sm font-sans-clean">Selecting a concern will tailor the formulations shown in the grid below.</p>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {concerns.map((concern) => (
                 <button
                   key={concern.id}
                   onClick={() => setSelectedConcern(selectedConcern === concern.id ? null : concern.id)}
                   className={`p-10 rounded-3xl border text-left transition-all group ${
-                    selectedConcern === concern.id 
-                    ? 'bg-[#5A7A5C] border-[#5A7A5C] shadow-2xl shadow-[#5A7A5C]/20 text-white' 
+                    selectedConcern === concern.id
+                    ? 'bg-[#5A7A5C] border-[#5A7A5C] shadow-2xl shadow-[#5A7A5C]/20 text-white'
                     : 'bg-white border-[#F2EDE4] hover:border-[#5A7A5C] hover:shadow-xl'
                   }`}
                 >
@@ -317,61 +326,42 @@ const ShopPage = () => {
           </div>
         </section>
 
-        {/* 3) Filters & Sorting */}
-        <section id="product-grid" className="py-8 md:py-12 border-t border-[#F2EDE4] bg-[#FDFBF7] sticky top-[64px] lg:top-[80px] z-40">
+        {/* 3) Filter & Sort Bar */}
+        <section id="product-grid" className="sticky top-[64px] lg:top-[80px] z-30 bg-white/95 backdrop-blur-md border-y border-[#F2EDE4] py-5 shadow-sm">
           <div className="container px-4">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 lg:gap-8">
-                {/* Search & Mobile Filter Toggle */}
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1 lg:flex-none group">
-                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search className="h-4 w-4 text-[#1A2E35]/30 group-focus-within:text-[#5A7A5C] transition-colors" />
-                    </div>
-                    <input 
-                      type="text"
-                      placeholder="Search..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="bg-white border border-[#F2EDE4] rounded-xl pl-10 pr-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] focus:outline-none focus:border-[#5A7A5C] transition-all w-full lg:w-64 placeholder:text-[#1A2E35]/20"
-                    />
-                  </div>
-                  
-                  {/* Mobile Filter Toggle Button */}
-                  <button 
-                    onClick={() => setShowMobileFilters(!showMobileFilters)}
-                    aria-label={showMobileFilters ? "Hide filters" : "Show filters"}
-                    className={`lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${
-                      showMobileFilters || selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" 
-                      ? 'bg-[#5A7A5C] border-[#5A7A5C] text-white' 
-                      : 'bg-white border-[#F2EDE4] text-[#1A2E35]'
-                    }`}
-                  >
-                    <Filter className="h-4 w-4" />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Filters</span>
-                    {(selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all") && (
-                      <span className="ml-1 w-2 h-2 rounded-full bg-red-400 border border-white" />
-                    )}
-                  </button>
+              {/* Left: Search & Filter Actions */}
+              <div className="flex flex-wrap items-center gap-5 md:gap-10">
+                {/* Search Box */}
+                <div className="relative group max-w-xs w-full">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1A2E35]/60 group-focus-within:text-[#5A7A5C] transition-colors" />
+                  <input
+                    type="text"
+                    placeholder="SEARCH PRODUCTS..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-[#FDFBF7] border border-[#F2EDE4] rounded-xl py-2.5 pl-11 pr-4 text-xs tracking-widest text-[#1A2E35] placeholder:text-[#1A2E35]/40 focus:outline-none focus:ring-1 focus:ring-[#5A7A5C]/30 focus:border-[#5A7A5C]/50 transition-all font-sans-clean"
+                  />
                 </div>
 
-                {/* Filter Controls - Conditional on Mobile */}
-                <div className={`${showMobileFilters ? 'flex' : 'hidden'} lg:flex flex-wrap items-center gap-2 lg:gap-6 mt-2 lg:mt-0 p-2 lg:p-0 bg-white lg:bg-transparent rounded-2xl border border-[#F2EDE4] lg:border-none shadow-xl lg:shadow-none`}>
+                {/* Filter Dropdowns */}
+                <div className="flex items-center gap-6 md:gap-8">
                   {/* Category Filter */}
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] hover:text-[#5A7A5C] transition-colors focus:outline-none px-3 py-2 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
-                      Category <ChevronDown className="h-4 w-4" />
+                    <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                      <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Category</span>
+                      <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-[#5A7A5C] transition-colors" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                    <DropdownMenuContent align="start" className="w-64 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
                       <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Select Category</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <div className="space-y-1">
+                      <div className="max-h-[300px] overflow-y-auto">
                         {categories.map((cat) => (
-                          <DropdownMenuItem 
-                            key={cat} 
+                          <DropdownMenuItem
+                            key={cat}
                             onClick={() => setSelectedCategory(cat)}
-                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display hover:bg-[#F2EDE4]/30 transition-colors ${
-                              selectedCategory === cat ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35]'
+                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
+                              selectedCategory === cat ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35] hover:bg-muted'
                             }`}
                           >
                             {cat}
@@ -383,19 +373,20 @@ const ShopPage = () => {
 
                   {/* Price Filter */}
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] hover:text-[#5A7A5C] transition-colors focus:outline-none px-3 py-2 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
-                      Price <ChevronDown className="h-4 w-4" />
+                    <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                      <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Price</span>
+                      <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-[#5A7A5C] transition-colors" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                    <DropdownMenuContent align="start" className="w-56 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
                       <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Price Range</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <div className="space-y-1">
                         {priceRanges.map((range) => (
-                          <DropdownMenuItem 
-                            key={range.value} 
+                          <DropdownMenuItem
+                            key={range.value}
                             onClick={() => setSelectedPriceRange(range.value)}
-                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display hover:bg-[#F2EDE4]/30 transition-colors ${
-                              selectedPriceRange === range.value ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35]'
+                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
+                              selectedPriceRange === range.value ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35] hover:bg-muted'
                             }`}
                           >
                             {range.label}
@@ -405,79 +396,71 @@ const ShopPage = () => {
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  {/* Availability Filter */}
-                  <div className="flex items-center gap-2 px-3 py-1 bg-[#FDFBF7] lg:bg-transparent rounded-lg">
-                    <button 
-                      onClick={() => setInStockOnly(!inStockOnly)}
-                      aria-label="Toggle in-stock only items"
-                      aria-pressed={inStockOnly}
-                      className={`h-4 w-8 rounded-full transition-all relative ${inStockOnly ? 'bg-[#5A7A5C]' : 'bg-[#F2EDE4]'}`}
-                    >
-                      <div className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${inStockOnly ? 'left-[18px]' : 'left-0.5 shadow-sm'}`} />
-                    </button>
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#1A2E35]/40">In Stock</span>
+                  {/* Availability Toggle */}
+                  <div className="flex items-center gap-3 py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all cursor-pointer group" onClick={() => setInStockOnly(!inStockOnly)}>
+                    <span className="text-[11px] font-bold tracking-[0.2em] text-[#1A2E35] uppercase select-none">In Stock</span>
+                    <Switch
+                      checked={inStockOnly}
+                      onCheckedChange={setInStockOnly}
+                      className="data-[state=checked]:bg-[#5A7A5C] data-[state=unchecked]:bg-[#F2EDE4]"
+                    />
                   </div>
                 </div>
               </div>
-              
-              <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0 mt-2 lg:mt-0">
-                <div className="flex items-center gap-2 lg:hidden">
-                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">
-                    {filteredProducts.length} Results
-                  </p>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mr-2">Sort by</span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] border-b border-[#1A2E35]/20 pb-1 focus:outline-none">
-                      {sortBy} <ChevronDown className="h-3 w-3" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 bg-white rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
-                      <div className="space-y-1">
-                        {["Bestselling", "Price: Low to High", "Price: High to Low", "Newest First", "Doctor Recommended"].map((s) => (
-                          <DropdownMenuItem 
-                            key={s} 
-                            onClick={() => setSortBy(s)}
-                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display hover:bg-[#F2EDE4]/30 transition-colors ${
-                              sortBy === s ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35]'
-                            }`}
-                          >
-                            {s}
-                          </DropdownMenuItem>
-                        ))}
-                      </div>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+              {/* Right: Sort By */}
+              <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#1A2E35]/40 font-bold">Sort By</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                    <span className="text-[11px] font-bold tracking-[0.2em] uppercase">{sortByLabels[sortBy] || sortBy}</span>
+                    <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-[#5A7A5C] transition-colors" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-64 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                    <div className="space-y-1">
+                      {["Bestselling", "Price: Low to High", "Price: High to Low", "Newest First", "Doctor Recommended"].map((s) => (
+                        <DropdownMenuItem
+                          key={s}
+                          onClick={() => setSortBy(s)}
+                          className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
+                            sortBy === s ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35] hover:bg-muted'
+                          }`}
+                        >
+                          {s}
+                        </DropdownMenuItem>
+                      ))}
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
-            
-            <div className="mt-8 hidden lg:flex items-center justify-between bg-white/50 border border-[#F2EDE4] rounded-2xl px-6 py-4">
-               <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]">
-                Showing {filteredProducts.length} formulations
-              </p>
+
+            {/* Status Bar */}
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 p-4 bg-white/50 border border-[#F2EDE4] rounded-2xl">
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]">
+                  Showing {filteredProducts.length} formulations
+                </p>
+                {/* Active Chips */}
+                {selectedConcern && (
+                  <div className="bg-[#5A7A5C]/10 text-[#5A7A5C] px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    Concern: {selectedConcern} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedConcern(null)} />
+                  </div>
+                )}
+                {selectedCategory !== "All Categories" && (
+                  <div className="bg-[#5A7A5C]/10 text-[#5A7A5C] px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
+                    {selectedCategory} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedCategory("All Categories")} />
+                  </div>
+                )}
+              </div>
+
               {(selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly || searchQuery) && (
-                <button 
+                <button
                   onClick={clearFilters}
                   className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors"
                 >
                   Reset All Filters <X className="h-3 w-3" />
                 </button>
-              )}
-            </div>
-            
-            {/* Active Chips */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {selectedConcern && (
-                <div className="bg-[#5A7A5C]/10 text-[#5A7A5C] px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
-                  Concern: {selectedConcern} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedConcern(null)} />
-                </div>
-              )}
-              {selectedCategory !== "All Categories" && (
-                <div className="bg-[#5A7A5C]/10 text-[#5A7A5C] px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
-                  {selectedCategory} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedCategory("All Categories")} />
-                </div>
               )}
             </div>
           </div>
@@ -519,7 +502,12 @@ const ShopPage = () => {
                       <Link to={`/product/${product.node.handle}`}>
                         <div className="relative aspect-square bg-gradient-to-br from-secondary to-sand-warm flex items-center justify-center overflow-hidden">
                           {image ? (
-                            <Image src={image.url} alt={image.altText || product.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <Image 
+                              src={image.url} 
+                              alt={image.altText || product.node.title} 
+                              fill={true} 
+                              className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                            />
                           ) : (
                             <Leaf className="h-16 w-16 text-primary/20" />
                           )}
@@ -576,37 +564,49 @@ const ShopPage = () => {
                             </span>
                           </div>
                         )}
-
-                        <div className="flex flex-col gap-2">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleAddToCart(product)}
-                              disabled={!variant?.availableForSale || addingId === product.node.id || buyingId === product.node.id}
-                              className="flex-1 bg-[#5A7A5C] hover:bg-[#4A634B] text-white py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
-                            >
-                              {addingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <><ShoppingCart className="h-3.5 w-3.5" /> Add to Cart</>}
-                            </button>
-                            <Link
-                              to={`/product/${product.node.handle}`}
-                              aria-label={`View details for ${product.node.title}`}
-                              className="px-4 py-2.5 rounded-lg border border-[#5A7A5C] text-[#5A7A5C] font-sans-clean text-xs font-semibold hover:bg-[#5A7A5C] hover:text-white transition-all flex items-center justify-center whitespace-nowrap"
-                            >
-                              Details
-                            </Link>
-                          </div>
+                                    {!variant?.availableForSale ? (
                           <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleBuyNow(product);
-                            }}
-                            disabled={buyingId === product.node.id || !variant?.availableForSale}
-                            className="w-full border-2 border-[#1A2E35] text-[#1A2E35] py-2.5 rounded-lg font-sans-clean text-[10px] font-bold uppercase tracking-wider hover:bg-[#1A2E35] hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            disabled
+                            className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center cursor-not-allowed"
                           >
-                            {buyingId === product.node.id ? <Loader2 className="h-3.3 w-3.5 animate-spin" /> : null}
-                            {buyingId === product.node.id ? "Redirecting..." : (!variant?.availableForSale ? "Sold Out" : "Buy Now Direct")}
+                            Sold Out
                           </button>
-                        </div>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleAddToCart(product)}
+                                disabled={addingId === product.node.id || buyingId === product.node.id}
+                                className="flex-1 border border-[#5A7A5C]/20 text-[#5A7A5C] py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all hover:bg-[#5A7A5C]/5 active:scale-[0.98] disabled:opacity-50 group/cart"
+                              >
+                                {addingId === product.node.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <><ShoppingCart className="h-3.5 w-3.5 group-hover/cart:scale-110 transition-transform" /> Add to Cart</>
+                                )}
+                              </button>
+                              <Link
+                                to={`/product/${product.node.handle}`}
+                                aria-label={`View details for ${product.node.title}`}
+                                className="px-4 py-2.5 rounded-lg border border-[#F2EDE4] text-[#1A2E35]/60 font-sans-clean text-xs font-semibold hover:border-[#1A2E35] hover:text-[#1A2E35] transition-all flex items-center justify-center whitespace-nowrap"
+                              >
+                                Details
+                              </Link>
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleBuyNow(product);
+                              }}
+                              disabled={buyingId === product.node.id}
+                              className="w-full bg-[#1A2E35] text-white py-3 rounded-lg font-sans-clean text-[10px] font-bold uppercase tracking-wider hover:bg-[#1A2E35]/90 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[#1A2E35]/10"
+                            >
+                              {buyingId === product.node.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                              {buyingId === product.node.id ? "Redirecting..." : "Buy Now Direct"}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   );
@@ -617,29 +617,40 @@ const ShopPage = () => {
         </section>
 
         {/* 5) Shop Trust Strip */}
-        <section className="py-20 border-y border-[#F2EDE4] bg-white">
+        <section className="py-24 border-y border-[#F2EDE4] bg-[#FDFBF7]">
           <div className="container px-4">
-            <div className="grid md:grid-cols-3 gap-16 max-w-5xl mx-auto">
-              <div className="text-center space-y-4">
-                <div className="w-12 h-12 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center mx-auto text-[#5A7A5C]">
-                  <ShieldCheck className="h-6 w-6" />
+            <div className="grid md:grid-cols-3 gap-12 lg:gap-16 max-w-6xl mx-auto">
+              {/* GMP Certified */}
+              <div className="text-center space-y-5 group">
+                <div className="w-16 h-16 bg-white border border-[#5A7A5C]/10 rounded-2xl flex items-center justify-center mx-auto text-[#5A7A5C] shadow-sm group-hover:shadow-md transition-shadow">
+                  <ShieldCheck className="h-7 w-7" />
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">GMP Certified</h3>
-                <p className="text-[11px] text-[#1A2E35]/40 leading-relaxed font-sans-clean">Manufactured in clinical-grade environments under strict Ayurvedic manufacturing standards.</p>
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#1A2E35]">GMP Certified</h3>
+                  <p className="text-xs text-[#1A2E35]/70 leading-relaxed font-sans-clean max-w-[280px] mx-auto">Manufactured in clinical-grade environments under strict Ayurvedic manufacturing standards.</p>
+                </div>
               </div>
-              <div className="text-center space-y-4 text-center">
-                <div className="w-12 h-12 bg-[#C5A059]/5 rounded-2xl flex items-center justify-center mx-auto text-[#C5A059]">
-                  <CheckCircle2 className="h-6 w-6" />
+              
+              {/* Batch Integrity */}
+              <div className="text-center space-y-5 group">
+                <div className="w-16 h-16 bg-white border border-[#C5A059]/10 rounded-2xl flex items-center justify-center mx-auto text-[#C5A059] shadow-sm group-hover:shadow-md transition-shadow">
+                  <CheckCircle2 className="h-7 w-7" />
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">Batch Integrity</h3>
-                <p className="text-[11px] text-[#1A2E35]/40 leading-relaxed font-sans-clean">Every batch undergoes consistency checks for purity, potency, and standardized extraction.</p>
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#1A2E35]">Batch Integrity</h3>
+                  <p className="text-xs text-[#1A2E35]/70 leading-relaxed font-sans-clean max-w-[280px] mx-auto">Every batch undergoes consistency checks for purity, potency, and standardized extraction.</p>
+                </div>
               </div>
-              <div className="text-center space-y-4">
-                <div className="w-12 h-12 bg-blue-500/5 rounded-2xl flex items-center justify-center mx-auto text-blue-500">
-                  <Package className="h-6 w-6" />
+              
+              {/* Full Transparency */}
+              <div className="text-center space-y-5 group">
+                <div className="w-16 h-16 bg-white border border-blue-500/10 rounded-2xl flex items-center justify-center mx-auto text-blue-500 shadow-sm group-hover:shadow-md transition-shadow">
+                  <Package className="h-7 w-7" />
                 </div>
-                <h3 className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]">Full Transparency</h3>
-                <p className="text-[11px] text-[#1A2E35]/40 leading-relaxed font-sans-clean">Clearly labeled botanical names and concentration ratios for zero-guesswork wellness.</p>
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-[#1A2E35]">Full Transparency</h3>
+                  <p className="text-xs text-[#1A2E35]/70 leading-relaxed font-sans-clean max-w-[280px] mx-auto">Clearly labeled botanical names and concentration ratios for zero-guesswork wellness.</p>
+                </div>
               </div>
             </div>
           </div>

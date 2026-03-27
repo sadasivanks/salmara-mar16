@@ -145,16 +145,19 @@ const ContactPage = () => {
               </p>
               
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
-                <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Secure Booking</p>
-                <a 
-                  href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#1A2E35] text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/10"
-                >
-                  Book Appointment <ArrowRight className="h-3 w-3" />
-                </a>
-              </div>
+              <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">
+                Secure Booking
+              </p>
+
+              <a 
+                href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#5A7A5C] text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#5A7A5C]/90 transition-all shadow-lg shadow-[#5A7A5C]/10 break-all sm:break-normal"
+              >
+                Book Appointment <ArrowRight className="h-3 w-3" />
+              </a>
+            </div>
             </motion.div>
 
             {/* Affiliate & Partnerships Card */}
@@ -174,15 +177,18 @@ const ContactPage = () => {
                 For collaborations, commissions, or marketing tie-ups.
               </p>
               
-              <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
-                <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Join Network</p>
-                <Link 
-                  to="/affiliate"
-                  className="bg-[#1A2E35] text-white py-4 rounded-2xl text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/10"
-                >
-                  Join the Program <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
+             <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
+              <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">
+                Join Network
+              </p>
+
+              <Link 
+                to="/affiliate"
+                className="bg-[#5A7A5C] text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-[#5A7A5C]/90 transition-all shadow-lg shadow-[#5A7A5C]/10 break-all sm:break-normal"
+              >
+                Join the Program <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
             </motion.div>
           </div>
         </section>

@@ -50,7 +50,7 @@ const Image = ({
   };
 
   return (
-    <div className={cn("relative overflow-hidden", fill ? "absolute inset-0" : "inline-block", className)}>
+    <div className={cn("relative overflow-hidden shrink-0", fill ? "absolute inset-0" : "inline-block", className)}>
       {!loaded && <Skeleton className="absolute inset-0 z-10 bg-muted/20" />}
       <img
         src={optimizedSrc}
@@ -60,12 +60,12 @@ const Image = ({
         width={width}
         height={height}
         loading={loading}
-        decoding="async" // Added decoding="async"
+        decoding="async"
         onLoad={handleLoad}
         className={cn(
-          "transition-opacity duration-500",
+          "transition-opacity duration-500 w-full h-full",
           loaded ? "opacity-100 scale-100" : "opacity-0 scale-95",
-          fill ? "absolute inset-0 w-full h-full object-cover" : "max-w-full h-auto block"
+          fill ? "absolute inset-0 object-cover" : "object-cover block"
         )}
         {...props}
       />

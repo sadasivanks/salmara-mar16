@@ -106,6 +106,13 @@ export default {
         "slide-in-right": "slide-in-right 0.6s ease-out forwards",
         "slow-pan": "slow-pan 20s ease-in-out infinite alternate",
       },
+      fontFamily: {
+        sans: ["Lora", "serif"],
+        playfair: ["Playfair Display", "serif"],
+        lora: ["Lora", "serif"],
+        display: ["Playfair Display", "serif"],
+        body: ["Lora", "serif"],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
