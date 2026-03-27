@@ -257,7 +257,7 @@ const Dashboard = () => {
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back
           </button>
           <div className="flex flex-col gap-4">
-            <img src={logo} alt="Salmara Admin" className="h-12 w-auto brightness-0 invert opacity-90" />
+          
             <span className="font-display font-medium text-lg tracking-tight text-white/60">Wellness Dashboard</span>
           </div>
         </div>
@@ -345,9 +345,9 @@ const Dashboard = () => {
                     </div>
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.3em] text-white/40 font-bold mb-1">Welcome back</p>
-                      <h2 className="text-2xl font-display font-medium mb-1">
-                        {formData.firstName} {formData.lastName}
-                      </h2>
+                   <h2 className="text-2xl font-display font-medium mb-1 text-white">
+                    {formData.firstName} {formData.lastName}
+                  </h2>
                       <p className="text-white/50 text-sm font-sans-clean">{formData.email}</p>
                     </div>
                   </div>

@@ -383,7 +383,7 @@ const LoginPage = () => {
                 <span className="text-sm font-sans-clean font-medium">Back to Shop</span>
               </button>
               
-              {/* <img src="/salamara_icon.jpg" alt="Salmara" className="h-20 w-auto brightness-0 invert mb-8" /> */}
+           
               <h1 className="text-4xl lg:text-5xl font-display font-medium text-white leading-tight mb-6">
                 Your Journey to <br />
                 <span className="italic">Authentic Wellness.</span>
