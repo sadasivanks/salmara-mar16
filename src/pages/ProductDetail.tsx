@@ -143,11 +143,24 @@ const ProductDetail = () => {
 
     setIsSubmittingQuestion(true);
     try {
-      addQuestion(handle, {
-        name: questionName,
-        email: questionEmail,
-        question: questionText,
+      const response = await fetch('/api/user_doubt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: questionName,
+          email: questionEmail,
+          message: questionText,
+        }),
       });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to submit question");
+      }
+
       toast.success("Question submitted", { description: "We'll get back to you soon!" });
       setQuestionText("");
     } catch (error) {
@@ -156,7 +169,6 @@ const ProductDetail = () => {
       setIsSubmittingQuestion(false);
     }
   };
-
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product?.id) return;

@@ -253,9 +253,9 @@ const AboutUsPage = () => {
   <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
     
     <div className="space-y-4">
-      <h3 className="text-2xl md:text-4xl font-display border-b border-white/10 pb-4">
-        Our Impact
-      </h3>
+    <h3 className="text-2xl md:text-4xl font-display text-white border-b border-white/10 pb-4">
+    Our Impact
+  </h3>
       <p className="text-white/60 font-sans-clean italic">
         "Our journey from one clinic to eight cities. From local practice to a national movement."
       </p>
@@ -272,7 +272,7 @@ const AboutUsPage = () => {
         { val: "100k+", label: "Lives Healed" },
       ].map((stat, idx) => (
         <div key={idx} className="space-y-1">
-          <div className="text-3xl md:text-5xl font-display text-[#C5A059]">
+          <div className="text-3xl md:text-5xl font-[Inter] font-semibold text-[#C5A059] tracking-tight tabular-nums">
             {stat.val}
           </div>
           <div className="text-xs md:text-sm uppercase tracking-widest text-white/60 font-bold">
@@ -328,11 +328,11 @@ const AboutUsPage = () => {
               {/* Featured Awards (with images) */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
-                  { title: "Foundation Ceremony 2006", year: "2006", img: awardIMG7921 },
-                  { title: "Taluku Kannada Rajyotsa award (2025)", year: "2025", img: awardIMG7909 },
-                  { title: "Karunada Ratna Award (2025)", year: "2025", img: awardIMG7918 },
-                  { title: "Nava Rathna Award 2019", year: "2019", img: awardIMG7913 },
-                  { title: "National Health Award 2025", year: "2025", img: awardIMG7916 },
+                  { title: "Foundation Ceremony ", year: "2006", img: awardIMG7921 },
+                  { title: "Taluku Kannada Rajyotsa award ", year: "2025", img: awardIMG7909 },
+                  { title: "Karunada Ratna Award ", year: "2025", img: awardIMG7918 },
+                  { title: "Nava Rathna Award ", year: "2019", img: awardIMG7913 },
+                  { title: "National Health Award", year: "2025", img: awardIMG7916 },
                   { title: "Vaidya Seva Ratna Award", year: "2025", img: awardIMG7915 },
                   { title: "Noble Man Award (Mumbai)", year: "2009", img: awardNobleMan },
                 ].map((award, idx) => (
@@ -354,7 +354,7 @@ const AboutUsPage = () => {
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90" />
                       <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                        <div className="text-[10px] font-bold uppercase tracking-widest mb-2 text-[#C5A059]">{award.year}</div>
+                        <div className="text-[18px] font-[Inter] font-semibold uppercase tracking-widest mb-2 text-[#C5A059] tabular-nums">{award.year}</div>
                         <div className="text-base md:text-xl font-display leading-tight drop-shadow-lg">{award.title}</div>
                       </div>
                     </div>

@@ -10,7 +10,8 @@ import {
   X,
   User as UserIcon,
   Bell,
-  Search
+  Search,
+  HelpCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredSession } from "@/lib/shopifyAdmin";
@@ -27,6 +28,8 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }: AdminSidebarProps) => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/admin-salmara" },
     { id: "testimonials", label: "Testimonials", icon: MessageSquare, path: "/admin-salmara/testimonials" },
     { id: "subscribers", label: "Subscribed Users", icon: Users, path: "/admin-salmara/subscribers" },
+    { id: "user-doubts", label: "User Doubts", icon: HelpCircle, path: "/admin-salmara/user-doubts" },
+    { id: "enquiries", label: "Enquiries", icon: MessageSquare, path: "/admin-salmara/enquiries" },
   ];
 
   return (

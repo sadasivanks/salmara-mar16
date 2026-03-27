@@ -20,6 +20,8 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AdminTestimonials = lazy(() => import("@/pages/AdminTestimonials"));
 const AdminSubscribers = lazy(() => import("@/pages/AdminSubscribers"));
+const AdminUserDoubts = lazy(() => import("@/pages/AdminUserDoubts"));
+const AdminEnquiries = lazy(() => import("@/pages/AdminEnquiries"));
 const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
 
 import ScrollToTop from "@/components/ScrollToTop";
@@ -80,6 +82,8 @@ const App = () => (
                 <Route index element={<AdminDashboard />} />
                 <Route path="testimonials" element={<AdminTestimonials />} />
                 <Route path="subscribers" element={<AdminSubscribers />} />
+                <Route path="user-doubts" element={<AdminUserDoubts />} />
+                <Route path="enquiries" element={<AdminEnquiries />} />
               </Route>
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

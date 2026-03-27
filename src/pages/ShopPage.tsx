@@ -24,7 +24,8 @@ import {
   fetchProductsViaAdmin, 
   createHybridCheckout, 
   getStoredSession,
-  type Address
+  type Address,
+  fetchBulkReviews
 } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
@@ -80,6 +81,7 @@ const ShopPage = () => {
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [selectedProductForCheckout, setSelectedProductForCheckout] = useState<ShopifyProduct | null>(null);
+  const [reviewsMap, setReviewsMap] = useState<Record<string, any[]>>({});
 
   const navigate = useNavigate();
 
@@ -101,7 +103,17 @@ const ShopPage = () => {
   useEffect(() => {
     setLoading(true);
     fetchProductsViaAdmin(50) // Fetch more for better filtering
-      .then(setProducts)
+      .then(async (fetchedProducts) => {
+        setProducts(fetchedProducts);
+        // Fetch reviews in bulk
+        const ids = fetchedProducts.map(p => p.node.id);
+        const reviewsData = await fetchBulkReviews(ids);
+        const map: Record<string, any[]> = {};
+        reviewsData.forEach((item: any) => {
+          map[item.id] = item.reviews;
+        });
+        setReviewsMap(map);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
 
@@ -540,20 +552,39 @@ const ShopPage = () => {
                         
                         {/* Rating Display */}
                         <div className="flex items-center gap-1.5 mb-3">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`h-3 w-3 ${i < (product.node.handle === 'triphala-churna' ? 5 : 4) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
-                              />
-                            ))}
-                          </div>
-                          <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
-                            {product.node.handle === 'triphala-churna' ? '4.9 (248 reviews)' : 
-                             product.node.handle === 'brahmi-hair-oil' ? '4.8 (186 reviews)' : 
-                             product.node.handle === 'triphala-tablets' ? '4.7 (92 reviews)' : 
-                             '4.5 (124 reviews)'}
-                          </span>
+                          {(() => {
+                            const productReviews = reviewsMap[product.node.id] || [];
+                            const hasReviews = productReviews.length > 0;
+                            
+                            // Fallback calculations
+                            const defaultRating = product.node.handle === 'triphala-churna' ? 4.9 : 
+                                                 product.node.handle === 'brahmi-hair-oil' ? 4.8 : 
+                                                 product.node.handle === 'triphala-tablets' ? 4.7 : 4.5;
+                            const defaultCount = product.node.handle === 'triphala-churna' ? 248 : 
+                                               product.node.handle === 'brahmi-hair-oil' ? 186 : 
+                                               product.node.handle === 'triphala-tablets' ? 92 : 124;
+
+                            const avgRating = hasReviews 
+                              ? Number((productReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / productReviews.length).toFixed(1))
+                              : defaultRating;
+                            const count = hasReviews ? productReviews.length : defaultCount;
+
+                            return (
+                              <>
+                                <div className="flex">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star 
+                                      key={i} 
+                                      className={`h-3 w-3 ${i < Math.round(avgRating) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
+                                  {avgRating} ({count} reviews)
+                                </span>
+                              </>
+                            );
+                          })()}
                         </div>
                         <p className="text-muted-foreground font-body text-sm mb-3 line-clamp-2">{product.node.description}</p>
 

@@ -2,7 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { ShoppingCart, Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, Heart } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
-import { type ShopifyProduct, fetchProductsViaAdmin, createHybridCheckout, getStoredSession, type Address } from "@/lib/shopifyAdmin";
+import { type ShopifyProduct, fetchProductsViaAdmin, createHybridCheckout, getStoredSession, type Address, fetchBulkReviews } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
@@ -21,10 +21,21 @@ const FeaturedProducts = () => {
   const [selectedProductForCheckout, setSelectedProductForCheckout] = useState<ShopifyProduct | null>(null);
   const { addItem } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
+  const [reviewsMap, setReviewsMap] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
     fetchProductsViaAdmin(12)
-      .then(setProducts)
+      .then(async (fetchedProducts) => {
+        setProducts(fetchedProducts);
+        // Fetch reviews in bulk
+        const ids = fetchedProducts.map(p => p.node.id);
+        const reviewsData = await fetchBulkReviews(ids);
+        const map: Record<string, any[]> = {};
+        reviewsData.forEach((item: any) => {
+          map[item.id] = item.reviews;
+        });
+        setReviewsMap(map);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -237,20 +248,39 @@ const FeaturedProducts = () => {
                       <div className="flex justify-between items-center mb-3">
                         {/* Rating Display */}
                         <div className="flex items-center gap-1.5 min-w-0">
-                          <div className="flex shrink-0">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`h-2.5 w-2.5 ${i < (product.node.handle === 'triphala-churna' ? 5 : 4) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
-                              />
-                            ))}
-                          </div>
-                          <span className="text-[9px] font-bold text-[#1A2E35]/40 tracking-tighter truncate">
-                            {product.node.handle === 'triphala-churna' ? '4.9 (248)' : 
-                             product.node.handle === 'brahmi-hair-oil' ? '4.8 (186)' : 
-                             product.node.handle === 'triphala-tablets' ? '4.7 (92)' : 
-                             '4.5 (124)'}
-                          </span>
+                          {(() => {
+                            const productReviews = reviewsMap[product.node.id] || [];
+                            const hasReviews = productReviews.length > 0;
+                            
+                            // Fallback calculations
+                            const defaultRating = product.node.handle === 'triphala-churna' ? 4.9 : 
+                                                 product.node.handle === 'brahmi-hair-oil' ? 4.8 : 
+                                                 product.node.handle === 'triphala-tablets' ? 4.7 : 4.5;
+                            const defaultCount = product.node.handle === 'triphala-churna' ? 248 : 
+                                               product.node.handle === 'brahmi-hair-oil' ? 186 : 
+                                               product.node.handle === 'triphala-tablets' ? 92 : 124;
+
+                            const avgRating = hasReviews 
+                              ? Number((productReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / productReviews.length).toFixed(1))
+                              : defaultRating;
+                            const count = hasReviews ? productReviews.length : defaultCount;
+
+                            return (
+                              <>
+                                <div className="flex shrink-0">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star 
+                                      key={i} 
+                                      className={`h-2.5 w-2.5 ${i < Math.round(avgRating) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                                    />
+                                  ))}
+                                </div>
+                                <span className="text-[9px] font-bold text-[#1A2E35]/40 tracking-tighter truncate">
+                                  {avgRating} ({count})
+                                </span>
+                              </>
+                            );
+                          })()}
                         </div>
 
                         {price && (

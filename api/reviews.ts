@@ -26,29 +26,60 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method === "GET") {
     const productId = req.query.product_id as string;
+    const productIds = req.query.product_ids as string;
 
-    if (!productId) {
-      return res.status(400).json({ error: "product_id is required" });
+    if (!productId && !productIds) {
+      return res.status(400).json({ error: "product_id or product_ids is required" });
     }
 
     try {
-      const query = `
-        query getProductReviews($id: ID!) {
-          product(id: $id) {
-            metafield(namespace: "custom", key: "reviews") { value }
+      if (productId) {
+        const query = `
+          query getProductReviews($id: ID!) {
+            product(id: $id) {
+              metafield(namespace: "custom", key: "reviews") { value }
+            }
           }
-        }
-      `;
+        `;
 
-      const response = await fetch(shopifyUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
-        body: JSON.stringify({ query, variables: { id: productId } }),
-      });
+        const response = await fetch(shopifyUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+          body: JSON.stringify({ query, variables: { id: productId } }),
+        });
 
-      const data = await response.json() as any;
-      const metafieldValue = data?.data?.product?.metafield?.value;
-      return res.status(200).json(metafieldValue ? JSON.parse(metafieldValue) : []);
+        const data = await response.json() as any;
+        const metafieldValue = data?.data?.product?.metafield?.value;
+        return res.status(200).json(metafieldValue ? JSON.parse(metafieldValue) : []);
+      } else {
+        // Bulk fetch
+        const ids = productIds.split(',');
+        const query = `
+          query getBulkReviews($ids: [ID!]!) {
+            nodes(ids: $ids) {
+              ... on Product {
+                id
+                metafield(namespace: "custom", key: "reviews") { value }
+              }
+            }
+          }
+        `;
+
+        const response = await fetch(shopifyUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+          body: JSON.stringify({ query, variables: { ids } }),
+        });
+
+        const data = await response.json() as any;
+        const nodes = data?.data?.nodes || [];
+        const results = nodes.map((node: any) => ({
+          id: node?.id,
+          reviews: node?.metafield?.value ? JSON.parse(node.metafield.value) : []
+        }));
+        
+        return res.status(200).json(results);
+      }
     } catch (err: any) {
       return res.status(500).json({ error: "Failed to fetch reviews", message: err.message });
     }

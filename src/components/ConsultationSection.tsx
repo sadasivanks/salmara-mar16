@@ -26,7 +26,7 @@ const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: str
   }, [isInView, target]);
 
   return (
-    <span ref={ref} className="tabular-nums">
+  <span ref={ref} className="tabular-nums font-[Inter] font-semibold tracking-tight">
       {count.toLocaleString()}{suffix}
     </span>
   );
@@ -90,19 +90,19 @@ const ConsultationSection = () => {
           >
             <div className="bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 rounded-3xl p-12">
               <Stethoscope className="h-20 w-20 text-gold-light mx-auto mb-6" />
-              <p className="text-5xl sm:text-6xl font-display font-bold text-primary-foreground mb-2">
+              <p className="text-5xl sm:text-6xl font-[Inter] font-semibold tracking-tight text-primary-foreground mb-2">
                 <AnimatedCounter target={15000} suffix="+" />
               </p>
               <p className="text-primary-foreground/60 font-sans-clean text-sm">Consultations Completed</p>
               <div className="mt-8 grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-2xl font-display font-bold text-gold-light">
+                  <p className="text-2xl font-[Inter] font-semibold tracking-tight text-gold-light">
                     <AnimatedCounter target={50} suffix="+" />
                   </p>
                   <p className="text-primary-foreground/50 font-sans-clean text-xs">Doctors</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-display font-bold text-gold-light">
+<p className="text-2xl font-[Inter] font-semibold tracking-tight text-gold-light">
                     <AnimatedCounter target={12} />
                   </p>
                   <p className="text-primary-foreground/50 font-sans-clean text-xs">Clinic Locations</p>

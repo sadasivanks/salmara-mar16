@@ -23,17 +23,66 @@ const ContactPage = () => {
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
   const [activeRoute, setActiveRoute] = useState<'support' | 'clinic' | 'affiliate'>('support');
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    category: "",
+    message: ""
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState('submitting');
-    setTimeout(() => {
+    
+    try {
+      const response = await fetch('/api/contact_us', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          phone_number: formData.phone,
+          category: formData.category,
+          user_text: formData.message
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to send message");
+      }
+
       setFormState('success');
       toast.success("Message sent successfully!", {
         description: "We've received your inquiry and will get back to you soon.",
         className: "font-sans-clean",
       });
-    }, 1500);
+      
+      // Reset form
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        category: "",
+        message: ""
+      });
+    } catch (error: any) {
+      console.error("Error submitting contact form:", error);
+      setFormState('error');
+      toast.error("Failed to send message", {
+        description: error.message || "An unexpected error occurred. Please try again later.",
+        className: "font-sans-clean",
+      });
+    }
   };
 
   const contactRoutes = [
@@ -299,6 +348,8 @@ const ContactPage = () => {
                               required
                               aria-required="true"
                               placeholder="e.g. Advait Sharma"
+                              value={formData.fullName}
+                              onChange={handleChange}
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
                             />
                           </div>
@@ -310,6 +361,8 @@ const ContactPage = () => {
                               required
                               aria-required="true"
                               placeholder="name@example.com"
+                              value={formData.email}
+                              onChange={handleChange}
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
                             />
                           </div>
@@ -321,6 +374,8 @@ const ContactPage = () => {
                               required
                               aria-required="true"
                               placeholder="e.g. +91 99999 99999"
+                              value={formData.phone}
+                              onChange={handleChange}
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors"
                             />
                           </div>
@@ -330,9 +385,11 @@ const ContactPage = () => {
                               id="category"
                               required
                               aria-required="true"
+                              value={formData.category}
+                              onChange={handleChange}
                               className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors appearance-none cursor-pointer"
                             >
-                              <option value="" disabled selected>Select Category</option>
+                              <option value="" disabled>Select Category</option>
                               <option value="product">Product Inquiry</option>
                               <option value="order">Order/Shipping</option>
                               <option value="clinic">Consultation / Clinic</option>
@@ -350,6 +407,8 @@ const ContactPage = () => {
                             aria-required="true"
                             rows={5}
                             placeholder="Tell us about your inquiry..."
+                            value={formData.message}
+                            onChange={handleChange}
                             className="w-full px-6 py-4 bg-[#F8F9FA] border border-[#F2EDE4] rounded-2xl text-sm font-sans-clean focus:outline-none focus:border-[#5A7A5C] transition-colors resize-none"
                           />
                         </div>

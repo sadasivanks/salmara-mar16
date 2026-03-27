@@ -800,6 +800,23 @@ export async function fetchProductByHandleViaAdmin(handle: string): Promise<any 
 }
 
 /**
+ * Fetch reviews for multiple products in bulk.
+ */
+export async function fetchBulkReviews(productIds: string[]): Promise<any[]> {
+  if (!productIds.length) return [];
+  try {
+    const response = await fetch(`/api/reviews?product_ids=${encodeURIComponent(productIds.join(','))}`);
+    if (response.ok) {
+       return await response.json();
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching bulk reviews:", error);
+    return [];
+  }
+}
+
+/**
  * Fetch review statistics for a product via the Admin API.
  * Currently returns a placeholder since Shopify doesn't have a native "Review" object in Admin GraphQL by default.
  */

@@ -482,32 +482,64 @@ function shopifyAdminProxy(): Plugin {
         if (req.method === "GET") {
           const url = new URL(req.url!, `http://${req.headers.host}`);
           const productId = url.searchParams.get("product_id");
+          const productIds = url.searchParams.get("product_ids");
 
-          if (!productId) {
+          if (!productId && !productIds) {
             res.writeHead(400, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ error: "product_id is required" }));
+            res.end(JSON.stringify({ error: "product_id or product_ids is required" }));
             return;
           }
 
           try {
-            const query = `
-              query getProductReviews($id: ID!) {
-                product(id: $id) {
-                  metafield(namespace: "custom", key: "reviews") { value }
+            if (productId) {
+              const query = `
+                query getProductReviews($id: ID!) {
+                  product(id: $id) {
+                    metafield(namespace: "custom", key: "reviews") { value }
+                  }
                 }
-              }
-            `;
+              `;
 
-            const response = await secureFetch(shopifyUrl, {
-              method: "POST",
-              headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
-              body: JSON.stringify({ query, variables: { id: productId } }),
-            });
+              const response = await secureFetch(shopifyUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+                body: JSON.stringify({ query, variables: { id: productId } }),
+              });
 
-            const data = await response.json() as any;
-            const metafieldValue = data?.data?.product?.metafield?.value;
-            res.writeHead(200, { "Content-Type": "application/json" });
-            res.end(JSON.stringify(metafieldValue ? JSON.parse(metafieldValue) : []));
+              const data = await response.json() as any;
+              const metafieldValue = data?.data?.product?.metafield?.value;
+              res.writeHead(200, { "Content-Type": "application/json" });
+              res.end(JSON.stringify(metafieldValue ? JSON.parse(metafieldValue) : []));
+            } else {
+              // Bulk fetch
+              const ids = productIds!.split(',');
+              const query = `
+                query getBulkReviews($ids: [ID!]!) {
+                  nodes(ids: $ids) {
+                    ... on Product {
+                      id
+                      metafield(namespace: "custom", key: "reviews") { value }
+                    }
+                  }
+                }
+              `;
+
+              const response = await secureFetch(shopifyUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-Shopify-Access-Token": adminToken },
+                body: JSON.stringify({ query, variables: { ids } }),
+              });
+
+              const data = await response.json() as any;
+              const nodes = data?.data?.nodes || [];
+              const results = nodes.map((node: any) => ({
+                id: node?.id,
+                reviews: node?.metafield?.value ? JSON.parse(node.metafield.value) : []
+              }));
+              
+              res.writeHead(200, { "Content-Type": "application/json" });
+              res.end(JSON.stringify(results));
+            }
           } catch (err: any) {
             res.writeHead(500, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ error: "Failed to fetch reviews", message: err.message }));
@@ -678,6 +710,99 @@ function shopifyAdminProxy(): Plugin {
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ success: true }));
         } catch (error: any) {
+          console.error("[SUBSCRIBE PROXY ERROR]", error);
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+
+      // --- 4b. Contact Us Proxy ---
+      server.middlewares.use("/api/contact_us", async (req, res) => {
+        if (req.method !== "POST") {
+          res.writeHead(405, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+
+        let body = "";
+        for await (const chunk of req) body += chunk;
+
+        try {
+          const { name, email, phone_number, category, user_text } = JSON.parse(body);
+          if (!supabaseUrl || !supabaseKey) throw new Error("Supabase credentials missing");
+
+          const response = await secureFetch(`${supabaseUrl}/rest/v1/contact_us`, {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json", 
+              "apikey": supabaseKey, 
+              "Authorization": `Bearer ${supabaseKey}`,
+              "Prefer": "return=representation"
+            },
+            body: JSON.stringify({ 
+              name, 
+              email: email.toLowerCase(), 
+              phone_number, 
+              category, 
+              user_text 
+            }),
+          });
+
+          if (!response.ok) {
+            const errorMsg = await response.text();
+            throw new Error(`Failed to record inquiry: ${errorMsg}`);
+          }
+
+          const data = await response.json();
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: true, data }));
+        } catch (error: any) {
+          console.error("[CONTACT PROXY ERROR]", error);
+          res.writeHead(500, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: error.message }));
+        }
+      });
+
+      // --- 4c. User Doubt Proxy ---
+      server.middlewares.use("/api/user_doubt", async (req, res) => {
+        if (req.method !== "POST") {
+          res.writeHead(405, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Method not allowed" }));
+          return;
+        }
+
+        let body = "";
+        for await (const chunk of req) body += chunk;
+
+        try {
+          const { name, email, message } = JSON.parse(body);
+          if (!supabaseUrl || !supabaseKey) throw new Error("Supabase credentials missing");
+
+          const response = await secureFetch(`${supabaseUrl}/rest/v1/user_doubt`, {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json", 
+              "apikey": supabaseKey, 
+              "Authorization": `Bearer ${supabaseKey}`,
+              "Prefer": "return=representation"
+            },
+            body: JSON.stringify({ 
+              name, 
+              email: email.toLowerCase(), 
+              message 
+            }),
+          });
+
+          if (!response.ok) {
+            const errorMsg = await response.text();
+            throw new Error(`Failed to record doubt: ${errorMsg}`);
+          }
+
+          const data = await response.json();
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ success: true, data }));
+        } catch (error: any) {
+          console.error("[USER DOUBT PROXY ERROR]", error);
           res.writeHead(500, { "Content-Type": "application/json" });
           res.end(JSON.stringify({ error: error.message }));
         }

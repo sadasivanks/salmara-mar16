@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useCartStore } from "@/stores/cartStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { fetchProductsViaAdmin, getStoredSession, logoutViaAdmin, type ShopifyProduct } from "@/lib/shopifyAdmin";
 import { Image } from "@/components/ui/Image";
 import { siteConfig } from "@/config/site.config";
@@ -46,6 +46,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { items: wishlistItems, syncWithShopify, clearWishlist } = useWishlistStore();
   const wishlistCount = wishlistItems.length;
+  const location = useLocation();
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement> | null, href: string) => {
     const hash = href.includes("#") ? `#${href.split("#")[1]}` : href;
@@ -154,8 +155,7 @@ const Header = () => {
 
       {/* Main Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-border/40 shadow-sm">
-        <div className="w-full px-4 md:px-8 flex items-center justify-between h-16 lg:h-20">
-          {/* Logo & Tagline */}
+        <div className="w-full px-4 md:px-8 flex items-center justify-between h-16 lg:h-20">          {/* Logo & Tagline */}
           <Link 
             to="/" 
             onClick={(e) => {
@@ -164,14 +164,20 @@ const Header = () => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }
             }}
-            className="flex items-center gap-4 shrink-0 group"
+            className="flex items-center gap-4 shrink-0 group py-1"
           >
-            <img src={siteConfig.logo} alt={`${siteConfig.name} Logo`} className="h-14 md:h-20 w-auto drop-shadow-sm" />
-            <div className="hidden lg:flex flex-col border-l-2 border-[#F2EDE4] pl-6 py-1">
-              <span className="text-[10px] md:text-sm font-display font-medium text-[#1A2E35] leading-tight tracking-wide">
+            <div className="relative flex items-center justify-center">
+              <img 
+                src={siteConfig.logo} 
+                alt={`${siteConfig.name} Logo`} 
+                className="h-10 md:h-12 lg:h-14 w-auto mix-blend-multiply drop-shadow-sm transition-transform duration-300 group-hover:scale-105" 
+              />
+            </div>
+            <div className="hidden lg:flex flex-col border-l border-[#F2EDE4] pl-5 py-0.5">
+              <span className="text-[10px] md:text-xs font-display font-medium text-[#1A2E35] leading-tight tracking-wide">
                 Rediscover Wellness Through
               </span>
-              <span className="text-[10px] md:text-sm font-display font-medium text-[#5A7A5C] leading-tight tracking-wide italic">
+              <span className="text-[10px] md:text-xs font-display font-medium text-[#5A7A5C] leading-tight tracking-wide italic">
                 Authentic Ayurveda.
               </span>
             </div>
@@ -205,10 +211,16 @@ const Header = () => {
                       scrollToSection(e as any, `#${hash}`);
                     }
                   }}
-                  className="px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary transition-colors duration-200 relative group"
+                  className={`px-3 py-2 text-sm font-sans-clean transition-colors duration-200 relative group ${
+                    location.pathname === item.href 
+                      ? "text-primary font-bold" 
+                      : "text-foreground/80 hover:text-primary"
+                  }`}
                 >
                   {item.label}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-3/4 rounded-full" />
+                  <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-primary transition-all duration-300 rounded-full ${
+                    location.pathname === item.href ? "w-3/4" : "w-0 group-hover:w-3/4"
+                  }`} />
                 </Link>
               )
             ))}
@@ -391,7 +403,11 @@ const Header = () => {
                               setMobileOpen(false);
                             }
                           }}
-                          className="block px-3 py-3 text-sm font-sans-clean text-foreground/80 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
+                          className={`block px-3 py-3 text-sm font-sans-clean rounded-lg transition-colors ${
+                            location.pathname === item.href
+                              ? "text-primary bg-secondary/50 font-bold"
+                              : "text-foreground/80 hover:text-primary hover:bg-secondary"
+                          }`}
                         >
                           {item.label}
                         </Link>
