@@ -11,7 +11,8 @@ import {
   User as UserIcon,
   Bell,
   Search,
-  HelpCircle
+  HelpCircle,
+  Star
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getStoredSession } from "@/lib/shopifyAdmin";
@@ -30,6 +31,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }: AdminSidebarProps) => {
     { id: "subscribers", label: "Subscribed Users", icon: Users, path: "/admin-salmara/subscribers" },
     { id: "user-doubts", label: "User Doubts", icon: HelpCircle, path: "/admin-salmara/user-doubts" },
     { id: "enquiries", label: "Enquiries", icon: MessageSquare, path: "/admin-salmara/enquiries" },
+    { id: "product-reviews", label: "Product Reviews", icon: Star, path: "/admin-salmara/product-reviews" },
   ];
 
   return (

@@ -977,6 +977,119 @@ export async function fetchProductReviewsFromShopify(productId: string): Promise
   }
 }
 
+const ALL_PRODUCTS_WITH_REVIEWS_QUERY = `
+  query getAllProductsWithReviews($first: Int!, $after: String) {
+    products(first: $first, after: $after) {
+      pageInfo { hasNextPage endCursor }
+      edges {
+        node {
+          id
+          title
+          images(first: 1) {
+            edges { node { url } }
+          }
+          reviews: metafield(namespace: "custom", key: "reviews") {
+            value
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Fetch all product reviews across the entire catalog and flatten into a single list.
+ * Reviews are stored as JSON arrays in the "custom.reviews" metafield on each product.
+ */
+export async function fetchAllProductReviewsViaAdmin(): Promise<any[]> {
+  const allReviews: any[] = [];
+  let hasNextPage = true;
+  let after: string | null = null;
+
+  while (hasNextPage) {
+    try {
+      const data = await adminApiRequest(ALL_PRODUCTS_WITH_REVIEWS_QUERY, {
+        first: 50,
+        after: after ?? undefined,
+      });
+      const edges = data?.data?.products?.edges || [];
+      const pageInfo = data?.data?.products?.pageInfo;
+
+      for (const edge of edges) {
+        const node = edge.node;
+        const productId = node.id;
+        const productName = node.title;
+        const productImage = node.images?.edges?.[0]?.node?.url || "";
+        const rawReviews = node.reviews?.value;
+
+        if (rawReviews) {
+          try {
+            const parsed = JSON.parse(rawReviews);
+            if (Array.isArray(parsed)) {
+              parsed.forEach((r: any) => {
+                allReviews.push({
+                  ...r,
+                  product_id: productId,
+                  product_name: productName,
+                  product_image: productImage,
+                });
+              });
+            }
+          } catch {
+            // Skip malformed metafield
+          }
+        }
+      }
+
+      hasNextPage = pageInfo?.hasNextPage ?? false;
+      after = pageInfo?.endCursor ?? null;
+    } catch (error) {
+      console.error("Error fetching all product reviews:", error);
+      break;
+    }
+  }
+
+  // Sort newest first
+  return allReviews.sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+}
+
+/**
+ * Delete a specific review from a product's "custom.reviews" metafield.
+ * Reads the current review array, removes the target review by ID, and writes it back.
+ */
+export async function deleteProductReviewViaAdmin(productId: string, reviewId: string): Promise<void> {
+  // 1. Fetch current reviews for this product
+  const data = await adminApiRequest(PRODUCT_REVIEWS_QUERY, { id: productId });
+  const metafieldValue = data?.data?.product?.metafield?.value;
+  const current: any[] = metafieldValue ? JSON.parse(metafieldValue) : [];
+
+  // 2. Remove the target review
+  const updated = current.filter((r: any) => r.id !== reviewId);
+
+  // 3. Write back via productUpdate mutation
+  const result = await adminApiRequest(PRODUCT_UPDATE_MUTATION, {
+    input: {
+      id: productId,
+      metafields: [
+        {
+          namespace: "custom",
+          key: "reviews",
+          value: JSON.stringify(updated),
+          type: "json",
+        },
+      ],
+    },
+  });
+
+  const userErrors = result?.data?.productUpdate?.userErrors || [];
+  if (userErrors.length > 0) {
+    throw new Error(userErrors[0].message);
+  }
+}
+
+
 /**
  * Add a review to a Shopify product's metafield.
  */
