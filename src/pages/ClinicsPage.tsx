@@ -320,7 +320,7 @@ const ClinicsPage = () => {
                               </a>
                             )}
                           </div>
-                          <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 ${clinic.type === 'Virtual' ? 'bg-blue-50 text-blue-600' : 'bg-[#5A7A5C]/5 text-[#5A7A5C]'}`}>
+                          <div className={`px-2 py-1 rounded-full text-[8px] font-bold uppercase tracking-widest flex items-center gap-1.5 whitespace-nowrap shrink-0 ${clinic.type === 'Virtual' ? 'bg-blue-50 text-blue-600' : 'bg-[#5A7A5C]/5 text-[#5A7A5C]'}`}>
                             {clinic.type === 'Virtual' ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
                             {clinic.type}
                           </div>

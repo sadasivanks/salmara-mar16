@@ -25,7 +25,31 @@ import aboutLab from "@/assets/about-lab.jpg";
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
-  const [selectedAward, setSelectedAward] = useState<{title: string, img: string} | null>(null);
+  const awards = [
+    { title: "Foundation Ceremony ", year: "2006", img: awardIMG7921 },
+    { title: "Taluku Kannada Rajyotsa award ", year: "2025", img: awardIMG7909 },
+    { title: "Karunada Ratna Award ", year: "2025", img: awardIMG7918 },
+    { title: "Nava Rathna Award ", year: "2019", img: awardIMG7913 },
+    { title: "National Health Award", year: "2025", img: awardIMG7916 },
+    { title: "Vaidya Seva Ratna Award", year: "2025", img: awardIMG7915 },
+    { title: "Noble Man Award (Mumbai)", year: "2009", img: awardNobleMan },
+  ];
+
+  const [selectedAwardIndex, setSelectedAwardIndex] = useState<number | null>(null);
+  
+  const handlePrevAward = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedAwardIndex !== null) {
+      setSelectedAwardIndex((selectedAwardIndex - 1 + awards.length) % awards.length);
+    }
+  };
+
+  const handleNextAward = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedAwardIndex !== null) {
+      setSelectedAwardIndex((selectedAwardIndex + 1) % awards.length);
+    }
+  };
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
       <SEO 
@@ -327,23 +351,15 @@ const AboutUsPage = () => {
 
               {/* Featured Awards (with images) */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { title: "Foundation Ceremony ", year: "2006", img: awardIMG7921 },
-                  { title: "Taluku Kannada Rajyotsa award ", year: "2025", img: awardIMG7909 },
-                  { title: "Karunada Ratna Award ", year: "2025", img: awardIMG7918 },
-                  { title: "Nava Rathna Award ", year: "2019", img: awardIMG7913 },
-                  { title: "National Health Award", year: "2025", img: awardIMG7916 },
-                  { title: "Vaidya Seva Ratna Award", year: "2025", img: awardIMG7915 },
-                  { title: "Noble Man Award (Mumbai)", year: "2009", img: awardNobleMan },
-                ].map((award, idx) => (
+                {awards.map((award, idx) => (
                   <motion.div 
                     key={idx}
                     whileHover={{ y: -5 }}
-                    onClick={() => setSelectedAward({ title: award.title, img: award.img })}
+                    onClick={() => setSelectedAwardIndex(idx)}
                     className="bg-white rounded-3xl overflow-hidden border border-[#F2EDE4] shadow-sm group cursor-pointer"
                   >
                     <div className="aspect-[4/5] bg-gray-100 relative">
-                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" />
+                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 transition-all duration-500" />
                       
                       {/* Hover Overlay */}
                       <div className="absolute inset-0 bg-[#1A2E35]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -621,12 +637,12 @@ const AboutUsPage = () => {
 
       {/* Lightbox for Award Images */}
       <AnimatePresence>
-        {selectedAward && (
+        {selectedAwardIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedAward(null)}
+            onClick={() => setSelectedAwardIndex(null)}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 cursor-zoom-out"
           >
             <motion.div
@@ -637,25 +653,51 @@ const AboutUsPage = () => {
               className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center gap-6 cursor-default"
             >
               <button 
-                onClick={() => setSelectedAward(null)}
-                className="absolute top-0 -right-4 md:-right-12 p-2 text-white/50 hover:text-white transition-colors"
+                onClick={() => setSelectedAwardIndex(null)}
+                className="absolute top-0 right-0 md:-top-4 md:-right-12 p-2 text-white/50 hover:text-white transition-colors z-50 bg-black/20 rounded-full backdrop-blur-sm"
                 title="Close"
                 aria-label="Close award details"
               >
                 <X className="h-8 w-8" />
               </button>
+
+              {/* Navigation Arrows */}
+              <button 
+                onClick={handlePrevAward}
+                className="absolute left-0 md:-left-20 top-1/2 -translate-y-1/2 p-4 text-white/40 hover:text-white hover:bg-white/10 rounded-full transition-all z-50"
+                aria-label="Previous award"
+              >
+                <ArrowLeft className="h-8 w-8 md:h-12 md:w-12" />
+              </button>
+
+              <button 
+                onClick={handleNextAward}
+                className="absolute right-0 md:-right-20 top-1/2 -translate-y-1/2 p-4 text-white/40 hover:text-white hover:bg-white/10 rounded-full transition-all z-50"
+                aria-label="Next award"
+              >
+                <ArrowRight className="h-8 w-8 md:h-12 md:w-12" />
+              </button>
               
-              <div className="w-full h-full overflow-hidden rounded-2xl bg-[#1A2E35]/20 flex items-center justify-center">
-                <Image 
-                  src={selectedAward.img} 
-                  alt={selectedAward.title} 
-                  className="max-w-full max-h-full object-contain shadow-2xl"
-                />
-              </div>
-              
-              <div className="text-center text-white space-y-2">
-                <h2 className="text-2xl font-display">{selectedAward.title}</h2>
-                <p className="text-white/40 text-[10px] uppercase tracking-[0.3em] font-bold">Salmara Ayurveda Achievements</p>
+              <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                <div className="relative w-full h-[70vh] flex items-center justify-center">
+                  <motion.img 
+                    key={awards[selectedAwardIndex].img}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    src={awards[selectedAwardIndex].img} 
+                    alt={awards[selectedAwardIndex].title} 
+                    className="max-w-full max-h-full object-contain shadow-2xl rounded-xl"
+                  />
+                </div>
+                
+                <div className="text-center text-white mt-8 space-y-2">
+                  <h2 className="text-2xl md:text-3xl font-display !text-white">{awards[selectedAwardIndex].title}</h2>
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="h-px w-8 bg-white/20" />
+                    <p className="text-white/60 text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">{awards[selectedAwardIndex].year}</p>
+                    <span className="h-px w-8 bg-white/20" />
+                  </div>
+                </div>
               </div>
             </motion.div>
           </motion.div>

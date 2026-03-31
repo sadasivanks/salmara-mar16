@@ -131,9 +131,8 @@ const Header = () => {
     const query = searchQuery.toLowerCase();
     const filtered = allProducts.filter((product) => {
       const titleMatch = product.node.title.toLowerCase().includes(query);
-      const tagMatch = product.node.tags.some(tag => tag.toLowerCase().includes(query));
-      const descriptionMatch = product.node.description.toLowerCase().includes(query);
-      return titleMatch || tagMatch || descriptionMatch;
+      // const tagMatch = product.node.tags.some(tag => tag.toLowerCase().includes(query));
+      return titleMatch;
     }).slice(0, 5); // Limit to top 5 results
 
     setSearchResults(filtered);
@@ -262,50 +261,77 @@ const Header = () => {
 
               {/* Search Results Dropdown */}
               <AnimatePresence>
-                {searchOpen && searchResults.length > 0 && (
+                {searchOpen && searchQuery.trim().length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     className="absolute top-full right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-2rem)] max-h-[60vh] overflow-y-auto bg-white border border-[#F2EDE4] rounded-2xl shadow-2xl z-[60]"
                   >
-                    <div className="p-2 space-y-1">
-                      <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 border-b border-[#F2EDE4] mb-1">
-                        Results
-                      </p>
-                      {searchResults.map((product) => (
-                        <button
-                          key={product.node.id}
-                          onClick={() => handleResultClick(product.node.handle)}
-                          className="w-full flex items-center gap-3 p-2 hover:bg-[#F2EDE4]/30 rounded-xl transition-colors text-left group"
-                        >
-                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#F2EDE4]/50 shrink-0">
-                            {product.node.images.edges[0]?.node?.url ? (
-                              <Image src={product.node.images.edges[0].node.url} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                              <Leaf className="w-5 h-5 m-2.5 text-[#5A7A5C]/30" />
-                            )}
+                    <div className="p-2">
+                      {isSearching ? (
+                        <div className="p-8 text-center flex flex-col items-center gap-2">
+                          <div className="h-5 w-5 border-2 border-[#5A7A5C] border-t-transparent rounded-full animate-spin" />
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Searching...</p>
+                        </div>
+                      ) : searchResults.length > 0 ? (
+                        <div className="space-y-1">
+                          <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 border-b border-[#F2EDE4] mb-1">
+                            Results
+                          </p>
+                          {searchResults.map((product) => (
+                            <button
+                              key={product.node.id}
+                              onClick={() => handleResultClick(product.node.handle)}
+                              className="w-full flex items-center gap-3 p-2 hover:bg-[#F2EDE4]/30 rounded-xl transition-colors text-left group"
+                            >
+                              <div className="w-10 h-10 rounded-lg overflow-hidden bg-[#F2EDE4]/50 shrink-0">
+                                {product.node.images.edges[0]?.node?.url ? (
+                                  <Image src={product.node.images.edges[0].node.url} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  <Leaf className="w-5 h-5 m-2.5 text-[#5A7A5C]/30" />
+                                )}
+                              </div>
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-xs font-bold text-[#1A2E35] truncate group-hover:text-[#5A7A5C] transition-colors">
+                                  {product.node.title}
+                                </span>
+                                <span className="text-[10px] text-[#1A2E35]/40 truncate">
+                                  {product.node.productType || "Ayurvedic Formulation"}
+                                </span>
+                              </div>
+                            </button>
+                          ))}
+                          <Link 
+                            to={`/shop?search=${searchQuery}`}
+                            onClick={() => {
+                              setSearchOpen(false);
+                              setSearchQuery("");
+                            }}
+                            className="block text-center py-2 text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] hover:bg-[#5A7A5C]/5 transition-colors"
+                          >
+                            View All Results
+                          </Link>
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center flex flex-col items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-[#F2EDE4]/50 flex items-center justify-center">
+                            <Search className="h-5 w-5 text-[#1A2E35]/20" />
                           </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-bold text-[#1A2E35] truncate group-hover:text-[#5A7A5C] transition-colors">
-                              {product.node.title}
-                            </span>
-                            <span className="text-[10px] text-[#1A2E35]/40 truncate">
-                              {product.node.productType || "Ayurvedic Formulation"}
-                            </span>
+                          <div className="space-y-1">
+                            <p className="text-sm font-bold text-[#1A2E35]">No matches found</p>
+                            <p className="text-[11px] text-[#1A2E35]/40 max-w-[180px] mx-auto leading-relaxed">
+                              We couldn't find any products matching "{searchQuery}"
+                            </p>
                           </div>
-                        </button>
-                      ))}
-                      <Link 
-                        to={`/shop?search=${searchQuery}`}
-                        onClick={() => {
-                          setSearchOpen(false);
-                          setSearchQuery("");
-                        }}
-                        className="block text-center py-2 text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] hover:bg-[#5A7A5C]/5 transition-colors"
-                      >
-                        View All Results
-                      </Link>
+                          <button 
+                            onClick={() => setSearchQuery("")}
+                            className="mt-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#5A7A5C] hover:bg-[#5A7A5C]/5 border border-[#5A7A5C]/20 rounded-full transition-all"
+                          >
+                            Clear Search
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}

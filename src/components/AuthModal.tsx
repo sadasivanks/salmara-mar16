@@ -44,6 +44,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     return () => clearInterval(interval);
   }, [resendTimer]);
 
+  // Reset form state whenever the modal closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      resetForm();
+    }
+  }, [isOpen, initialView]);
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setFirstName("");
+    setLastName("");
+    setPhone("");
+    setOtp("");
+    setPhoneHint("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setShowPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setResendTimer(0);
+    setLoading(false);
+    setView(initialView);
+  };
+
   if (!isOpen) return null;
 
   const handleLogin = async (e: React.FormEvent) => {

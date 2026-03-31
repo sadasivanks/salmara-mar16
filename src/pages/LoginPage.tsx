@@ -51,6 +51,33 @@ const LoginPage = () => {
     }
   }, [navigate, redirect]);
 
+ 
+  useEffect(() => {
+    setOtp("");
+    setShowPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
+    setLoading(false);
+  }, [view]);
+
+  // Handle explicit reset for a truly fresh start when the page is visited
+  useEffect(() => {
+    const freshStart = () => {
+      setEmail("");
+      setPassword("");
+      setFirstName("");
+      setLastName("");
+      setPhone("");
+      setOtp("");
+      setPhoneHint("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    };
+
+    freshStart();
+    return () => freshStart(); // Cleanup on unmount
+  }, []);
+
   const handleSuccessfulAuth = async (user: any, currentCartId: string | null) => {
     if (redirect === "checkout") {
         toast.info("Resuming checkout...");

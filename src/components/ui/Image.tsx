@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fill?: boolean;
   quality?: number;
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
 }
 
 const optimizeShopifyUrl = (url: string, width?: number | string, quality: number = 80) => {
@@ -31,6 +32,7 @@ const Image = ({
   height,
   loading = "lazy",
   onLoad,
+  objectFit = "cover",
   ...props 
 }: ImageProps) => {
   const [loaded, setLoaded] = useState(false);
@@ -65,7 +67,12 @@ const Image = ({
         className={cn(
           "transition-opacity duration-500 w-full h-full",
           loaded ? "opacity-100 scale-100" : "opacity-0 scale-95",
-          fill ? "absolute inset-0 object-cover" : "object-cover block"
+          fill ? "absolute inset-0" : "block",
+          objectFit === "cover" && "object-cover",
+          objectFit === "contain" && "object-contain",
+          objectFit === "fill" && "object-fill",
+          objectFit === "none" && "object-none",
+          objectFit === "scale-down" && "object-scale-down"
         )}
         {...props}
       />
