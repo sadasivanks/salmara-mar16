@@ -1,10 +1,10 @@
 import { motion, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { useRef } from "react";
-import tulsi from "@/assets/tulsi_dark.jpg";
-import guggul from "@/assets/guggul_dark.jpg";
-import triphala from "@/assets/triphala_dark.jpg";
-import ashwagandha from "@/assets/ashwagandha_dark.jpg";
+const tulsi = "/images/products/tulsi_dark.jpg";
+const guggul = "/images/products/guggul_dark.jpg";
+const triphala = "/images/products/triphala_dark.jpg";
+const ashwagandha = "/images/products/ashwagandha_dark.jpg";
 
 const ingredients = [
   {

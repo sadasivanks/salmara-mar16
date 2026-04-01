@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import clinicImg from "@/assets/clinics-page.jpg";
+const clinicImg = "/images/clinics/clinics-page.jpg";
 import { 
   Search, 
   MapPin, 
@@ -95,7 +95,7 @@ const ClinicsPage = () => {
     { q: "Is my booking confirmed immediately?", a: "Absolutely. Once you complete the 5-step booking process, you will receive an instant confirmation via email and SMS with all relevant details." },
     { q: "What if I need to reschedule?", a: "You can easily reschedule through your User Dashboard or the link in your confirmation email up to 4 hours before the appointment time." },
     { q: "Do you offer follow-up sessions?", a: "Yes, continuity of care is central to our philosophy. Your doctor will recommend a follow-up schedule tailored to your personal treatment plan." },
-    // { q: "Do you provide treatment plans or product recommendations?", a: "Following your consultation, you will receive a personalized wellness protocol, which may include dietary guidance, lifestyle adjustments, and recommendations from our tested product range." }
+
   ];
 
   return (
@@ -128,7 +128,6 @@ const ClinicsPage = () => {
         <section className="relative pt-12 pb-0 md:pt-16 md:pb-0 bg-[#F2EDE4] overflow-hidden">
           <div className="absolute top-0 right-0 w-1/2 h-full hidden lg:block">
             <Image 
-              // src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop" 
               src={clinicImg}
               alt="Ayurvedic Consultation" 
               className="w-full h-full object-cover grayscale-[20%] opacity-90"
@@ -304,9 +303,16 @@ const ClinicsPage = () => {
                         <div className="flex justify-between items-start mb-6">
                           <div className="space-y-2">
                             <h3 className={`text-xl font-display font-medium transition-colors ${selectedClinicId === clinic.id ? 'text-[#5A7A5C]' : 'text-[#1A2E35] group-hover:text-[#5A7A5C]'}`}>{clinic.name}</h3>
-                            <div className="flex items-center gap-2 text-sm text-[#1A2E35]/60 font-sans-clean">
-                              <MapPin className="h-4 w-4 shrink-0" />
-                              <span>{clinic.address}</span>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 text-sm text-[#1A2E35]/40 font-sans-clean">
+                                <MapPin className="h-4 w-4 shrink-0" />
+                                <span>{clinic.address}</span>
+                              </div>
+                                {clinic.fulladdress && (
+                                <div className="text-sm text-[#1A2E35]/60 font-sans-clean">
+                                  {clinic.fulladdress}
+                                </div>
+                              )}
                             </div>
                             {clinic.type !== 'Virtual' && (
                               <a 

@@ -121,11 +121,7 @@ const ContactPage = () => {
         {/* HERO SECTION */}
         <section className="relative pt-12 pb-8 md:pt-16 md:pb-10 overflow-hidden">
           <div className="absolute inset-0 bg-white">
-            {/* <img 
-              src="/C:/Users/Admin/.gemini/antigravity/brain/81674a61-4351-4cc1-be3e-ca84fc1e49a0/salmara_contact_bg_1773572963140.png" 
-              className="absolute inset-0 w-full h-full object-cover opacity-10 grayscale" 
-              alt="Soft focus background"
-            /> */}
+
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FDFBF7]/80 to-[#FDFBF7]" />
           </div>
           

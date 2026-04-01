@@ -11,17 +11,16 @@ import {
 } from "lucide-react";
 import SEO from "@/components/SEO";
 
-// Award Images
-import awardIMG7909 from "@/awards/IMG_7909.JPG";
-import awardIMG7913 from "@/awards/IMG_7913.JPG";
-import awardIMG7915 from "@/awards/IMG_7915.JPG";
-import awardIMG7916 from "@/awards/IMG_7916.JPG";
-import awardIMG7918 from "@/awards/IMG_7918.JPG";
-import awardIMG7921 from "@/awards/IMG_7921.JPG";
-import awardNobleMan from "@/awards/Noble-Man-Award.png";
-
-// Assets
-import aboutLab from "@/assets/about-lab.jpg";
+// Award Images - Now from public/images
+const awardIMG7909 = "/images/awards/IMG_7909.JPG";
+const awardIMG7913 = "/images/awards/IMG_7913.JPG";
+const awardIMG7915 = "/images/awards/IMG_7915.JPG";
+const awardIMG7916 = "/images/awards/IMG_7916.JPG";
+const awardIMG7918 = "/images/awards/IMG_7918.JPG";
+const awardIMG7921 = "/images/awards/IMG_7921.JPG";
+const awardNobleMan = "/images/awards/Noble-Man-Award.png";
+const founder = "/images/brand/founder.jpeg";
+const aboutLab = "/images/clinics/about-lab.jpg";
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
@@ -112,9 +111,9 @@ const AboutUsPage = () => {
             <div className="w-full md:w-1/4 flex-shrink-0">
               <div className="relative">
                 <Image 
-                  src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=1974&auto=format&fit=crop" 
+                  src={founder} 
                   alt="Founder" 
-                  className="rounded-xl grayscale hover:grayscale-0 transition-all duration-700 shadow-lg w-full max-w-[200px] mx-auto md:max-w-none"
+                  className="rounded-xl transition-all duration-700 shadow-lg w-full max-w-[300px] mx-auto md:max-w-none"
                 />
                 <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-[#5A7A5C]/10 rounded-lg -z-10" />
               </div>
@@ -128,15 +127,12 @@ const AboutUsPage = () => {
               
               <div className="text-[#1A2E35]/70 font-sans-clean leading-relaxed text-base md:text-lg">
                 <p>
-                  When we began Salmara, it was never just about herbal formulations — it was about restoring the 
-                  credibility of Ayurveda. We wanted people to experience something that feels traditional, yet proven. 
-                  Every bottle carries our promise — tested, verified, and made with respect for the science that nature 
-                  already perfected.
+                When we began Salmara, it was never only about herbal formulations. It was about restoring the credibility of Ayurveda. We wanted people to experience something that feels traditional while also being proven and reliable. Every bottle reflects our promise. It is carefully tested, verified, and created with deep respect for the science that nature has already perfected.
                 </p>
               </div>
 
               <div className="pt-2">
-                <p className="font-display italic text-xl text-[#5A7A5C]">Shamsuddin Ahmed Salmara</p>
+                <p className="font-display italic text-xl text-[#5A7A5C]">Shamsuddin Salmara</p>
                 <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1A2E35]/40">— Founder, Salmara Ayurveda</p>
               </div>
             </div>

@@ -60,14 +60,7 @@ const AdminLayout = () => {
 
           <div className="flex items-center gap-2 sm:gap-6">
             {/* Search */}
-            {/* <div className="hidden md:flex items-center gap-2 bg-[#FDFBF7] border border-[#F2EDE4] rounded-2xl px-4 py-2 w-64 focus-within:border-[#5A7A5C] transition-all group">
-              <Search className="h-4 w-4 text-[#1A2E35]/30 group-focus-within:text-[#5A7A5C]" />
-              <input 
-                type="text" 
-                placeholder="Search..." 
-                className="bg-transparent border-none outline-none text-sm w-full placeholder:text-[#1A2E35]/20 font-medium"
-              />
-            </div> */}
+
 
         
 

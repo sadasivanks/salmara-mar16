@@ -141,14 +141,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
 
     // 1. Restore Cart from Shopify if available
     if (userData?.shopifyCartId) {
-      console.log("Found Shopify Cart ID, restoring:", userData.shopifyCartId);
+
       setCartId(userData.shopifyCartId);
       setTimeout(async () => {
         await syncCart(); 
-        console.log("Cart restoration complete");
+
       }, 500);
     } else if (currentCartId) {
-      console.log("Saving local cart to Shopify account:", currentCartId);
+
       await updateCustomerCartId(userData.id, currentCartId);
       setCartId(currentCartId);
     }
@@ -649,7 +649,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       {resendTimer > 0 ? `Resend in ${Math.floor(resendTimer / 60)}:${(resendTimer % 60).toString().padStart(2, '0')}` : "Resend Code"}
                     </button>
                     <div className="h-3 w-[1px] bg-[#F2EDE4]" />
-                    {/* <button onClick={() => setView("register")} className="text-[10px] font-bold text-[#1A2E35]/60 uppercase tracking-widest hover:underline">Edit Details</button> */}
+
                   </div>
                 </div>
              </motion.div>

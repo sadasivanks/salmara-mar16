@@ -843,7 +843,7 @@ export async function createHybridCheckout(
   };
   
   try {
-    console.log("[CHECKOUT] Starting Standard Checkout flow...");
+
     const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || "salmara-5.myshopify.com";
     
     const formattedItems = lineItems
@@ -880,7 +880,7 @@ export async function createHybridCheckout(
       
       permalinkUrl += `?${params.toString()}`;
       
-      console.log("[CHECKOUT] Standard Checkout URL generated:", permalinkUrl);
+
       localStorage.setItem('shopify_checkout_pending', 'true');
       return { success: true, checkoutUrl: permalinkUrl };
     }

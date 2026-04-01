@@ -11,7 +11,7 @@ export function useCartSync() {
     // Check if we just returned from a checkout
     const isPending = localStorage.getItem('shopify_checkout_pending');
     if (isPending === 'true') {
-      console.log("Global Auto-Sync: Order detected via pending flag, clearing cart...");
+
       clearCart();
       localStorage.removeItem('shopify_checkout_pending');
     }

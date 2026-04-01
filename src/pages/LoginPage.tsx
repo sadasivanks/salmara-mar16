@@ -83,7 +83,7 @@ const LoginPage = () => {
         toast.info("Resuming checkout...");
         const checkoutUrl = await checkout();
         if (checkoutUrl) {
-            console.log("LoginPage: Resuming Cart Checkout:", checkoutUrl);
+            return;
             await logCheckoutToTerminal(checkoutUrl, "LoginPage (Post-Login Cart Resume)");
             window.location.href = checkoutUrl;
             return;
@@ -99,7 +99,7 @@ const LoginPage = () => {
         try {
           const result = await createHybridCheckout([{ variantId, quantity }], user.id, user.email);
            if (result.success && result.checkoutUrl) {
-            console.log("LoginPage: Resuming Buy Now Checkout:", result.checkoutUrl);
+
             await logCheckoutToTerminal(result.checkoutUrl, `LoginPage (Post-Login Buy Now Resume: ${variantId})`);
             window.location.href = result.checkoutUrl;
             return;
@@ -435,7 +435,7 @@ const LoginPage = () => {
           {/* Right Side: Form */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white">
             <div className="md:hidden flex justify-center mb-8">
-               <img src="/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto" />
+               <img src="/images/brand/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto" />
             </div>
 
             <AnimatePresence mode="wait">
@@ -725,9 +725,7 @@ const LoginPage = () => {
                       {loading ? "Verifying..." : "Complete Registration"}
                     </button>
                   </form>
-                  {/* <div className="mt-8 text-center md:text-left">
-                    <button onClick={() => setView("register")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Edit Registration Details</button>
-                  </div> */}
+
                 </motion.div>
               ) : view === "otp" ? (
                 <motion.div

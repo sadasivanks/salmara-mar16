@@ -39,7 +39,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { Image } from "@/components/ui/Image";
 
 
-const logo = "/salamara_icon.jpg";
+const logo = "/images/brand/salamara_icon.jpg";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ const Dashboard = () => {
   const fetchOrders = async () => {
     setFetchingOrders(true);
     try {
-      console.log("Fetching orders for customer ID:", user.id, "and email:", user.email);
+
       
       // 1. Fetch by Customer ID (directly linked orders)
       const linkedOrders = await fetchCustomerOrdersViaAdmin(user.id);
@@ -102,7 +102,7 @@ const Dashboard = () => {
         }
       });
 
-      console.log(`Found ${linkedOrders.length} linked and ${emailOrders.length} total unique orders.`);
+
       setOrders(allOrders);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -302,13 +302,7 @@ const Dashboard = () => {
             <User className="h-5 w-5" />
             Profile Settings
           </button>
-          {/* <Link 
-            to="/" 
-            className="w-full flex items-center gap-4 px-4 py-3.5 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all"
-          >
-            <Home className="h-5 w-5" />
-            Back to Home
-          </Link> */}
+
         </nav>
 
         <div className="p-4 mt-auto">

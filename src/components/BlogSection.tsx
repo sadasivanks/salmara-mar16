@@ -2,9 +2,9 @@ import { motion, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import tulsiImg from "@/assets/tulsi_dark.jpg";
-import ashwagandhaImg from "@/assets/ashwagandha_dark.jpg";
-import triphalaImg from "@/assets/triphala_dark.jpg";
+const tulsiImg = "/images/products/tulsi_dark.jpg";
+const ashwagandhaImg = "/images/products/ashwagandha_dark.jpg";
+const triphalaImg = "/images/products/triphala_dark.jpg";
 
 const posts = [
   {

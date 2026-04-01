@@ -13,7 +13,7 @@ import { Image } from "@/components/ui/Image";
 import { siteConfig } from "@/config/site.config";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-const logo = "/salamara_icon.jpg";
+const logo = "/images/brand/salamara_icon.jpg";
 
 const navItems = [
   { label: "About Us", href: "/about" },
@@ -131,7 +131,7 @@ const Header = () => {
     const query = searchQuery.toLowerCase();
     const filtered = allProducts.filter((product) => {
       const titleMatch = product.node.title.toLowerCase().includes(query);
-      // const tagMatch = product.node.tags.some(tag => tag.toLowerCase().includes(query));
+
       return titleMatch;
     }).slice(0, 5); // Limit to top 5 results
 
@@ -495,13 +495,7 @@ const Header = () => {
                         <User className="h-4 w-4" /> Login
                       </button>
                     )}
-                    {/* <Link 
-                      to="/contact" 
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 text-sm font-sans-clean text-foreground/80 hover:text-primary"
-                    >
-                      <Phone className="h-4 w-4" /> Contact Us
-                    </Link> */}
+
                   </div>
                 </div>
               </SheetContent>
@@ -509,7 +503,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Removed Old Search Bar */}
+
       </header>
 
       {/* Auth Modal */}

@@ -56,7 +56,7 @@ const getOrCreateUserRole = async (): Promise<number | null> => {
  */
 export const syncShopifyCustomerToDb = async (customer: ShopifyCustomer) => {
   try {
-    console.log("Starting DB sync for customer:", customer.email);
+
 
     // 1. Check if user already exists
     const { data: existingUser, error: checkError } = await supabase
@@ -66,7 +66,7 @@ export const syncShopifyCustomerToDb = async (customer: ShopifyCustomer) => {
       .maybeSingle();
 
     if (existingUser) {
-      console.log("User already exists in DB, skipping insert.");
+
       return { success: true, userId: existingUser.id, existed: true };
     }
 
@@ -112,7 +112,7 @@ export const syncShopifyCustomerToDb = async (customer: ShopifyCustomer) => {
       };
     }
 
-    console.log("User successfully synced to DB:", newUser?.id);
+
     return { success: true, userId: newUser?.id, existed: false };
 
   } catch (error: any) {

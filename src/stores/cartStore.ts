@@ -114,7 +114,7 @@ export const useCartStore = create<CartStore>()(
         quantity: item.quantity
       }));
 
-      console.log("Starting Standard checkout flow with address:", shippingAddress);
+
       const result = await createHybridCheckout(
         lineItems, 
         session?.user?.id, 
@@ -123,7 +123,6 @@ export const useCartStore = create<CartStore>()(
       );
 
       if (result.success && result.checkoutUrl) {
-            console.log("Admin checkout successful URL:", result.checkoutUrl);
             return result.checkoutUrl;
           } else {
             console.error("Admin checkout failed:", result.errors);
@@ -146,7 +145,6 @@ export const useCartStore = create<CartStore>()(
           try {
             const remoteItems = JSON.parse(session.user.cartJson);
             if (Array.isArray(remoteItems) && remoteItems.length > 0) {
-              console.log("Restoring cart from Shopify:", remoteItems.length, "items");
               set({ items: remoteItems });
             }
           } catch (e) {

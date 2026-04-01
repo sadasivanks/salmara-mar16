@@ -39,7 +39,6 @@ export const CartDrawer = () => {
     try {
       const checkoutUrl = await checkout(address);
       if (checkoutUrl) {
-        console.log("CartDrawer: Redirecting to Shopify Checkout with address:", checkoutUrl);
         await logCheckoutToTerminal(checkoutUrl, `CartDrawer (Direct Checkout ${address ? 'w/ Address' : 'w/o Saved Address'})`);
         window.location.href = checkoutUrl;
       } else {

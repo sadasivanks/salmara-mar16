@@ -1,10 +1,10 @@
 export const siteConfig = {
   name: "Salmara Ayurveda",
   url: "https://salmara.com",
-  logo: "/salamara_icon.jpg",
+  logo: "/images/brand/salamara_icon.jpg",
   contact: {
     phone: "+91-9353436373",
-    email: "customercare@salmara.com",
+    email: "office@salmaraayurveda.com",
     whatsapp: "919353436373",
   },
   social: {
@@ -16,7 +16,8 @@ export const siteConfig = {
     {
       id: 1,
       name: "Salmara Ayurveda - Bangalore",
-      address: "Bangalore - Rajajinagar888, 64th Cross Rd, 5th Block, Rajajinagar, Bengaluru, Karnataka 560010 / ಬೆಂಗಳೂರು - ರಾಜಾಜಿನಗರ",
+      address: "Bangalore - Rajajinagar / ಬೆಂಗಳೂರು - ರಾಜಾಜಿನಗರ",
+      fulladdress: "888, 64th Cross Rd, 5th Block, Rajajinagar, Bengaluru, Karnataka 560010",
       streetAddress: "Rajajinagar",
       city: "Bengaluru",
       state: "Karnataka",
@@ -31,7 +32,8 @@ export const siteConfig = {
     {
       id: 2,
       name: "Salmara Ayurveda - Puttur",
-      address: "Puttur - D.K, Panjala Bus Stop, SH 100, Narimogru, Karnataka 574202 / ಪುತ್ತೂರು - ದ.ಕ",
+      address: "Puttur - D.K / ಪುತ್ತೂರು - ದ.ಕ",
+      fulladdress: "Panjala Bus Stop, SH 100, Narimogru, Karnataka 574202",
       streetAddress: "Salmara",
       city: "Puttur",
       state: "Karnataka",
@@ -46,7 +48,8 @@ export const siteConfig = {
     {
       id: 3,
       name: "Salmara Ayurveda - Mysore",
-      address: "Mysore - Saraswatipuram, 12th main road, 3rd Cross Road, opposite akul creation, Saraswathipuram, Mysuru, Karnataka 570009 / ಮೈಸೂರು - ಸರಸ್ವತೀಪುರಂ",
+      address: "Mysore - Saraswatipuram / ಮೈಸೂರು - ಸರಸ್ವತೀಪುರಂ",
+      fulladdress: "12th main road, 3rd Cross Road, opposite akul creation, Saraswathipuram, Mysuru, Karnataka 570009",
       streetAddress: "Saraswatipuram",
       city: "Mysuru",
       state: "Karnataka",
@@ -61,7 +64,8 @@ export const siteConfig = {
     {
       id: 4,
       name: "Salmara Ayurveda - Hubli",
-      address: "Hubli - Vidyanagar, Sajjanar building, Prabhat Colony, opposite to Sanjeevini hospital, Shirur Park, Vidya Nagar, Hubballi, Karnataka 580021 / ಹುಬ್ಬಳ್ಳಿ - ವಿದ್ಯಾನಗರ",
+      address: "Hubli - Vidyanagar / ಹುಬ್ಬಳ್ಳಿ - ವಿದ್ಯಾನಗರ",
+      fulladdress: "Sajjanar building, Prabhat Colony, opposite to Sanjeevini hospital, Shirur Park, Vidya Nagar, Hubballi, Karnataka 580021",
       streetAddress: "Vidyanagar",
       city: "Hubli",
       state: "Karnataka",
@@ -76,7 +80,8 @@ export const siteConfig = {
     {
       id: 5,
       name: "Salmara Ayurveda - Mumbai",
-      address: "Ghatkhopar - Mumbai, 36, 37 Jethalal Parekh Road, near Jhunjhunwala College, Shival Nagar, CGS Colony, Ghatkopar West, Mumbai, Maharashtra 400086",
+      address: "Ghatkhopar - Mumbai",
+      fulladdress: "36, 37 Jethalal Parekh Road, near Jhunjhunwala College, Shival Nagar, CGS Colony, Ghatkopar West, Mumbai, Maharashtra 400086",
       streetAddress: "Ghatkopar",
       city: "Mumbai",
       state: "Maharashtra",
@@ -91,7 +96,8 @@ export const siteConfig = {
     {
       id: 6,
       name: "Salmara Ayurveda - Raichur",
-      address: "Raichur, Station Area, H.No. 1-5-97, IB Rd, opposite to bolas dry fruits, Indira Nagar, Railway, Raichur, Karnataka 584101 / ರಾಯಚೂರು",
+      address: "Raichur - Karnataka / ರಾಯಚೂರು",
+      fulladdress:"Station Area, H.No. 1-5-97, IB Rd, opposite to bolas dry fruits, Indira Nagar, Railway, Raichur, Karnataka 584101",
       streetAddress: "Raichur",
       city: "Raichur",
       state: "Karnataka",
@@ -106,7 +112,8 @@ export const siteConfig = {
     {
       id: 7,
       name: "Salmara Ayurveda - Kozhikode",
-      address: "Calicut - Kerala, Ground floor, Crestis Avenue, 1602/A, Kannur Rd, Moonalingal, Kozhikode, Corporation, Kerala 673001",
+      address: "Calicut - Kerala",
+      fulladdress: "Ground floor, Crestis Avenue, 1602/A, Kannur Rd, Moonalingal, Kozhikode, Corporation, Kerala 673001",
       streetAddress: "Calicut",
       city: "Kozhikode",
       state: "Kerala",
@@ -121,7 +128,8 @@ export const siteConfig = {
     {
       id: 8,
       name: "Salmara Ayurveda - Kochi",
-      address: "Kochi - Kerala, Shop no 21/121, manaliparambil building, Manjummel Road, Janatha Rd, Manjummel, Kochi, Kerala 683501",
+      address: "Kochi - Kerala",
+      fulladdress: "Shop no 21/121, manaliparambil building, Manjummel Road, Janatha Rd, Manjummel, Kochi, Kerala 683501",
       streetAddress: "Kochi",
       city: "Kochi",
       state: "Kerala",

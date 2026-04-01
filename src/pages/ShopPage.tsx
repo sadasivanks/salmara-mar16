@@ -47,8 +47,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-// Assuming getStoredSession is available or will be added - REMOVED as no longer needed
-// import { loginViaProxy, createCustomerViaAdmin, saveSession } from "@/lib/shopifyAdmin"; 
 
 const concerns = [
   { id: "pain", title: "Pain & Mobility", desc: "For muscle relief, joints, and inflammation support." },

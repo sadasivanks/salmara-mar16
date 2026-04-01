@@ -2,9 +2,9 @@ import { motion, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import neemImg from "@/assets/neem_dark.jpg";
-import meditationImg from "@/assets/meditation_dark.jpg";
-import skincareImg from "@/assets/skincare-wellness.jpg";
+const neemImg = "/images/products/neem_dark.jpg";
+const meditationImg = "/images/lifestyle/meditation_dark.jpg";
+const skincareImg = "/images/lifestyle/skincare-wellness.jpg";
 
 const tips = [
   {

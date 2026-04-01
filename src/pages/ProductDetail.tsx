@@ -328,7 +328,6 @@ const ProductDetail = () => {
       const result = await createHybridCheckout(lineItems, getStoredSession()?.user?.id, getStoredSession()?.user?.email, address);
 
        if (result.success && result.checkoutUrl) {
-        console.log("ProductDetail: Redirecting to Direct Buy Now:", result.checkoutUrl);
         await logCheckoutToTerminal(result.checkoutUrl, `ProductDetail (Buy Now: ${encodeURIComponent(selectedVariant.id)})`);
         window.location.href = result.checkoutUrl;
       } else {
