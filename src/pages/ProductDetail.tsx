@@ -385,7 +385,7 @@ const ProductDetail = () => {
       />
       <Header />
       
-      <main className="pt-4 md:pt-8 pb-0 md:pb-24 overflow-x-hidden">
+      <main className="py-6 md:py-8 lg:py-10 xl:py-12 overflow-x-hidden">
         <div className="container px-4 mx-auto max-w-7xl">
           <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-12">
             <Link to="/" className="hover:text-[#5A7A5C]">Home</Link>
@@ -395,7 +395,7 @@ const ProductDetail = () => {
             <span className="text-[#1A2E35]">{product.title}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 mb-32">
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <div className="space-y-6">
               <div className="sticky top-32">
                 <motion.div 
@@ -629,11 +629,11 @@ const ProductDetail = () => {
           </div>
 
           {getMetafieldValue('benefits') && (
-            <section className="py-24 border-t border-[#F2EDE4]">
+            <section className="py-6 md:py-8 lg:py-10 xl:py-12 border-t border-[#F2EDE4]">
               <div className="max-w-4xl mx-auto text-center">
                 <p className="text-[#C5A059] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-4">THE SALMARA EXPERIENCE</p>
-                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-12">How it Supports Your Wellness</h2>
-                <div className="grid md:grid-cols-2 gap-12 text-left">
+                <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-6 md:mb-8 lg:mb-10 xl:mb-12">How it Supports Your Wellness</h2>
+                <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 text-left">
                   {getMetafieldValue('benefits')
                     .split(/[,\n]+/)
                     .map((s: string) => s.trim())
@@ -651,16 +651,16 @@ const ProductDetail = () => {
             </section>
           )}
 
-          <section className="py-24 bg-white -mx-4 px-4 border-y border-[#F2EDE4]">
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white -mx-4 px-4 border-y border-[#F2EDE4]">
             <div className="max-w-4xl mx-auto space-y-16">
-              <div className="text-center">
+              <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
                 <p className="text-[#C5A059] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Ingredient Insights</p>
                 <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-4">Core Herbs & Extracts</h2>
                 <p className="text-[#1A2E35]/40 font-sans-clean max-w-xl mx-auto text-sm">We believe transparency is the root of trust. Every milligram in this formulation is ethically sourced and standardized.</p>
               </div>
               
               {getMetafieldValue('ingredients') ? (
-                <div className={getMetafieldValue('ingredients').includes(',') ? "grid md:grid-cols-3 gap-8" : "max-w-2xl mx-auto"}>
+                <div className={getMetafieldValue('ingredients').includes(',') ? "grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12" : "max-w-2xl mx-auto"}>
                   {getMetafieldValue('ingredients').includes(',') ? (
                     getMetafieldValue('ingredients').split(',').map((s: string) => s.trim()).filter(Boolean).map((ing: string) => (
                       <div key={ing} className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group">
@@ -695,9 +695,9 @@ const ProductDetail = () => {
             </div>
           </section>
 
-          <section className="py-24 max-w-4xl mx-auto">
-            <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-12">Suggested Use</h2>
-            <div className="grid md:grid-cols-2 gap-12">
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 max-w-4xl mx-auto">
+            <h2 className="text-3xl font-display font-medium text-[#1A2E35] text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">Suggested Use</h2>
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12">
               <div className="flex gap-6">
                 <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">01</div>
                 <div>
@@ -715,8 +715,8 @@ const ProductDetail = () => {
             </div>
           </section>
 
-          <section id="reviews" className="py-24 max-w-4xl mx-auto border-b border-[#F2EDE4]">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12 md:mb-16">
+          <section id="reviews" className="py-6 md:py-8 lg:py-10 xl:py-12 max-w-4xl mx-auto border-b border-[#F2EDE4]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
               <div className="space-y-2">
                 <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Customer Reviews</h2>
                 <div className="flex flex-wrap items-center gap-3 md:gap-4">

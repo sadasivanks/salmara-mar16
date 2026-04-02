@@ -7,7 +7,7 @@ const AffiliateSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="affiliate" className="py-24 bg-[#5A7A5C]" ref={ref}>
+    <section id="affiliate" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -16,15 +16,15 @@ const AffiliateSection = () => {
           className="text-center max-w-3xl mx-auto"
         >
           {/* Central Users Icon */}
-          <div className="flex justify-center mb-10">
+          <div className="flex justify-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <Users className="h-16 w-16 text-[#C5A059]" strokeWidth={1.5} />
           </div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-medium text-white mb-6">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-medium text-[#1A2E35] mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             Share Ayurveda and Earn
           </h2>
           
-          <p className="text-white/80 font-body text-base md:text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[#1A2E35]/80 font-body text-base md:text-lg mb-6 md:mb-8 lg:mb-10 xl:mb-12 max-w-2xl mx-auto leading-relaxed">
             Join the Salmara Affiliate Program and grow with India's trusted Ayurvedic brand.
           </p>
 

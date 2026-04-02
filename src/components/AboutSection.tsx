@@ -45,9 +45,9 @@ const AboutSection = () => {
   }, [activeSlide]);
 
   return (
-    <section id="about" className="py-12 bg-[#F2EDE4]" ref={ref}>
+    <section id="about" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-10">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 items-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
           {/* Main Image with Badge */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -80,7 +80,7 @@ const AboutSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">OUR HERITAGE</p>
-            <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35] mb-8 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35] mb-6 md:mb-8 lg:mb-10 xl:mb-12 leading-tight">
               The Salmara Story
             </h2>
             
@@ -91,7 +91,7 @@ const AboutSection = () => {
               processes.
             </p>
             
-            <div className="relative pl-6 py-2 mb-10 border-l-4 border-[#C5A059]/60">
+            <div className="relative pl-6 py-2 mb-6 md:mb-8 lg:mb-10 xl:mb-12 border-l-4 border-[#C5A059]/60">
               <p className="text-[#1A2E35]/50 italic font-body text-lg">
                 "We don't just manufacture products — we preserve Ayurveda."
               </p>
@@ -132,7 +132,7 @@ const AboutSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="max-w-4xl mx-auto mt-16"
+          className="max-w-4xl mx-auto mt-6 md:mt-8 lg:mt-10 xl:mt-12"
         >
           {/* Desktop Grid Layout */}
           <div className="hidden lg:grid grid-cols-3 gap-0 relative">

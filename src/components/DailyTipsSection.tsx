@@ -29,13 +29,13 @@ const DailyTipsSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="tips" className="py-24 bg-white" ref={ref}>
+    <section id="tips" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12"
         >
           <p className="text-[#C5A059] font-sans-clean text-xs sm:text-sm uppercase tracking-[0.3em] font-bold mb-4">DAILY WISDOM</p>
           <h2 className="text-3xl sm:text-4xl font-display font-medium text-[#1A2E35]">
@@ -43,7 +43,7 @@ const DailyTipsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {tips.map((tip, i) => (
             <motion.article
               key={tip.title}

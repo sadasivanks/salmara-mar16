@@ -31,5 +31,5 @@
   },
   "include": [
     "src"
-, "src/components/IngredientHighlights.tsx", "src/components/HeroSection.tsx"  ]
+  ]
 }

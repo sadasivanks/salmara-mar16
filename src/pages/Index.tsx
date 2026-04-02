@@ -1,3 +1,4 @@
+// HeroSection import should resolve properly after tsconfig cleanup
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -7,14 +8,13 @@ import IngredientHighlights from "@/components/IngredientHighlights";
 import ConsultationSection from "@/components/ConsultationSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import DailyTipsSection from "@/components/DailyTipsSection";
-import AffiliateSection from "@/components/AffiliateSection";
-import NewsletterSection from "@/components/NewsletterSection";
+import CommunitySection from "@/components/CommunitySection";
 import Footer from "@/components/Footer";
 import FloatingButtons from "@/components/FloatingButtons";
 import SEO from "@/components/SEO";
 
 const Index = () => (
-  <div className="min-h-screen bg-[#FDFBF7]">
+  <div className="min-h-screen bg-secondary">
     <SEO 
       title="Authentic Ayurvedic Formulations & Wellness"
       description="Discover the power of authentic Ayurveda. Clinically certified, GMP-audited herbal formulations for pain relief, immunity, and holistic healing. Shop Salmara today."
@@ -48,8 +48,7 @@ const Index = () => (
       <TestimonialsSection />
       <DailyTipsSection />
       <ConsultationSection />
-      <AffiliateSection />
-      <NewsletterSection />
+      <CommunitySection />
     </main>
     <Footer />
     <FloatingButtons />

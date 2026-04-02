@@ -4,9 +4,9 @@ import { siteConfig } from "@/config/site.config";
 const logo = "/images/brand/salamara_icon.jpg";
 
 const Footer = () => (
-  <footer className="bg-[#5A7A5C] text-white pt-24 pb-12">
+  <footer className="bg-[#5A7A5C] text-white py-6 md:py-8 lg:py-10 xl:py-12">
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8 mb-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12">
         {/* Brand Column */}
         <div className="max-w-xs">
           {/* <img src={logo} alt={siteConfig.name} className="h-12 w-auto mb-6 brightness-0 invert opacity-90" /> */}
@@ -17,7 +17,7 @@ const Footer = () => (
 
         {/* Quick Links */}
         <div>
-          <h3 className="font-display font-bold text-xl mb-8 text-white">Quick Links</h3>
+          <h3 className="font-display font-bold text-xl mb-4 md:mb-8 text-white">Quick Links</h3>
           <ul className="space-y-4">
             {["Home", "About Us", "Shop Now", "Blog", "Contact Us"].map((label) => {
               const href = label === "Home" ? "/" : 
@@ -47,7 +47,7 @@ const Footer = () => (
 
         {/* Legal */}
         <div>
-          <h3 className="font-display font-bold text-xl mb-8 text-white">Legal</h3>
+          <h3 className="font-display font-bold text-xl mb-4 md:mb-8 text-white">Legal</h3>
           <ul className="space-y-4">
             {["Terms & Conditions", "Privacy Policy", "Legacy", "Shipping Policy"].map((label) => {
               const href = label === "Legacy" ? "/about" : "#";
@@ -70,7 +70,7 @@ const Footer = () => (
 
         {/* Connect */}
         <div>
-          <h3 className="font-display font-bold text-xl mb-8 text-white">Connect</h3>
+          <h3 className="font-display font-bold text-xl mb-4 md:mb-8 text-white">Connect</h3>
           <div className="flex gap-4">
             {[
               { Icon: Facebook, href: siteConfig.social.facebook, label: "Facebook" },
@@ -93,7 +93,7 @@ const Footer = () => (
       </div>
 
       {/* Bottom Bar */}
-      <div className="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div className="pt-6 md:pt-8 lg:pt-10 xl:pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
         <p className="text-white/80 text-sm font-body">
           © {new Date().getFullYear()} {siteConfig.name}. All Rights Reserved.
         </p>

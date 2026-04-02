@@ -37,37 +37,36 @@ const ConsultationSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="consultation" className="py-24 bg-herbal-dark relative overflow-hidden" ref={ref}>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--gold)/0.1),transparent_60%)]" />
+    <section id="consultation" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary relative overflow-hidden" ref={ref}>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <p className="text-gold-light font-sans-clean text-sm uppercase tracking-[0.2em] mb-3">Expert Care</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-primary-foreground mb-6 leading-tight">
+            <p className="text-[#C5A059] font-sans-clean text-sm uppercase tracking-[0.2em] mb-2">Expert Care</p>
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#1A2E35] mb-2 leading-tight">
               Personalized Ayurvedic Guidance
             </h2>
-            <p className="text-primary-foreground/70 font-body text-lg leading-relaxed mb-8">
+            <p className="text-[#1A2E35]/70 font-body text-lg leading-relaxed mb-8">
               Unsure which remedy suits your needs? Speak directly with our certified 
               Ayurvedic doctors — online or in person. Get personalized treatment plans 
               rooted in your unique Prakriti.
             </p>
 
-            <div className="grid grid-cols-3 gap-4 mb-10">
+            <div className="grid grid-cols-3 gap-4 mb-8">
               {[
                 { icon: Video, label: "Online" },
                 { icon: MapPin, label: "In-Person" },
                 { icon: Calendar, label: "Flexible Slots" },
               ].map((item) => (
                 <div key={item.label} className="text-center">
-                  <div className="w-12 h-12 rounded-xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-2">
-                    <item.icon className="h-5 w-5 text-gold-light" />
+                  <div className="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center mx-auto mb-2">
+                    <item.icon className="h-5 w-5 text-[#C5A059]" />
                   </div>
-                  <p className="text-xs font-sans-clean text-primary-foreground/70">{item.label}</p>
+                  <p className="text-xs font-sans-clean text-[#1A2E35]/70">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -88,24 +87,24 @@ const ConsultationSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-center"
           >
-            <div className="bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 rounded-3xl p-12">
-              <Stethoscope className="h-20 w-20 text-gold-light mx-auto mb-6" />
-              <p className="text-5xl sm:text-6xl font-[Inter] font-semibold tracking-tight text-primary-foreground mb-2">
+            <div className="bg-white/50 backdrop-blur-sm border border-[#1A2E35]/5 rounded-3xl p-12">
+              <Stethoscope className="h-20 w-20 text-[#C5A059] mx-auto mb-6" />
+              <p className="text-5xl sm:text-6xl font-[Inter] font-semibold tracking-tight text-[#1A2E35] mb-2">
                 <AnimatedCounter target={15000} suffix="+" />
               </p>
-              <p className="text-primary-foreground/60 font-sans-clean text-sm">Consultations Completed</p>
+              <p className="text-[#1A2E35]/60 font-sans-clean text-sm">Consultations Completed</p>
               <div className="mt-8 grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-2xl font-[Inter] font-semibold tracking-tight text-gold-light">
+                  <p className="text-2xl font-[Inter] font-semibold tracking-tight text-[#C5A059]">
                     <AnimatedCounter target={50} suffix="+" />
                   </p>
-                  <p className="text-primary-foreground/50 font-sans-clean text-xs">Doctors</p>
+                  <p className="text-[#1A2E35]/50 font-sans-clean text-xs">Doctors</p>
                 </div>
                 <div>
-<p className="text-2xl font-[Inter] font-semibold tracking-tight text-gold-light">
+<p className="text-2xl font-[Inter] font-semibold tracking-tight text-[#C5A059]">
                     <AnimatedCounter target={12} />
                   </p>
-                  <p className="text-primary-foreground/50 font-sans-clean text-xs">Clinic Locations</p>
+                  <p className="text-[#1A2E35]/50 font-sans-clean text-xs">Clinic Locations</p>
                 </div>
               </div>
             </div>

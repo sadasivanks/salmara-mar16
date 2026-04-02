@@ -42,13 +42,13 @@ const TestimonialsSection = () => {
   }, []);
 
   return (
-    <section className="pt-10 md:pt-16 pb-24 bg-white" ref={ref}>
+    <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4 overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12"
         >
           <p className="text-[#C5A059] font-sans-clean text-xs sm:text-sm uppercase tracking-[0.3em] font-bold mb-4">
             TESTIMONIALS
@@ -58,7 +58,7 @@ const TestimonialsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="relative group/marquee overflow-hidden min-h-[400px] flex items-center justify-center">
+        <div className="relative group/marquee overflow-hidden flex items-center justify-center">
           {loading ? (
             <div className="flex flex-col items-center gap-4">
               <Loader2 className="h-10 w-10 animate-spin text-[#5A7A5C]" />
@@ -68,9 +68,7 @@ const TestimonialsSection = () => {
              <p className="text-sm font-display text-[#1A2E35]/40 italic">Coming soon: More heart-led wellness stories.</p>
           ) : (
             <>
-              {/* Subtle gradient overlays for fade effect - Hidden on Mobile */}
-              <div className="hidden md:block absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-              <div className="hidden md:block absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
+            
 
               <motion.div 
                 className="flex gap-6 w-max"

@@ -50,7 +50,7 @@ const AboutUsPage = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-[#FDFBF7]">
+    <div className="min-h-screen bg-secondary">
       <SEO 
         title="Our Story & Legacy | Traditional Ayurvedic Wisdom" 
         description="Founded in 1996, Salmara Ayurveda bridges ancestral knowledge with modern science. Learn about our founding journey, clinical impact, and commitment to purity."
@@ -59,10 +59,10 @@ const AboutUsPage = () => {
       
       <main className="relative overflow-x-hidden">
         {/* 1) Hero Banner */}
-        <section className="relative min-h-[60vh] md:h-[60vh] py-16 md:py-0 flex items-center justify-center overflow-hidden bg-[#1A2E35]">
+        <section className="relative min-h-[60vh] md:h-[60vh] py-16 md:py-0 flex items-center justify-center overflow-hidden bg-herbal-dark">
           <div className="absolute inset-0 opacity-40">
             {/* Minimalistic lab/herbal visual placeholder style */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1A2E35]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-herbal-dark" />
             <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=2080&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay animate-pulse" style={{ animationDuration: '10s' }} />
           </div>
           
@@ -81,19 +81,19 @@ const AboutUsPage = () => {
               </p>
               
               <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-10 px-4">
-                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full whitespace-nowrap">
+                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-accent uppercase border border-accent/30 px-3 py-1.5 rounded-full whitespace-nowrap">
                   <ShieldCheck className="h-3 w-3" /> GMP Certified
                 </span>
-                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full whitespace-nowrap">
+                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-accent uppercase border border-accent/30 px-3 py-1.5 rounded-full whitespace-nowrap">
                   <CheckCircle2 className="h-3 w-3" /> ISO Compliant
                 </span>
-                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#C5A059] uppercase border border-[#C5A059]/30 px-3 py-1.5 rounded-full whitespace-nowrap">
+                <span className="flex items-center gap-2 text-[8px] sm:text-[10px] md:text-xs font-bold tracking-[0.2em] text-accent uppercase border border-accent/30 px-3 py-1.5 rounded-full whitespace-nowrap">
                   <Award className="h-3 w-3" /> AYUSH Approved
                 </span>
               </div>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 sm:px-0">
-                <Link to="/shop" className="w-full sm:w-auto px-10 py-4 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-black/20">
+                <Link to="/shop" className="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-herbal-dark transition-all shadow-xl shadow-black/20">
                   Explore Products
                 </Link>
                 <Link to="/clinics" className="w-full sm:w-auto px-10 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-white/20 transition-all">
@@ -105,7 +105,7 @@ const AboutUsPage = () => {
         </section>
 
         {/* 2) Founder’s Message - Minimalist Premium Redesign */}
-        <section className="py-6 md:py-10 container px-4 overflow-hidden">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 container px-4 overflow-hidden">
           <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-16">
             {/* Image Column - Compact but Premium */}
             <div className="w-full md:w-1/4 flex-shrink-0">
@@ -115,7 +115,7 @@ const AboutUsPage = () => {
                   alt="Founder" 
                   className="rounded-xl transition-all duration-700 shadow-lg w-full max-w-[300px] mx-auto md:max-w-none"
                 />
-                <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-[#5A7A5C]/10 rounded-lg -z-10" />
+                <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-primary/10 rounded-lg -z-10" />
               </div>
             </div>
 
@@ -132,7 +132,7 @@ const AboutUsPage = () => {
               </div>
 
               <div className="pt-2">
-                <p className="font-display italic text-xl text-[#5A7A5C]">Shamsuddin Salmara</p>
+                <p className="font-display italic text-xl text-primary">Shamsuddin Salmara</p>
                 <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1A2E35]/40">— Founder, Salmara Ayurveda</p>
               </div>
             </div>
@@ -140,53 +140,56 @@ const AboutUsPage = () => {
         </section>
 
         {/* 2.5) Our Journey */}
-        <section className="py-12 md:py-24 bg-white overflow-hidden">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white overflow-hidden">
           <div className="container px-4 max-w-6xl mx-auto">
             <div className="text-center mb-10 md:mb-16">
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-[#5A7A5C] mb-4 block">The Salmara Legacy</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-primary mb-4 block">The Salmara Legacy</span>
               <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">Our Journey</h2>
               <div className="w-24 h-1 bg-[#F2EDE4] mx-auto mt-4 md:mt-6" />
             </div>
 
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+            <div className="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-20 items-start">
               {/* Narrative Story */}
-          <div className="space-y-8 text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg text-justify">
-  <p>
-    <span className="text-7xl font-display text-[#5A7A5C] float-left mr-4 mt-1 leading-[0.8] h-full">I</span>
-    n 1996, our founder inherited not just Ayurvedic formulations, but a responsibility to continue a legacy of natural healing.
-  </p>
+              <div className="space-y-4 md:space-y-6 lg:space-y-8 text-[#1A2E35]/80 font-sans-clean leading-relaxed text-base md:text-lg text-left">
+                <div className="relative">
+                  <span className="text-6xl md:text-7xl font-display text-primary float-left mr-3 mt-1 leading-[0.8]">I</span>
+                  <p>
+                    n 1996, our founder inherited not just Ayurvedic formulations, but a responsibility to continue a legacy of natural healing.
+                  </p>
+                </div>
 
-  <p>
-    What began with traditional remedies for hair care and kidney health evolved into a mission to make authentic Ayurveda accessible to every home.
-  </p>
+                <p>
+                  What began with traditional remedies for hair care and kidney health evolved into a mission to make authentic Ayurveda accessible to every home.
+                </p>
 
-  <p>
-    Since 2004, we have conducted over 100 free medical camps, bringing healthcare to underserved communities across villages and cities.
-  </p>
+                <p>
+                  Since 2004, we have conducted over 100 free medical camps, bringing healthcare to underserved communities across villages and cities.
+                </p>
 
-  <p>
-    In 2005, we opened our first clinic in Murudjinjira, offering holistic care rooted in ancient wisdom and compassion.
-  </p>
+                <p>
+                  In 2005, we opened our first clinic in Murudjinjira, offering holistic care rooted in ancient wisdom and compassion.
+                </p>
 
-  <p>
-    In 2006, we became an official AYUSH partner, marking our commitment to authentic Ayurvedic practice.
-  </p>
+                <p>
+                  In 2006, we became an official AYUSH partner, marking our commitment to authentic Ayurvedic practice.
+                </p>
 
-  <p>
-    Over time, we developed 26+ formulations based on real patient experiences and generations of herbal knowledge.
-  </p>
+                <p>
+                  Over time, we developed 26+ formulations based on real patient experiences and generations of herbal knowledge.
+                </p>
 
-  <p>
-    Our non-surgical piles treatment, recognized as Karnataka’s No.1, earned the National Health Award in 2024 for innovation in traditional medicine.
-  </p>
-</div>
+                  <p>
+                    Our non-surgical piles treatment, recognized as Karnataka’s No.1, earned the National Health Award in 2024 for innovation in traditional medicine.
+                  </p>
+  
+              </div>
 
               {/* Milestones Timeline */}
-              <div className="bg-[#FDFBF7] rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 border border-[#F2EDE4] relative overflow-hidden">
+              <div className="bg-secondary rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-12 border border-[#F2EDE4] relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#F2EDE4]/30 rounded-full blur-3xl -mr-32 -mt-32" />
                 <h3 className="text-xl md:text-2xl font-display font-medium text-[#1A2E35] mb-8 md:mb-10 relative z-10">Milestones of Growth</h3>
                 
-                <div className="space-y-8 relative z-10">
+                <div className="space-y-4 md:space-y-6 lg:space-y-8 relative z-10">
                   <div className="absolute left-[11px] top-2 bottom-2 w-[1px] bg-[#F2EDE4] md:left-[15px]" />
                   
                   {[
@@ -208,11 +211,11 @@ const AboutUsPage = () => {
                       transition={{ delay: idx * 0.1 }}
                       className="flex gap-6 relative"
                     >
-                      <div className="w-[22px] h-[22px] md:w-[30px] md:h-[30px] rounded-full bg-white border-2 border-[#5A7A5C] flex-shrink-0 z-10 flex items-center justify-center">
-                        <div className="w-2 h-2 rounded-full bg-[#5A7A5C]" />
+                      <div className="w-[22px] h-[22px] md:w-[30px] md:h-[30px] rounded-full bg-white border-2 border-primary flex-shrink-0 z-10 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-primary" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-[#5A7A5C] tracking-widest">{milestone.year}</span>
+                        <span className="text-sm font-bold text-primary tracking-widest">{milestone.year}</span>
                         <span className="text-[#1A2E35]/80 font-sans-clean leading-snug">{milestone.label}</span>
                       </div>
                     </motion.div>
@@ -220,51 +223,7 @@ const AboutUsPage = () => {
                 </div>
               </div>
             </div>
-
-            {/* Impact Block */}
-            {/* <div className="mt-16 md:mt-24 bg-[#1A2E35] rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
-              <div className="absolute inset-0 opacity-10 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,#5A7A5C_0%,transparent_50%)]" />
-              </div>
-              
-              <div className="relative z-10 grid md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
-                <div className="space-y-4">
-                  <h3 className="text-2xl md:text-4xl font-display border-b border-white/10 pb-4">Our Impact</h3>
-                  <p className="text-white/60 font-sans-clean italic">
-                    "Our journey from one clinic to eight cities. From local practice to a national movement."
-                  </p>
-                  <p className="text-[10px] uppercase tracking-widest text-white/40 pt-4 leading-relaxed">
-                    Our founder also serves as Jilla Adhyaksha (District President) of Karnataka Paramparika Vaidya Sangha.
-                  </p>
-                </div>
-                
-                <div className="lg:col-span-2 grid grid-cols-2 gap-8 md:gap-12">
-                  {[
-                    { val: "26+", label: "Ancestral Products" },
-                    { val: "8", label: "Cities Presence" },
-                    { val: "100+", label: "Medical Camps" },
-                    { val: "100k+", label: "Lives Healed" },
-                  ].map((stat, idx) => (
-                    <div key={idx} className="space-y-1">
-                      <div className="text-3xl md:text-5xl font-display text-[#5A7A5C]">{stat.val}</div>
-                      <div className="text-xs md:text-sm uppercase tracking-widest text-white/60 font-bold">{stat.label}</div>
-                    </div>
-                  ))}
-                  <div className="col-span-2 pt-4 border-t border-white/5">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-[#5A7A5C]/20 rounded-xl text-[#5A7A5C]">
-                        <Trophy className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <div className="text-lg font-bold text-white">Karnataka's No.1</div>
-                        <div className="text-xs text-white/60 uppercase tracking-widest">Non-surgical piles treatment</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            <div className="mt-16 md:mt-24 bg-herbal-dark rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
+            <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12 bg-herbal-dark rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
 {/* <div className="mt-16 md:mt-24 bg-[#1A2E35] rounded-[2rem] md:rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden"> */}
   <div className="absolute inset-0 opacity-10 pointer-events-none">
     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--gold)/0.1),transparent_60%)]" />
@@ -292,7 +251,7 @@ const AboutUsPage = () => {
         { val: "100k+", label: "Lives Healed" },
       ].map((stat, idx) => (
         <div key={idx} className="space-y-1">
-          <div className="text-3xl md:text-5xl font-[Inter] font-semibold text-[#C5A059] tracking-tight tabular-nums">
+          <div className="text-3xl md:text-5xl font-[Inter] font-semibold text-accent tracking-tight tabular-nums">
             {stat.val}
           </div>
           <div className="text-xs md:text-sm uppercase tracking-widest text-white/60 font-bold">
@@ -319,14 +278,14 @@ const AboutUsPage = () => {
   </div>
 </div>
             {/* Awards Hybrid Logic */}
-            <div className="mt-24">
+            <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12">
               <div className="text-center mb-12">
                 <h3 className="text-2xl md:text-3xl font-display font-medium text-[#1A2E35]">Achievements and Awards</h3>
                 <p className="text-[#1A2E35]/60 mt-2 font-sans-clean">Validation of our authentic practice and dedication.</p>
               </div>
 
               {/* Comprehensive Honors List */}
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
                 {[
                   { year: "2009", title: "Noble Man Award (Karnataka Sangha, Mumbai)" },
                   { year: "2017", title: "Vaidya Seva Ratna Award (Shimoga)" },
@@ -337,8 +296,8 @@ const AboutUsPage = () => {
                   { year: "2025", title: "Taluku Kannada Rajyotsava Award" },
                   { year: "2025", title: "Karunada Ratna Award (Samaj Seva category)" },
                 ].map((honor, idx) => (
-                  <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-[#FDFBF7] border border-[#F2EDE4]/50 hover:border-[#5A7A5C]/30 transition-colors">
-                    <div className="text-xs font-bold text-[#5A7A5C] w-12 shrink-0">{honor.year}</div>
+                  <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-secondary border border-[#F2EDE4]/50 hover:border-primary/30 transition-colors">
+                    <div className="text-xs font-bold text-primary w-12 shrink-0">{honor.year}</div>
                     <div className="w-[1px] h-4 bg-[#F2EDE4]" />
                     <div className="text-sm text-[#1A2E35]/80 font-medium">{honor.title}</div>
                   </div>
@@ -366,7 +325,7 @@ const AboutUsPage = () => {
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-90" />
                       <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                        <div className="text-[18px] font-[Inter] font-semibold uppercase tracking-widest mb-2 text-[#C5A059] tabular-nums">{award.year}</div>
+                        <div className="text-[18px] font-[Inter] font-semibold uppercase tracking-widest mb-2 text-accent tabular-nums">{award.year}</div>
                         <div className="text-base md:text-xl font-display leading-tight drop-shadow-lg">{award.title}</div>
                       </div>
                     </div>
@@ -376,11 +335,11 @@ const AboutUsPage = () => {
             </div>
 
             {/* Ending Narrative & CTA */}
-            <div className="mt-24 text-center max-w-2xl mx-auto">
+            <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12 text-center max-w-2xl mx-auto">
               <p className="text-[#1A2E35]/60 mb-8 italic">
                 From one clinic to eight cities. From two ancestral formulations to 26+ trusted products. From local practice to a national movement.
               </p>
-              <Link to="/shop" className="inline-flex items-center gap-3 px-12 py-5 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-[0.2em] uppercase text-xs hover:bg-[#4a654c] transition-all shadow-xl shadow-[#5A7A5C]/20 group">
+              <Link to="/shop" className="inline-flex items-center gap-3 px-12 py-5 bg-primary text-white rounded-xl font-bold tracking-[0.2em] uppercase text-xs hover:bg-herbal-dark transition-all shadow-xl shadow-primary/20 group">
                 Explore Our Products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
@@ -388,16 +347,16 @@ const AboutUsPage = () => {
         </section>
 
         {/* 3) Philosophy */}
-        <section className="py-8 bg-[#F8F9FA]">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary">
           <div className="container px-4">
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-display font-medium text-[#1A2E35] mb-2">Purity. Precision. Proof.</h2>
               <p className="text-[#1A2E35]/60 font-sans-clean">The three pillars that define the Salmara standard.</p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6 md:gap-8">
               <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
-                <div className="h-14 w-14 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center text-[#5A7A5C]">
+                <div className="h-14 w-14 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
                   <Leaf className="h-7 w-7" />
                 </div>
                 <h3 className="text-2xl font-display font-medium text-[#1A2E35]">Purity</h3>
@@ -430,30 +389,30 @@ const AboutUsPage = () => {
         </section>
 
         {/* 4) Certification Gallery */}
-        <section className="py-8 md:py-10 container px-4">
-          <div className="max-w-3xl mx-auto text-center mb-10">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 container px-4">
+          <div className="max-w-3xl mx-auto text-center mb-6">
             <h2 className="text-2xl md:text-3xl font-display font-medium text-[#1A2E35] mb-3">Approved by Standards That Matter</h2>
             <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
               Integrity is not just a word; it’s a certification. Our facility and products undergo rigorous external audits to ensure they meet the highest standards.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
             <div className="p-8 border border-[#F2EDE4] rounded-2xl text-center">
               <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">GMP Certified</h3>
-              <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-4">Quality Council of India</p>
+              <p className="text-[10px] uppercase tracking-widest text-accent mb-4">Quality Council of India</p>
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Ensuring our manufacturing products are consistently produced and controlled according to quality standards.</p>
             </div>
             
             <div className="p-8 border border-[#F2EDE4] rounded-2xl text-center">
               <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">ISO 9001:2015</h3>
-              <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-4">International Standards Organization</p>
+              <p className="text-[10px] uppercase tracking-widest text-accent mb-4">International Standards Organization</p>
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Recognized standard for Quality Management Systems, focused on customer satisfaction and quality delivery PAN India.</p>
             </div>
             
             <div className="p-8 border border-[#F2EDE4] rounded-2xl text-center">
               <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">AYUSH License</h3>
-              <p className="text-[10px] uppercase tracking-widest text-[#C5A059] mb-4">Ministry of AYUSH, Govt. of India</p>
+              <p className="text-[10px] uppercase tracking-widest text-accent mb-4">Ministry of AYUSH, Govt. of India</p>
               <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Full regulatory compliance for traditional Ayurvedic formulations and clinical procedures.</p>
             </div>
             
@@ -463,7 +422,7 @@ const AboutUsPage = () => {
 
 
         {/* 7) The Process - Science Behind Every Drop */}
-        <section className="py-6 md:py-10 bg-[#F8F9FA] overflow-hidden">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-[#F8F9FA] overflow-hidden">
           <div className="container px-4">
             <div className="flex flex-col lg:flex-row items-center gap-12 mb-8">
               {/* Left visuals */}
@@ -477,8 +436,8 @@ const AboutUsPage = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/40 to-transparent" />
                 </div>
                 {/* Decorative element */}
-                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#C5A059]/10 rounded-full blur-3xl -z-10" />
-                <div className="absolute -top-6 -right-6 w-48 h-48 bg-[#5A7A5C]/5 rounded-full blur-3xl -z-10" />
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-accent/10 rounded-full blur-3xl -z-10" />
+                <div className="absolute -top-6 -right-6 w-48 h-48 bg-primary/5 rounded-full blur-3xl -z-10" />
               </div>
 
               {/* Right copy */}
@@ -490,14 +449,14 @@ const AboutUsPage = () => {
                   </p>
                 </div>
                 
-                <div className="relative pl-8 border-l-2 border-[#C5A059]/30 py-4">
+                <div className="relative pl-8 border-l-2 border-accent/30 py-4">
                   <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed text-lg">
                     "Every Salmara product follows a path of precision — from sourcing verified herbs to controlled formulation and purity testing. Every batch is standardized, GMP-audited, and produced under the supervision of experts."
                   </p>
                 </div>
 
                 <div className="pt-4">
-                  <Link to="/shop" className="inline-flex items-center gap-3 px-10 py-4 bg-[#5A7A5C] text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-lg shadow-[#5A7A5C]/20 group">
+                  <Link to="/shop" className="inline-flex items-center gap-3 px-10 py-4 bg-primary text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-herbal-dark transition-all shadow-lg shadow-primary/20 group">
                     Explore Our Products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
@@ -533,23 +492,23 @@ const AboutUsPage = () => {
                     step: "04"
                   }
                 ].map((item, i, arr) => (
-                  <div key={i} className="relative group p-8 lg:p-12 bg-white lg:bg-transparent hover:bg-white lg:hover:bg-white/50 transition-all duration-500 rounded-3xl lg:rounded-none lg:first:rounded-l-3xl lg:last:rounded-r-3xl border border-[#F2EDE4] lg:border-r-0 lg:last:border-r">
+                  <div key={i} className="relative group p-8 lg:p-12 bg-white lg:bg-transparent hover:bg-white lg:hover:bg-white/50 transition-all duration-500 rounded-3xl lg:rounded-none lg:first:rounded-l-3xl lg:last:rounded-r-3xl border border-accent/30 lg:border-r-0 lg:last:border-r">
                     <div className="space-y-8">
                       {/* Step Visual */}
                       <div className="relative">
-                        <div className="h-20 w-44 bg-[#F2EDE4] clip-chevron flex items-center justify-center text-[#5A7A5C] group-hover:bg-[#C5A059]/10 transition-colors">
+                        <div className="h-20 w-44 bg-[#F2EDE4] clip-chevron flex items-center justify-center text-primary group-hover:bg-accent/10 transition-colors">
                           <div className="transform -translate-x-2">
                             {item.icon}
                           </div>
                         </div>
-                        <span className="absolute top-0 right-8 text-4xl font-display text-[#1A2E35]/5 font-bold group-hover:text-[#C5A059]/20 transition-colors">
+                        <span className="absolute top-0 right-8 text-4xl font-display text-[#1A2E35]/5 font-bold group-hover:text-accent/20 transition-colors">
                           {item.step}
                         </span>
                       </div>
 
                       {/* Content */}
                       <div className="space-y-3">
-                        <h3 className="font-display font-bold text-[#1A2E35] text-lg leading-tight group-hover:text-[#5A7A5C] transition-colors">{item.title}</h3>
+                        <h3 className="font-display font-bold text-[#1A2E35] text-lg leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
                         <p className="text-sm text-[#1A2E35]/60 font-sans-clean leading-relaxed">{item.desc}</p>
                       </div>
                     </div>
@@ -557,7 +516,7 @@ const AboutUsPage = () => {
                     {/* Horizontal Arrow (Desktop Only) */}
                     {i < arr.length - 1 && (
                       <div className="absolute top-1/2 -right-4 -translate-y-1/2 z-20 hidden lg:block">
-                        <div className="h-8 w-8 bg-white border border-[#F2EDE4] rounded-full flex items-center justify-center text-[#C5A059] shadow-sm">
+                        <div className="h-8 w-8 bg-white border border-[#F2EDE4] rounded-full flex items-center justify-center text-accent shadow-sm">
                           <ChevronRight className="h-4 w-4" />
                         </div>
                       </div>
@@ -575,18 +534,18 @@ const AboutUsPage = () => {
         </section>
 
         {/* Testimonials */}
-        <section className="py-10 container px-4 overflow-hidden">
-          <div className="text-center mb-10">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 container px-4 overflow-hidden">
+          <div className="text-center mb-6 md:mb-8 lg:mb-10">
             <h2 className="text-2xl md:text-4xl font-display font-medium text-[#1A2E35]">Trust in Every Word</h2>
           </div>
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-            <div className="bg-[#FDFBF7] p-10 rounded-3xl border border-[#F2EDE4] relative">
-              <div className="absolute top-8 right-8 text-[#5A7A5C]/10 text-6xl font-display self-end">“</div>
+            <div className="bg-secondary p-10 rounded-3xl border border-black relative">
+              <div className="absolute top-8 right-8 text-primary/10 text-6xl font-display self-end">“</div>
               <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed mb-6">
                 "Having used various brands, the transparency Salmara offers through their testing certificates changed how I perceive Ayurveda. It’s effective and reliable."
               </p>
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-[#5A7A5C]/10 rounded-full flex items-center justify-center text-[#5A7A5C] font-bold text-xs">RK</div>
+                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs">RK</div>
                 <div>
                   <p className="font-bold text-[#1A2E35] text-sm">Rakesh K.</p>
                   <p className="text-[10px] uppercase text-[#1A2E35]/40 tracking-widest">Verified Customer</p>
@@ -594,13 +553,13 @@ const AboutUsPage = () => {
               </div>
             </div>
             
-            <div className="bg-[#FDFBF7] p-10 rounded-3xl border border-[#F2EDE4] relative">
-              <div className="absolute top-8 right-8 text-[#5A7A5C]/10 text-6xl font-display self-end">“</div>
+            <div className="bg-secondary p-10 rounded-3xl border border-black relative">
+              <div className="absolute top-8 right-8 text-primary/10 text-6xl font-display self-end">“</div>
               <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed mb-6">
                 "Finally, an Ayurvedic brand that prioritizes quality standards over marketing. Their products have become a staple in my wellness routine."
               </p>
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-[#5A7A5C]/10 rounded-full flex items-center justify-center text-[#5A7A5C] font-bold text-xs">SP</div>
+                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs">SP</div>
                 <div>
                   <p className="font-bold text-[#1A2E35] text-sm">Sunita P.</p>
                   <p className="text-[10px] uppercase text-[#1A2E35]/40 tracking-widest">Wellness Enthusiast</p>
@@ -611,7 +570,7 @@ const AboutUsPage = () => {
         </section>
 
         {/* 8) Closing Section */}
-        <section className="py-10 md:py-12 bg-[#FDFBF7] border-t border-[#F2EDE4]">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary border-t border-[#F2EDE4]">
           <div className="container px-4 text-center max-w-3xl mx-auto">
             <h2 className="text-2xl md:text-4xl font-display font-medium text-[#1A2E35] mb-6">A Legacy of Trust</h2>
             <div className="space-y-6 text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg mb-12">
@@ -622,7 +581,7 @@ const AboutUsPage = () => {
                 At Salmara, we are building a space where faith meets evidence and healing meets honesty. Thank you for being a part of our story.
               </p>
             </div>
-            <Link to="/shop" className="inline-block px-12 py-5 bg-[#5A7A5C] text-white rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-[#4a654c] transition-all shadow-2xl shadow-[#5A7A5C]/30 transform hover:-translate-y-1">
+            <Link to="/shop" className="inline-block px-12 py-5 bg-primary text-white rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-herbal-dark transition-all shadow-2xl shadow-primary/30 transform hover:-translate-y-1">
               Explore Our Products
             </Link>
           </div>

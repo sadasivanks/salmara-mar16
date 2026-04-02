@@ -102,18 +102,18 @@ const HeroSection = () => {
             transition={{ duration: 1, delay: 0.2 }}
             className="text-center md:text-left"
           >
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[84px] font-display font-medium text-white leading-[1.2] md:leading-tight mb-6 md:mb-8 drop-shadow-2xl">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[72px] xl:text-[84px] font-display font-medium text-white leading-[1.2] md:leading-tight mb-6 md:mb-8 lg:mb-10 xl:mb-12 drop-shadow-2xl">
               <span className="inline-block">Rooted in Ayurveda.</span>
               <br />
               <span className="italic inline-block text-[#C5A059]">Refined by Science.</span>
             </h1>
             
-            <p className="text-white/90 text-sm sm:text-lg md:text-2xl font-body leading-relaxed mb-8 md:mb-12 max-w-sm sm:max-w-xl md:max-w-2xl mx-auto md:mx-0 drop-shadow-lg">
+            <p className="text-white/90 text-sm sm:text-lg md:text-2xl font-body leading-relaxed mb-6 md:mb-8 lg:mb-10 xl:mb-12 max-w-sm sm:max-w-xl md:max-w-2xl mx-auto md:mx-0 drop-shadow-lg">
               Unlock the power of ancestral formulations with modern quality standards. 
               Pure ingredients, proven results.
             </p>
  
-            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 items-center md:items-start">
+            <div className="flex flex-col sm:flex-row gap-6 md:gap-8 lg:gap-10 xl:gap-12 items-center md:items-start">
          <Link
   to="/shop"
   className="w-full sm:w-auto 

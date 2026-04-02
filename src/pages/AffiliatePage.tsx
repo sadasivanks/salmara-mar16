@@ -22,7 +22,7 @@ const AffiliatePage = () => {
           <div className="absolute bottom-[20%] left-[10%] w-[30rem] h-[30rem] bg-[#C5A059]/5 rounded-full blur-3xl opacity-50" />
         </div>
 
-        <section className="container px-4 relative z-10 pt-4 pb-12 md:py-12">
+        <section className="container px-4 relative z-10 py-6 md:py-8 lg:py-10 xl:py-12">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}

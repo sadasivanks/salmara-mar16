@@ -109,8 +109,8 @@ const FeaturedProducts = () => {
   const marqueeProducts = [...products, ...products, ...products];
 
   return (
-    <section id="products" className="pt-12 md:pt-24 pb-12 bg-[#FDFBF7] overflow-hidden" ref={ref}>
-      <div className="container mx-auto px-4 text-center mb-10 md:mb-16">
+    <section id="products" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary overflow-hidden" ref={ref}>
+      <div className="container mx-auto text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -121,7 +121,7 @@ const FeaturedProducts = () => {
           <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">
             Best Loved <span>Formulations</span>
           </h2>
-          <div className="w-24 h-1 bg-[#F2EDE4] mx-auto mt-6" />
+
         </motion.div>
       </div>
 
@@ -136,14 +136,10 @@ const FeaturedProducts = () => {
         </div>
       ) : (
         <div className="relative">
-          {/* Edge Fades for Premium Look - Hidden on Mobile as requested */}
-          <div className="hidden md:block absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-          <div className="hidden md:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-
           {/* Marquee Container */}
           <div className="flex overflow-hidden group">
             <motion.div 
-              className="flex gap-6 py-8 px-4"
+              className="flex gap-6 md:gap-8 lg:gap-10 xl:gap-12"
               animate={{ x: ["0%", "-33.33%"] }}
               transition={{ 
                 duration: 40, 

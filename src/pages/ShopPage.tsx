@@ -269,7 +269,7 @@ const ShopPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7]">
+    <div className="min-h-screen bg-secondary">
       <SEO
         title="Shop Ayurvedic Formulations | Natural Wellness Remedies"
         description="Browse our curated collection of Ayurvedic remedies. From joint mobility to liver care, find traditional formulations backed by clinical evidence."
@@ -278,8 +278,8 @@ const ShopPage = () => {
 
       <main className="overflow-x-hidden">
         {/* 1) Hero Section */}
-        <section className="relative min-h-[60vh] md:h-[60vh] py-20 md:py-0 flex items-center justify-center bg-[#1A2E35] overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35] via-[#1A2E35]/90 to-[#1A2E35]/80" />
+        <section className="relative min-h-[60vh] md:h-[60vh] py-6 md:py-8 lg:py-10 xl:py-12 flex items-center justify-center bg-herbal-dark overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-herbal-dark via-herbal-dark/90 to-herbal-dark/80" />
 
           <div className="container px-4 relative z-10 text-center max-w-4xl">
             <motion.div
@@ -287,7 +287,7 @@ const ShopPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-2xl sm:text-4xl md:text-6xl font-display font-medium text-white mb-6 leading-tight">
+              <h1 className="text-2xl sm:text-4xl md:text-6xl font-display font-medium text-white mb-6 md:mb-8 lg:mb-10 xl:mb-12 leading-tight">
                 Explore Our Certified <br className="sm:hidden" /> Ayurvedic Range
               </h1>
               <p className="text-white/80 text-xs sm:text-sm md:text-xl font-body leading-relaxed mb-10 max-w-2xl mx-auto px-4">
@@ -306,9 +306,9 @@ const ShopPage = () => {
         </section>
 
         {/* 2) Shop by Concern */}
-        <section className="py-24 bg-[#FDFBF7]">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary">
           <div className="container px-4">
-            <div className="text-center mb-16">
+            <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
               <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-4">Find What Fits Your Wellness</h2>
               <p className="text-[#1A2E35]/40 text-sm font-sans-clean">Selecting a concern will tailor the formulations shown in the grid below.</p>
             </div>
@@ -320,8 +320,8 @@ const ShopPage = () => {
                   onClick={() => setSelectedConcern(selectedConcern === concern.id ? null : concern.id)}
                   className={`p-10 rounded-3xl border text-left transition-all group ${
                     selectedConcern === concern.id
-                    ? 'bg-[#5A7A5C] border-[#5A7A5C] shadow-2xl shadow-[#5A7A5C]/20 text-white'
-                    : 'bg-white border-[#F2EDE4] hover:border-[#5A7A5C] hover:shadow-xl'
+                    ? 'bg-primary border-primary shadow-2xl shadow-primary/20 text-white'
+                    : 'bg-white border-[#F2EDE4] hover:border-primary hover:shadow-xl'
                   }`}
                 >
                   <h3 className={`text-xl font-display font-medium mb-3 transition-colors ${selectedConcern === concern.id ? 'text-white' : 'text-[#1A2E35]'}`}>
@@ -337,112 +337,141 @@ const ShopPage = () => {
         </section>
 
         {/* 3) Filter & Sort Bar */}
-        <section id="product-grid" className="sticky top-[64px] lg:top-[80px] z-30 bg-white/95 backdrop-blur-md border-y border-[#F2EDE4] py-5 shadow-sm">
+        <section id="product-grid" className="sticky top-[64px] lg:top-[80px] z-30 bg-white/95 backdrop-blur-md border-y border-[#F2EDE4] py-4 md:py-5 shadow-sm">
           <div className="container px-4">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-              {/* Left: Search & Filter Actions */}
-              <div className="flex flex-wrap items-center gap-5 md:gap-10">
-                {/* Search Box */}
-                <div className="relative group max-w-xs w-full">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1A2E35]/60 group-focus-within:text-[#5A7A5C] transition-colors" />
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
+              
+              {/* Top Row: Search & Mobile Toggle */}
+              <div className="flex items-center gap-2 w-full lg:max-w-xs transition-all">
+                <div className="relative group flex-1">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1A2E35]/60 group-focus-within:text-primary transition-colors" />
                   <input
                     type="text"
                     placeholder="SEARCH PRODUCTS..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-[#FDFBF7] border border-[#F2EDE4] rounded-xl py-2.5 pl-11 pr-4 text-xs tracking-widest text-[#1A2E35] placeholder:text-[#1A2E35]/40 focus:outline-none focus:ring-1 focus:ring-[#5A7A5C]/30 focus:border-[#5A7A5C]/50 transition-all font-sans-clean"
+                    className="w-full bg-secondary border border-[#F2EDE4] rounded-xl py-2.5 pl-11 pr-4 text-[10px] sm:text-xs tracking-widest text-[#1A2E35] placeholder:text-[#1A2E35]/40 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/50 transition-all font-sans-clean"
                   />
                 </div>
 
-                {/* Filter Dropdowns */}
-                <div className="flex items-center gap-6 md:gap-8">
-                  {/* Category Filter */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
-                      <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Category</span>
-                      <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-[#5A7A5C] transition-colors" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-64 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
-                      <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Select Category</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <div className="max-h-[300px] overflow-y-auto">
-                        {categories.map((cat) => (
-                          <DropdownMenuItem
-                            key={cat}
-                            onClick={() => setSelectedCategory(cat)}
-                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
-                              selectedCategory === cat ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35] hover:bg-muted'
-                            }`}
-                          >
-                            {cat}
-                          </DropdownMenuItem>
-                        ))}
-                      </div>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Price Filter */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
-                      <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Price</span>
-                      <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-[#5A7A5C] transition-colors" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
-                      <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Price Range</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <div className="space-y-1">
-                        {priceRanges.map((range) => (
-                          <DropdownMenuItem
-                            key={range.value}
-                            onClick={() => setSelectedPriceRange(range.value)}
-                            className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
-                              selectedPriceRange === range.value ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35] hover:bg-muted'
-                            }`}
-                          >
-                            {range.label}
-                          </DropdownMenuItem>
-                        ))}
-                      </div>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Availability Toggle */}
-                  <div className="flex items-center gap-3 py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all cursor-pointer group" onClick={() => setInStockOnly(!inStockOnly)}>
-                    <span className="text-[11px] font-bold tracking-[0.2em] text-[#1A2E35] uppercase select-none">In Stock</span>
-                    <Switch
-                      checked={inStockOnly}
-                      onCheckedChange={setInStockOnly}
-                      className="data-[state=checked]:bg-[#5A7A5C] data-[state=unchecked]:bg-[#F2EDE4]"
-                    />
-                  </div>
-                </div>
+                {/* Mobile Filter Toggle */}
+                <button
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  className={cn(
+                    "lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all",
+                    showMobileFilters || selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly
+                    ? "bg-primary border-primary text-white"
+                    : "bg-white border-[#F2EDE4] text-[#1A2E35]"
+                  )}
+                >
+                  <Filter className="h-4 w-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Filters</span>
+                </button>
               </div>
 
-              {/* Right: Sort By */}
-              <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#1A2E35]/40 font-bold">Sort By</span>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
-                    <span className="text-[11px] font-bold tracking-[0.2em] uppercase">{sortByLabels[sortBy] || sortBy}</span>
-                    <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-[#5A7A5C] transition-colors" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-64 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
-                    <div className="space-y-1">
-                      {["Bestselling", "Price: Low to High", "Price: High to Low", "Newest First", "Doctor Recommended"].map((s) => (
-                        <DropdownMenuItem
-                          key={s}
-                          onClick={() => setSortBy(s)}
-                          className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
-                            sortBy === s ? 'text-[#5A7A5C] font-bold bg-[#5A7A5C]/5' : 'text-[#1A2E35] hover:bg-muted'
-                          }`}
-                        >
-                          {s}
-                        </DropdownMenuItem>
-                      ))}
+              {/* Selective Filters Content */}
+              <AnimatePresence>
+                {(showMobileFilters || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className={cn(
+                      "flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8 w-full lg:w-auto overflow-hidden",
+                      !showMobileFilters && "hidden lg:flex"
+                    )}
+                  >
+                    <div className="flex flex-wrap items-center gap-4 lg:gap-8 py-2 lg:py-0 border-t lg:border-none border-[#F2EDE4]/50">
+                      {/* Category Filter */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                          <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Category</span>
+                          <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-primary transition-colors" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-64 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                          <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Select Category</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <div className="max-h-[300px] overflow-y-auto">
+                            {categories.map((cat) => (
+                              <DropdownMenuItem
+                                key={cat}
+                                onClick={() => setSelectedCategory(cat)}
+                                className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
+                                  selectedCategory === cat ? 'text-primary font-bold bg-primary/5' : 'text-[#1A2E35] hover:bg-muted'
+                                }`}
+                              >
+                                {cat}
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
+                      {/* Price Filter */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                          <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Price</span>
+                          <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-primary transition-colors" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-56 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                          <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-4 py-3">Price Range</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <div className="space-y-1">
+                            {priceRanges.map((range) => (
+                              <DropdownMenuItem
+                                key={range.value}
+                                onClick={() => setSelectedPriceRange(range.value)}
+                                className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
+                                  selectedPriceRange === range.value ? 'text-primary font-bold bg-primary/5' : 'text-[#1A2E35] hover:bg-muted'
+                                }`}
+                              >
+                                {range.label}
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
+                      {/* Availability Toggle */}
+                      <div className="flex items-center gap-3 py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all cursor-pointer group" onClick={() => setInStockOnly(!inStockOnly)}>
+                        <span className="text-[11px] font-bold tracking-[0.2em] text-[#1A2E35] uppercase select-none">In Stock</span>
+                        <Switch
+                          checked={inStockOnly}
+                          onCheckedChange={setInStockOnly}
+                          className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-[#F2EDE4]"
+                        />
+                      </div>
                     </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+
+                    {/* Right: Sort By */}
+                    <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0">
+                      <span className="text-[10px] lg:hidden uppercase tracking-[0.2em] text-[#1A2E35]/40 font-bold">Sort By</span>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                          <span className="text-[11px] font-bold tracking-[0.2em] uppercase">{sortByLabels[sortBy] || sortBy}</span>
+                          <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-primary transition-colors" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-64 rounded-2xl border-[#F2EDE4] shadow-2xl p-2 z-[100]">
+                          <div className="space-y-1">
+                            {["Bestselling", "Price: Low to High", "Price: High to Low", "Newest First", "Doctor Recommended"].map((s) => (
+                              <DropdownMenuItem
+                                key={s}
+                                onClick={() => setSortBy(s)}
+                                className={`rounded-xl px-4 py-3 cursor-pointer text-xs font-display transition-colors ${
+                                  sortBy === s ? 'text-primary font-bold bg-primary/5' : 'text-[#1A2E35] hover:bg-muted'
+                                }`}
+                              >
+                                {s}
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Status Bar */}
@@ -453,12 +482,12 @@ const ShopPage = () => {
                 </p>
                 {/* Active Chips */}
                 {selectedConcern && (
-                  <div className="bg-[#5A7A5C]/10 text-[#5A7A5C] px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
+                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
                     Concern: {selectedConcern} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedConcern(null)} />
                   </div>
                 )}
                 {selectedCategory !== "All Categories" && (
-                  <div className="bg-[#5A7A5C]/10 text-[#5A7A5C] px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
+                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
                     {selectedCategory} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedCategory("All Categories")} />
                   </div>
                 )}
@@ -477,11 +506,11 @@ const ShopPage = () => {
         </section>
 
         {/* 4) Product Grid */}
-        <section className="pb-24 bg-[#FDFBF7]" ref={gridRef}>
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={gridRef}>
           <div className="container px-4">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-32 space-y-4">
-                <Loader2 className="h-10 w-10 animate-spin text-[#5A7A5C]" />
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1A2E35]/40">Harvesting Pure Ingredients...</p>
               </div>
             ) : filteredProducts.length === 0 ? (
@@ -490,7 +519,7 @@ const ShopPage = () => {
                 <h3 className="text-xl font-display font-medium text-[#1A2E35] mb-2">No products found.</h3>
                 <p className="text-[#1A2E35]/40 text-sm font-sans-clean max-w-sm mx-auto mb-8">No products found for this category. Try adjusting your filters.</p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <button onClick={clearFilters} className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] hover:underline underline-offset-4">Clear filters</button>
+                  <button onClick={clearFilters} className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline underline-offset-4">Clear filters</button>
                   <Link to="/shop" onClick={clearFilters} className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/60 hover:text-[#1A2E35]">Shop all products</Link>
                 </div>
               </div>
@@ -573,7 +602,7 @@ const ShopPage = () => {
                                   {[...Array(5)].map((_, i) => (
                                     <Star 
                                       key={i} 
-                                      className={`h-3 w-3 ${i < Math.round(avgRating) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                                      className={`h-3 w-3 ${i < Math.round(avgRating) ? 'fill-accent text-accent' : 'text-[#F2EDE4]'}`} 
                                     />
                                   ))}
                                 </div>
@@ -606,7 +635,7 @@ const ShopPage = () => {
                               <button
                                 onClick={() => handleAddToCart(product)}
                                 disabled={addingId === product.node.id || buyingId === product.node.id}
-                                className="flex-1 border border-[#5A7A5C]/20 text-[#5A7A5C] py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all hover:bg-[#5A7A5C]/5 active:scale-[0.98] disabled:opacity-50 group/cart"
+                                className="flex-1 border border-primary/20 text-primary py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all hover:bg-primary/5 active:scale-[0.98] disabled:opacity-50 group/cart"
                               >
                                 {addingId === product.node.id ? (
                                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -646,12 +675,12 @@ const ShopPage = () => {
         </section>
 
         {/* 5) Shop Trust Strip */}
-        <section className="py-24 border-y border-[#F2EDE4] bg-[#FDFBF7]">
+        <section className="py-6 md:py-8 lg:py-10 xl:py-12 border-y border-[#F2EDE4] bg-secondary">
           <div className="container px-4">
             <div className="grid md:grid-cols-3 gap-12 lg:gap-16 max-w-6xl mx-auto">
               {/* GMP Certified */}
               <div className="text-center space-y-5 group">
-                <div className="w-16 h-16 bg-white border border-[#5A7A5C]/10 rounded-2xl flex items-center justify-center mx-auto text-[#5A7A5C] shadow-sm group-hover:shadow-md transition-shadow">
+                <div className="w-16 h-16 bg-white border border-primary/10 rounded-2xl flex items-center justify-center mx-auto text-primary shadow-sm group-hover:shadow-md transition-shadow">
                   <ShieldCheck className="h-7 w-7" />
                 </div>
                 <div className="space-y-3">
@@ -662,7 +691,7 @@ const ShopPage = () => {
               
               {/* Batch Integrity */}
               <div className="text-center space-y-5 group">
-                <div className="w-16 h-16 bg-white border border-[#C5A059]/10 rounded-2xl flex items-center justify-center mx-auto text-[#C5A059] shadow-sm group-hover:shadow-md transition-shadow">
+                <div className="w-16 h-16 bg-white border border-accent/10 rounded-2xl flex items-center justify-center mx-auto text-accent shadow-sm group-hover:shadow-md transition-shadow">
                   <CheckCircle2 className="h-7 w-7" />
                 </div>
                 <div className="space-y-3">

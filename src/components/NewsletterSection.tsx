@@ -46,7 +46,7 @@ const NewsletterSection = () => {
   };
 
   return (
-    <section className="py-20 bg-secondary" ref={ref}>
+    <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -55,7 +55,7 @@ const NewsletterSection = () => {
           className="max-w-xl mx-auto text-center"
         >
           <Sparkles className="h-8 w-8 text-accent mx-auto mb-4" />
-          <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-3">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             Join the Salmara Circle of Wellness
           </h2>
           <p className="text-muted-foreground font-body text-sm mb-8">
