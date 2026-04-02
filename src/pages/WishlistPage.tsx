@@ -9,6 +9,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import { Image } from "@/components/ui/Image";
 import SEO from "@/components/SEO";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 import { getStoredSession, fetchBulkReviews } from "@/lib/shopifyAdmin";
 import { useNavigate } from "react-router-dom";
@@ -97,10 +98,14 @@ const WishlistPage = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <p className="text-[#5A7A5C] font-sans-clean text-sm uppercase tracking-[0.3em] mb-4">Your Favorites</p>
-              <h1 className="text-4xl md:text-6xl font-display font-medium text-[#1A2E35]">
-                Saved <span>Formulations</span>
-              </h1>
+            <SectionHeading 
+              title={<>Saved <span>Formulations</span></>}
+              eyebrow="Your Favorites"
+              level="h1"
+              centered={false}
+              className="mb-0"
+              animate={false}
+            />
             </motion.div>
 
             {items.length > 0 && (
@@ -131,10 +136,11 @@ const WishlistPage = () => {
                 <div className="w-20 h-20 bg-[#FDFBF7] rounded-full flex items-center justify-center mx-auto mb-8">
                   <Heart className="h-10 w-10 text-[#5A7A5C]/20" />
                 </div>
-                <h2 className="text-2xl font-display font-medium text-[#1A2E35] mb-4">Your wishlist is empty</h2>
-                <p className="text-[#1A2E35]/40 font-body mb-10 max-w-sm mx-auto">
-                  Explore our certified Ayurvedic formulations and save your favorites to compare and shop later.
-                </p>
+                <SectionHeading 
+                  title="Your wishlist is empty"
+                  description="Explore our certified Ayurvedic formulations and save your favorites to compare and shop later."
+                  animate={false}
+                />
                 <Link
                   to="/shop"
                   className="inline-flex items-center gap-3 bg-[#1A2E35] text-white px-10 py-5 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#5A7A5C] transition-all shadow-xl shadow-[#1A2E35]/10"

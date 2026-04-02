@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { Mail, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { getStoredSession } from "@/lib/shopifyAdmin";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const NewsletterSection = () => {
   const ref = useRef(null);
@@ -54,10 +55,13 @@ const NewsletterSection = () => {
           transition={{ duration: 0.6 }}
           className="max-w-xl mx-auto text-center"
         >
-          <Sparkles className="h-8 w-8 text-accent mx-auto mb-4" />
-          <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-            Join the Salmara Circle of Wellness
-          </h2>
+          <div className="flex justify-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
+            <Sparkles className="h-8 w-8 text-[#C5A059]" />
+          </div>
+          <SectionHeading 
+            title="Join the Salmara Circle of Wellness" 
+            animate={false}
+          />
           <p className="text-muted-foreground font-body text-sm mb-8">
             Receive Ayurvedic tips, offers, and early product updates.
           </p>

@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { format } from "date-fns";
 
 const doctors = [
@@ -76,10 +77,13 @@ const BookAppointmentPage = () => {
           </div>
 
           {/* Header & Progress */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-display font-medium text-[#1A2E35] mb-6 tracking-tight">Book Your Consultation</h1>
-            <p className="text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed">Experience personalized Ayurvedic care from our expert practitioners. Take the first step towards balanced, long-term health.</p>
-          </div>
+          <SectionHeading 
+            title="Book Your Consultation"
+            description="Experience personalized Ayurvedic care from our expert practitioners. Take the first step towards balanced, long-term health."
+            level="h1"
+            animate={false}
+            className="mb-16"
+          />
 
           {step < 5 && (
             <div className="flex items-center justify-between mb-20 relative px-4 max-w-3xl mx-auto">
@@ -117,9 +121,10 @@ const BookAppointmentPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-12"
               >
-                <div className="text-center">
-                  <h2 className="text-2xl font-display font-medium text-[#1A2E35]">How would you like to visit us?</h2>
-                </div>
+                <SectionHeading 
+                  title="How would you like to visit us?"
+                  animate={false}
+                />
                 <div className="grid md:grid-cols-2 gap-8">
                   <button 
                     onClick={() => { setSelection({...selection, type: "In-Person", clinic: "Indiranagar"}); nextStep(); }}
@@ -130,8 +135,11 @@ const BookAppointmentPage = () => {
                     <div className="h-16 w-16 bg-[#FDFBF7] rounded-2xl flex items-center justify-center text-[#5A7A5C] mb-8 border border-[#F2EDE4] group-hover:bg-[#5A7A5C] group-hover:text-white group-hover:border-[#5A7A5C] transition-all duration-500">
                       <MapPin className="h-7 w-7" />
                     </div>
-                    <h3 className="text-2xl font-display font-medium text-[#1A2E35] mb-4">In-Person Clinic Visit</h3>
-                    <p className="text-base text-[#1A2E35]/50 font-sans-clean leading-relaxed mb-8">Visit our certified centers in Bengaluru for a physical pulse examination and direct interaction with senior doctors.</p>
+                    <SectionHeading 
+                      title="In-Person Clinic Visit"
+                      description="Visit our certified centers in Bengaluru for a physical pulse examination and direct interaction with senior doctors."
+                      animate={false}
+                    />
                     <div className="inline-flex items-center gap-3 text-xs font-bold text-[#5A7A5C] uppercase tracking-widest border-b-2 border-[#5A7A5C]/20 pb-1 group-hover:border-[#5A7A5C] transition-all">
                       Select Location <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
@@ -239,10 +247,11 @@ const BookAppointmentPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 className="space-y-10"
               >
-                <div className="text-center">
-                  <h2 className="text-2xl font-display font-medium text-[#1A2E35]">Choose Your Expert</h2>
-                  <p className="text-sm text-[#1A2E35]/50 font-sans-clean mt-2">All our practitioners are certified experts in traditional Ayurveda.</p>
-                </div>
+                <SectionHeading 
+                  title="Choose Your Expert"
+                  description="All our practitioners are certified experts in traditional Ayurveda."
+                  animate={false}
+                />
                 <div className="grid gap-8">
                   {doctors.map((dr) => (
                     <button 
@@ -299,12 +308,12 @@ const BookAppointmentPage = () => {
                 <div className="grid lg:grid-cols-3 gap-10">
                   <div className="lg:col-span-2 space-y-8">
                     <div className="bg-white p-10 border border-[#F2EDE4] rounded-[2.5rem] shadow-sm space-y-10">
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 bg-[#5A7A5C]/10 rounded-xl flex items-center justify-center text-[#5A7A5C]">
-                          <User className="h-5 w-5" />
-                        </div>
-                        <h2 className="text-2xl font-display font-medium text-[#1A2E35]">Patient Details</h2>
-                      </div>
+                      <SectionHeading 
+                        title="Patient Details"
+                        centered={false}
+                        animate={false}
+                        className="mb-0"
+                      />
                       
                       <div className="grid md:grid-cols-2 gap-10">
                         <div className="space-y-4">
@@ -435,8 +444,13 @@ const BookAppointmentPage = () => {
                   <CheckCircle2 className="h-14 w-14" />
                 </motion.div>
                 
-                <h2 className="text-4xl md:text-6xl font-display font-medium text-[#1A2E35] mb-6 tracking-tight">Appointment Secured</h2>
-                <p className="text-lg text-[#1A2E35]/60 font-sans-clean mb-12 max-w-md mx-auto leading-relaxed">We've reserved your session with **{selection.doctor?.name}**. Your journey to holistic wellness starts here.</p>
+                <SectionHeading 
+                  title="Appointment Secured"
+                  description={<>We've reserved your session with <strong>{selection.doctor?.name}</strong>. Your journey to holistic wellness starts here.</>}
+                  level="h1"
+                  animate={false}
+                  className="mb-12"
+                />
                 
                 <div className="bg-white p-10 md:p-14 rounded-[3rem] border border-[#F2EDE4] shadow-xl shadow-[#1A2E35]/5 mb-12 space-y-10 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#5A7A5C]/5 rounded-bl-[6rem] -mr-8 -mt-8" />

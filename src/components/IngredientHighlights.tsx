@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
 const tulsi = "/images/products/tulsi_dark.jpg";
 const guggul = "/images/products/guggul_dark.jpg";
@@ -36,18 +37,11 @@ const IngredientHighlights = () => {
   return (
     <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12"
-        >
-          <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">Pure Ingredients</p>
-          {/* <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] mb-4">Pure Ingredients</p> */}
-          <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35]">
-            The Science of Nature
-          </h2>
-        </motion.div>
+        <SectionHeading 
+          title="The Science of Nature" 
+          eyebrow="Pure Ingredients" 
+          animate={false}
+        />
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {ingredients.map((item, i) => (

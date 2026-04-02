@@ -8,6 +8,7 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
 import AddressSelectionModal from "@/components/AddressSelectionModal";
 import { Image } from "@/components/ui/Image";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const FeaturedProducts = () => {
   const navigate = useNavigate();
@@ -110,19 +111,12 @@ const FeaturedProducts = () => {
 
   return (
     <section id="products" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary overflow-hidden" ref={ref}>
-      <div className="container mx-auto text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">Pure Potency</p>
-          {/* <p className="text-[#5A7A5C] font-sans-clean text-sm uppercase tracking-[0.3em] mb-4">Pure Potency</p> */}
-          <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">
-            Best Loved <span>Formulations</span>
-          </h2>
-
-        </motion.div>
+      <div className="container mx-auto">
+        <SectionHeading 
+          title={<>Best Loved <span>Formulations</span></>} 
+          eyebrow="Pure Potency" 
+          animate={false}
+        />
       </div>
 
       {loading ? (

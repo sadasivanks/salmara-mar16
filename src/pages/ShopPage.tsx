@@ -34,6 +34,7 @@ import AddressSelectionModal from "@/components/AddressSelectionModal";
 import { useNavigate } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
 import SEO from "@/components/SEO";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -308,10 +309,11 @@ const ShopPage = () => {
         {/* 2) Shop by Concern */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary">
           <div className="container px-4">
-            <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-              <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-4">Find What Fits Your Wellness</h2>
-              <p className="text-[#1A2E35]/40 text-sm font-sans-clean">Selecting a concern will tailor the formulations shown in the grid below.</p>
-            </div>
+            <SectionHeading 
+              title="Find What Fits Your Wellness"
+              description="Selecting a concern will tailor the formulations shown in the grid below."
+              animate={false}
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {concerns.map((concern) => (

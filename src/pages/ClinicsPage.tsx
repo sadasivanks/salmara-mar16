@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import SEO from "@/components/SEO";
 import { siteConfig } from "@/config/site.config";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const ClinicsPage = () => {
   const navigate = useNavigate();
@@ -268,9 +269,11 @@ const ClinicsPage = () => {
 
           {/* Clinic Cards & Map Grid */}
           <section className="py-6 md:py-8 lg:py-10 xl:py-12 container px-4">
-            <div className="mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-              <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Available Clinics</h2>
-            </div>
+            <SectionHeading 
+              title="Available Clinics"
+              centered={false}
+              animate={false}
+            />
             <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12">
               <div className="h-full">
                 <div className="space-y-6 h-[600px] overflow-y-auto pr-4 custom-scrollbar scroll-smooth">
@@ -441,9 +444,10 @@ const ClinicsPage = () => {
         {/* 5) Treatment Programs - Holistic Healing for Every Need */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary relative">
           <div className="container px-4">
-            <div className="text-center max-w-4xl mx-auto mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-              <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35] mb-6 md:mb-8 lg:mb-10 xl:mb-12">Holistic Healing for Every Need</h2>
-            </div>
+            <SectionHeading 
+              title="Holistic Healing for Every Need"
+              animate={false}
+            />
 
             <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
               {treatments.map((t, i) => (
@@ -473,10 +477,12 @@ const ClinicsPage = () => {
         {/* 6) Consultation Process */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white relative">
           <div className="container px-4">
-            <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-              <h2 className="text-2xl md:text-3xl font-display font-medium text-[#1A2E35]">Consultation Process</h2>
-              <p className="text-[#1A2E35]/50 font-sans-clean mt-2 italic">A straightforward journey from booking to healing.</p>
-            </div>
+            <SectionHeading 
+              title="Consultation Process"
+              description="A straightforward journey from booking to healing."
+              descriptionClassName="italic"
+              animate={false}
+            />
 
             <div className="relative max-w-5xl mx-auto px-10">
               {/* Connector line */}
@@ -508,10 +514,11 @@ const ClinicsPage = () => {
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white relative">
           <div className="container px-4">
             <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-                <h2 className="text-3xl font-display font-medium text-[#1A2E35]">Common Questions</h2>
-                <p className="text-[#1A2E35]/60 mt-4">Everything you need to know about starting your treatment.</p>
-              </div>
+              <SectionHeading 
+                title="Common Questions"
+                description="Everything you need to know about starting your treatment."
+                animate={false}
+              />
 
               <div className="space-y-4">
                 {faqs.map((faq, i) => (
@@ -551,8 +558,13 @@ const ClinicsPage = () => {
               <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1976&auto=format&fit=crop')] bg-cover bg-center opacity-10" />
 
               <div className="relative z-10 max-w-3xl mx-auto space-y-10">
-                <h2 className="text-4xl md:text-6xl font-display font-medium text-white leading-tight">Ready to Begin Your <br /> Ayurvedic Journey?</h2>
-                <p className="text-white/60 text-lg font-sans-clean">Experience personalized healing designed for your unique constitution by Salmara’s trusted experts.</p>
+                <SectionHeading 
+                  title={<>Ready to Begin Your <br /> Ayurvedic Journey?</>}
+                  description="Experience personalized healing designed for your unique constitution by Salmara’s trusted experts."
+                  descriptionClassName="!text-white/60"
+                  titleClassName="!text-white"
+                  animate={false}
+                />
                 <div className="pt-4">
                   <a
                     href="https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20start%20my%20Ayurvedic%20journey."

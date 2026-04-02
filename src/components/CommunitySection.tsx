@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef, useState } from "react";
 import { Mail, Sparkles, Loader2, Users, Gift, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -51,17 +52,11 @@ const CommunitySection = () => {
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <p className="text-accent font-sans-clean text-xs sm:text-sm uppercase tracking-[0.3em] font-bold mb-4">SALMARA COMMUNITY</p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-medium text-[#1A2E35]">
-            Grow with Us
-          </h2>
-        </motion.div>
+        <SectionHeading 
+          title="Grow with Us" 
+          eyebrow="SALMARA COMMUNITY" 
+          animate={false}
+        />
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {/* Newsletter Card */}

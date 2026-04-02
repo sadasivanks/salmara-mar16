@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef, useEffect, useState } from "react";
 import { Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, ArrowRight, Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -49,17 +50,13 @@ const ProductList = () => {
     <section id="product-list" className="py-24 bg-[#FDFBF7]" ref={ref}>
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-left"
-          >
-            <p className="text-[#5A7A5C] font-sans-clean text-sm uppercase tracking-[0.3em] mb-4">Our Collections</p>
-            <h2 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">
-              Botanical <span className="italic">Solutions</span>
-            </h2>
-          </motion.div>
+          <SectionHeading 
+            title={<>Botanical <span className="italic">Solutions</span></>} 
+            eyebrow="Our Collections" 
+            centered={false} 
+            animate={false}
+            className="mb-0"
+          />
           
           <motion.div
             initial={{ opacity: 0, x: 20 }}

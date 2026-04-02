@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const LoginPage = () => {
   const [view, setView] = useState<"login" | "register" | "forgot-password" | "verify-reset-otp" | "set-new-password" | "verify-registration-otp" | "otp">("login");
@@ -448,14 +449,15 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Access</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Welcome Back</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">Please enter your details to sign in.</p>
-                  </div>
+                  <SectionHeading 
+                    title="Welcome Back"
+                    eyebrow="Secure Access"
+                    description="Please enter your details to sign in."
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                    eyebrowClassName="animate-pulse"
+                  />
 
                   <form onSubmit={handleLogin} className="space-y-5">
                     <div className="space-y-2">
@@ -532,14 +534,14 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Account Recovery</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Reset Password</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">Enter your email to receive a recovery code.</p>
-                  </div>
+                  <SectionHeading 
+                    title="Reset Password"
+                    eyebrow="Account Recovery"
+                    description="Enter your email to receive a recovery code."
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                  />
 
                   <form onSubmit={handleRequestReset} className="space-y-6">
                     <div className="space-y-2">
@@ -576,16 +578,14 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Verification</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Verify Code</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">
-                      Enter code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
-                    </p>
-                  </div>
+                  <SectionHeading 
+                    title="Verify Code"
+                    eyebrow="Verification"
+                    description={<>Enter code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span></>}
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                  />
 
                   <form onSubmit={handleVerifyResetOtp} className="space-y-6">
                     <div className="space-y-2">
@@ -621,14 +621,14 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Reset</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">New Password</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">Create a strong new password.</p>
-                  </div>
+                  <SectionHeading 
+                    title="New Password"
+                    eyebrow="Secure Reset"
+                    description="Create a strong new password."
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                  />
 
                   <form onSubmit={handleConfirmReset} className="space-y-4">
                     <div className="space-y-2">
@@ -693,16 +693,14 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">New Account Verification</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Verify Your Account</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">
-                      Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
-                    </p>
-                  </div>
+                  <SectionHeading 
+                    title="Verify Your Account"
+                    eyebrow="New Account Verification"
+                    description={<>Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span></>}
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                  />
 
                   <form onSubmit={handleVerifyRegistrationOtp} className="space-y-6">
                     <div className="space-y-2">
@@ -736,16 +734,14 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Secure Verification</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Confirm Identity</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">
-                      Enter code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
-                    </p>
-                  </div>
+                  <SectionHeading 
+                    title="Confirm Identity"
+                    eyebrow="Secure Verification"
+                    description={<>Enter code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span></>}
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                  />
 
                   <form onSubmit={handleVerifyOtp} className="space-y-6">
                     <div className="space-y-2">
@@ -782,14 +778,14 @@ const LoginPage = () => {
                   transition={{ duration: 0.4 }}
                   className="w-full"
                 >
-                  <div className="mb-10 text-center md:text-left">
-                    <div className="inline-flex items-center gap-2 mb-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C] animate-pulse" />
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">Join Salmara</span>
-                    </div>
-                    <h2 className="text-4xl font-display font-medium text-[#1A2E35]">Create Account</h2>
-                    <p className="text-[#1A2E35]/50 mt-2 font-sans-clean">Join our community for a healthier life.</p>
-                  </div>
+                  <SectionHeading 
+                    title="Create Account"
+                    eyebrow="Join Salmara"
+                    description="Join our community for a healthier life."
+                    centered={false}
+                    animate={false}
+                    className="mb-10"
+                  />
 
                   <form onSubmit={handleRegister} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">

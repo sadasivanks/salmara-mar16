@@ -3,6 +3,7 @@ import { useRef, useEffect, useState } from "react";
 import { Star, BadgeCheck, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Image } from "@/components/ui/Image";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 interface Testimonial {
   id: string | number;
@@ -44,19 +45,11 @@ const TestimonialsSection = () => {
   return (
     <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4 overflow-hidden">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12"
-        >
-          <p className="text-[#C5A059] font-sans-clean text-xs sm:text-sm uppercase tracking-[0.3em] font-bold mb-4">
-            TESTIMONIALS
-          </p>
-          <h2 className="text-4xl sm:text-5xl font-display font-medium text-[#1A2E35]">
-            Real Stories, Real Wellness
-          </h2>
-        </motion.div>
+        <SectionHeading 
+          title="Real Stories, Real Wellness" 
+          eyebrow="TESTIMONIALS" 
+          animate={false}
+        />
 
         <div className="relative group/marquee overflow-hidden flex items-center justify-center">
           {loading ? (

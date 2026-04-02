@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Image } from "@/components/ui/Image";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -77,13 +78,15 @@ const AboutSection = () => {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8 }}
           >
-            <p className="text-[#C5A059] font-sans-clean text-xs uppercase tracking-[0.3em] font-bold mb-4">OUR HERITAGE</p>
-            <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35] mb-6 md:mb-8 lg:mb-10 xl:mb-12 leading-tight">
-              The Salmara Story
-            </h2>
-            
+            <SectionHeading 
+              title="The Salmara Story" 
+              eyebrow="OUR HERITAGE" 
+              centered={false} 
+              animate={false} 
+            />
+              
             <p className="text-[#1A2E35]/70 font-body text-base leading-relaxed mb-8 max-w-xl">
               Founded in Karnataka with a vision to make authentic Ayurveda accessible to 
               every home, Salmara Herbals blends tradition with technology. Our formulations 

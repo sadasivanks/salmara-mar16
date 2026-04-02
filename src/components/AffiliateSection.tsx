@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
 import { Users, TrendingUp, Banknote } from "lucide-react";
 
@@ -9,20 +10,16 @@ const AffiliateSection = () => {
   return (
     <section id="affiliate" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-3xl mx-auto"
-        >
+        <div className="text-center max-w-3xl mx-auto">
           {/* Central Users Icon */}
           <div className="flex justify-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <Users className="h-16 w-16 text-[#C5A059]" strokeWidth={1.5} />
           </div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-display font-medium text-[#1A2E35] mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-            Share Ayurveda and Earn
-          </h2>
+          <SectionHeading 
+            title="Share Ayurveda and Earn" 
+            animate={false} 
+          />
           
           <p className="text-[#1A2E35]/80 font-body text-base md:text-lg mb-6 md:mb-8 lg:mb-10 xl:mb-12 max-w-2xl mx-auto leading-relaxed">
             Join the Salmara Affiliate Program and grow with India's trusted Ayurvedic brand.
@@ -34,7 +31,7 @@ const AffiliateSection = () => {
           >
             Become an Affiliate
           </a>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

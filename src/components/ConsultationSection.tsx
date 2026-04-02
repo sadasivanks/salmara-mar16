@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef, useEffect, useState } from "react";
 import { Stethoscope, Calendar, Video, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -46,10 +47,13 @@ const ConsultationSection = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <p className="text-[#C5A059] font-sans-clean text-sm uppercase tracking-[0.2em] mb-2">Expert Care</p>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#1A2E35] mb-2 leading-tight">
-              Personalized Ayurvedic Guidance
-            </h2>
+            <SectionHeading 
+              title="Personalized Ayurvedic Guidance" 
+              eyebrow="Expert Care" 
+              centered={false} 
+              animate={false}
+              className="mb-6"
+            />
             <p className="text-[#1A2E35]/70 font-body text-lg leading-relaxed mb-8">
               Unsure which remedy suits your needs? Speak directly with our certified 
               Ayurvedic doctors — online or in person. Get personalized treatment plans 

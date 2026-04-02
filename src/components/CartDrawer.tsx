@@ -68,7 +68,7 @@ export const CartDrawer = () => {
         </SheetTrigger>
         <SheetContent className="w-full sm:max-w-lg flex flex-col h-full">
           <SheetHeader className="flex-shrink-0">
-            <SheetTitle className="font-display">Shopping Cart</SheetTitle>
+            <SheetTitle className="font-display text-sm md:text-lg lg:text-2xl">Shopping Cart</SheetTitle>
             <SheetDescription>
               {totalItems === 0 ? "Your cart is empty" : `${totalItems} item${totalItems !== 1 ? 's' : ''} in your cart`}
             </SheetDescription>

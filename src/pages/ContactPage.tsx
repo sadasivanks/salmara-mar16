@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import SEO from "@/components/SEO";
 import { siteConfig } from "@/config/site.config";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const ContactPage = () => {
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -245,12 +246,12 @@ const ContactPage = () => {
               
               {/* DETAILS SIDE */}
               <div className="space-y-12">
-                <div>
-                  <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-medium text-[#1A2E35] mb-6 whitespace-nowrap">Our Communication Hub</h2>
-                  <p className="text-[#1A2E35]/60 leading-relaxed font-sans-clean">
-                    For us, Ayurveda is a dialogue. We've dedicated teams for each touchpoint to ensure your inquiry reaches the right hands instantly.
-                  </p>
-                </div>
+                <SectionHeading 
+                  title="Our Communication Hub"
+                  description="For us, Ayurveda is a dialogue. We've dedicated teams for each touchpoint to ensure your inquiry reaches the right hands instantly."
+                  centered={false}
+                  animate={false}
+                />
                 
                 <div className="space-y-8">
                   <div className="flex gap-6 items-start">
@@ -440,12 +441,12 @@ const ContactPage = () => {
           <div className="container mx-auto px-6 md:px-4 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-16">
-                <div className="max-w-xl">
-                  <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-6">Visit Our Sanctuary</h2>
-                  <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
-                    Experience Ayurvedic wisdom in person. Our certified clinics offer personalized consultations and a full range of standardized treatments.
-                  </p>
-                </div>
+                  <SectionHeading 
+                    title="Visit Our Sanctuary"
+                    description="Experience Ayurvedic wisdom in person. Our certified clinics offer personalized consultations and a full range of standardized treatments."
+                    centered={false}
+                    animate={false}
+                  />
                 <Link
                   to="/clinics"
                   className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary border-b-2 border-primary/20 pb-1 hover:border-primary transition-all"
