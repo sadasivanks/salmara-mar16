@@ -12,7 +12,8 @@ import {
   ArrowRight,
   ChevronRight,
   Clock,
-  Phone
+  Phone,
+  ChevronDown
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -31,6 +32,7 @@ const ContactPage = () => {
     category: "",
     message: ""
   });
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
@@ -85,7 +87,12 @@ const ContactPage = () => {
       });
     }
   };
-
+  const faqs = [
+    { q: "Where is my order?", a: "You can track it under My Account → Orders or use the Track Order link in the header." },
+    { q: "Can I book a doctor consultation online?", a: "Yes, through our Book Appointment page using real-time slot selection." },
+    { q: "How long will my order take to arrive?", a: "Orders are usually delivered within 335 business days." },
+    { q: "Do you ship internationally?", a: " Currently, we ship across India. International orders" },
+  ]
   const contactRoutes = [
     {
       id: 'support' as const,
@@ -144,7 +151,7 @@ const ContactPage = () => {
 
         {/* QUICK CONTACT OPTIONS */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 container mx-auto px-6 md:px-4">
-          <div className="grid md:grid-cols-3 gap-12 lg:gap-16 max-w-6xl mx-auto items-stretch">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto items-stretch">
             {/* General Enquiries Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -242,7 +249,7 @@ const ContactPage = () => {
         {/* COMMUNICATION HUB SECTION */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white">
           <div className="container mx-auto px-6 md:px-4">
-            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-20 items-start">
+            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 items-start">
               
               {/* DETAILS SIDE */}
               <div className="space-y-12">
@@ -253,7 +260,7 @@ const ContactPage = () => {
                   animate={false}
                 />
                 
-                <div className="space-y-8">
+                <div className="space-y-2 md:space-y-4 lg:space-y-6 xl:space-y-8">
                   <div className="flex gap-6 items-start">
                     <div className="h-12 w-12 bg-white rounded-2xl border border-[#F2EDE4] flex items-center justify-center shrink-0">
                       <Mail className="h-5 w-5 text-primary" />
@@ -285,7 +292,7 @@ const ContactPage = () => {
                   </div>
                 </div>
 
-                <div className="pt-8">
+                <div>
                   <div className="p-8 rounded-3xl bg-white border border-[#F2EDE4] relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                       <Send className="h-20 w-20 rotate-12" />
@@ -438,9 +445,9 @@ const ContactPage = () => {
 
         {/* CLINIC HIGHLIGHTS */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white relative">
-          <div className="container mx-auto px-6 md:px-4 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
+          <div className="container mx-auto px-6 md:px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-16">
+              <div className="flex flex-col md:flex-row justify-between items-left md:items-center">
                   <SectionHeading 
                     title="Visit Our Sanctuary"
                     description="Experience Ayurvedic wisdom in person. Our certified clinics offer personalized consultations and a full range of standardized treatments."
@@ -457,6 +464,45 @@ const ContactPage = () => {
             </div>
           </div>
         </section>
+           <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white relative">
+                  <div className="container px-4">
+                    <div className="max-w-3xl mx-auto">
+                      <SectionHeading 
+                        title="Common Questions"
+                        description="Everything you need to know about starting your order."
+                        animate={false}
+                      />
+        
+                      <div className="space-y-4">
+                        {faqs.map((faq, i) => (
+                          <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden bg-white">
+                            <button
+                              onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                              className="w-full px-8 py-6 flex items-center justify-between text-left bg-secondary transition-colors"
+                            >
+                              <span className="font-display font-medium text-[#1A2E35]">{faq.q}</span>
+                              <ChevronDown className={`h-5 w-5 text-primary transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
+                            </button>
+                            <AnimatePresence>
+                              {openFaq === i && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="px-8 pb-8 pt-4 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
+                                    {faq.a}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </section>
       </main>
 
       <Footer />
