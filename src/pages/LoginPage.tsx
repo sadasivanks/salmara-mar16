@@ -23,6 +23,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { siteConfig } from "@/config/site.config";
 
 const LoginPage = () => {
   const [view, setView] = useState<"login" | "register" | "forgot-password" | "verify-reset-otp" | "set-new-password" | "verify-registration-otp" | "otp">("login");
@@ -436,7 +437,7 @@ const LoginPage = () => {
           {/* Right Side: Form */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white">
             <div className="md:hidden flex justify-center mb-8">
-               <img src="/images/brand/salamara_icon.jpg" alt="Salmara" className="h-16 w-auto" />
+               <Image src={siteConfig.logo} alt={siteConfig.name} className="h-16 w-auto" objectFit="contain" />
             </div>
 
             <AnimatePresence mode="wait">

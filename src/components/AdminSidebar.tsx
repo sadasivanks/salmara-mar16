@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate} from "react-router-dom";
 import { 
   LayoutDashboard, 
   MessageSquare, 
@@ -15,7 +15,9 @@ import {
   Star
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getStoredSession } from "@/lib/shopifyAdmin";
+import { getStoredSession, logoutAdmin } from "@/lib/shopifyAdmin";
+import { toast } from "sonner";
+
 
 interface AdminSidebarProps {
   isMobileOpen: boolean;
@@ -24,6 +26,13 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }: AdminSidebarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logoutAdmin();
+    toast.success("Successfully logged out from Admin Portal");
+    navigate("/admin-login");
+  };
   
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/admin-salmara" },
@@ -102,7 +111,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }: AdminSidebarProps) => {
                 <p className="text-sm font-display truncate truncate">Admin User</p>
                 <p className="text-[10px] text-white/40 truncate uppercase tracking-widest">Administrator</p>
               </div>
-              <button className="text-white/30 hover:text-white transition-colors" title="Logout">
+              <button className="text-white/30 hover:text-white transition-colors" title="Logout" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
