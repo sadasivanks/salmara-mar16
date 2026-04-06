@@ -437,7 +437,7 @@ const LoginPage = () => {
           {/* Right Side: Form */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white">
             <div className="md:hidden flex justify-center mb-8">
-               <Image src={siteConfig.logo} alt={siteConfig.name} className="h-16 w-auto" objectFit="contain" />
+               <img src={siteConfig.logo} alt={siteConfig.name} className="h-16 w-auto object-contain" />
             </div>
 
             <AnimatePresence mode="wait">
