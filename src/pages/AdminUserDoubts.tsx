@@ -19,7 +19,7 @@ interface UserDoubt {
   name: string;
   email: string;
   message: string;
-  status?: 'active' | 'inactive';
+  status?: 'pending' | 'resolved';
   created_at: string;
 }
 
@@ -46,7 +46,8 @@ const AdminUserDoubts = () => {
   };
 
   const handleToggleStatus = async (id: number, currentStatus?: string) => {
-    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    const isPending = !currentStatus || currentStatus === "pending" || currentStatus === "active";
+    const newStatus = isPending ? "resolved" : "pending";
     try {
       const { error } = await supabase
         .from("user_doubt")
@@ -213,12 +214,12 @@ const AdminUserDoubts = () => {
                       <button 
                         onClick={() => handleToggleStatus(item.id, item.status)}
                         className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border transition-all ${
-                          item.status === 'active'
+                          item.status === 'resolved'
                             ? 'text-emerald-600 bg-emerald-50 border-emerald-100 italic'
-                            : 'text-red-500 bg-red-50 border-red-100 opacity-50'
+                            : 'text-amber-600 bg-amber-50 border-amber-100'
                         }`}
                       >
-                        {item.status === 'active' ? 'Active' : 'Inactive'}
+                        {item.status === 'resolved' ? 'Resolved' : 'Pending'}
                       </button>
                     </td>
                     <td className="px-8 py-6">

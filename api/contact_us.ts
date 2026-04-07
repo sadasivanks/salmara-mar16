@@ -41,7 +41,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           email: email.toLowerCase(), 
           phone_number,
           category,
-          user_text
+          user_text,
+          status: 'pending'
         }
       ])
       .select();
@@ -57,4 +58,3 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: error.message });
   }
 }
- Riverside
