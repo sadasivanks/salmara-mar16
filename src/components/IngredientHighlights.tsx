@@ -2,10 +2,10 @@ import { motion, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
-const tulsi = "/images/products/tulsi_dark.jpg";
-const guggul = "/images/products/guggul_dark.jpg";
-const triphala = "/images/products/triphala_dark.jpg";
-const ashwagandha = "/images/products/ashwagandha_dark.jpg";
+const tulsi = "/images/products/tulsi_dark.webp";
+const guggul = "/images/products/guggul_dark.webp";
+const triphala = "/images/products/triphala_dark.webp";
+const ashwagandha = "/images/products/ashwagandha_dark.webp";
 
 const ingredients = [
   {

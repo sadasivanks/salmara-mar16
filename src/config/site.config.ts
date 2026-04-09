@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Salmara Ayurveda",
   url: "https://salmara.com",
-  logo: "/images/brand/salamara_icon.jpg",
+  logo: "/images/brand/salamara_icon.webp",
   contact: {
     phone: "+91-9353436373",
     email: "office@salmaraayurveda.com",
@@ -80,7 +80,7 @@ export const siteConfig = {
     {
       id: 5,
       name: "Salmara Ayurveda - Mumbai",
-      address: "Ghatkhopar - Mumbai",
+      address: "Ghatkhopar - Mumbai / मुंबई",
       fulladdress: "36, 37 Jethalal Parekh Road, near Jhunjhunwala College, Shival Nagar, CGS Colony, Ghatkopar West, Mumbai, Maharashtra 400086",
       streetAddress: "Ghatkopar",
       city: "Mumbai",
@@ -112,7 +112,7 @@ export const siteConfig = {
     {
       id: 7,
       name: "Salmara Ayurveda - Kozhikode",
-      address: "Calicut - Kerala",
+      address: "Calicut - Kerala / കോഴിക്കോട്",
       fulladdress: "Ground floor, Crestis Avenue, 1602/A, Kannur Rd, Moonalingal, Kozhikode, Corporation, Kerala 673001",
       streetAddress: "Calicut",
       city: "Kozhikode",
@@ -128,7 +128,7 @@ export const siteConfig = {
     {
       id: 8,
       name: "Salmara Ayurveda - Kochi",
-      address: "Kochi - Kerala",
+      address: "Kochi - Kerala / കൊച്ചി",
       fulladdress: "Shop no 21/121, manaliparambil building, Manjummel Road, Janatha Rd, Manjummel, Kochi, Kerala 683501",
       streetAddress: "Kochi",
       city: "Kochi",
@@ -140,6 +140,38 @@ export const siteConfig = {
       availability: "Monday to Saturday",
       type: "In-Person",
       specialties: ["Pain Relief", "Skin Care"]
+    },
+    {
+      id: 11,
+      name: "Salmara Ayurveda - Coimbatore",
+      address: "Coimbatore - Tamil Nadu / கோயம்புத்தூர்",
+      fulladdress: "B-34, Gandhima Nagar Road, Peelamedu, Murugan Nagar, Coimbatore, Tamil Nadu 641004",
+      streetAddress: "Peelamedu",
+      city: "Coimbatore",
+      state: "Tamil Nadu",
+      zip: "641004",
+      country: "IN",
+      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Salmara+Ayurveda+Clinic+Coimbatore",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      type: "In-Person",
+      specialties: ["Pain Relief", "General Wellness"]
+    },
+    {
+      id: 12,
+      name: "Salmara Ayurveda - Chennai",
+      address: "Chennai - Tamil Nadu / சென்னை",
+      fulladdress: "42, Gandhi St, Alwartirunagar, Valasaravakkam, Chennai, Tamil Nadu 600087",
+      streetAddress: "Valasaravakkam",
+      city: "Chennai",
+      state: "Tamil Nadu",
+      zip: "600087",
+      country: "IN",
+      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Salmara+Ayurveda+Clinic+Chennai",
+      hours: "10:00 AM – 1:00 PM, 3:00 PM – 6:00 PM",
+      availability: "Monday to Saturday",
+      type: "In-Person",
+      specialties: ["Women's Wellness", "Immunity"]
     },
     {
       id: 10,

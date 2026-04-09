@@ -3,9 +3,9 @@ import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-const tulsiImg = "/images/products/tulsi_dark.jpg";
-const ashwagandhaImg = "/images/products/ashwagandha_dark.jpg";
-const triphalaImg = "/images/products/triphala_dark.jpg";
+const tulsiImg = "/images/products/tulsi_dark.webp";
+const ashwagandhaImg = "/images/products/ashwagandha_dark.webp";
+const triphalaImg = "/images/products/triphala_dark.webp";
 
 const posts = [
   {

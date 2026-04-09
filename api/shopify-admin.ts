@@ -41,6 +41,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         "X-Shopify-Access-Token": adminToken,
       },
       body: bodyString,
+      cache: "no-store"
     });
 
     const data = await shopifyRes.json();

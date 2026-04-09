@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-const aboutLab = "/images/clinics/about-lab.jpg";
+const aboutLab = "/images/clinics/about-lab.webp";
 
 const timeline = [
   { year: "1997", label: "Origins" },

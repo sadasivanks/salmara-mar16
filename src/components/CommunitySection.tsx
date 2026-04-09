@@ -139,12 +139,9 @@ const CommunitySection = () => {
               </ul>
             </div>
 
-            <a
-              href="#"
-              className="bg-[#C5A059] hover:bg-[#B48F48] text-white py-4 px-4 md:py-4 mf:px-8  rounded-xl font-sans-clean font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-xl text-center flex items-center justify-center gap-2"
-            >
-              Become an Affiliate <Gift className="h-4 w-4" />
-            </a>
+            <div className="w-full py-4 border border-[#C5A059]/30 rounded-xl font-sans-clean font-bold text-xs uppercase tracking-[0.2em] text-[#C5A059] text-center cursor-default">
+              Coming Soon
+            </div>
           </motion.div>
         </div>
       </div>

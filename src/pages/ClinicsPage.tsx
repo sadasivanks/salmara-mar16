@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-const clinicImg = "/images/clinics/clinics-page.jpg";
+const clinicImg = "/images/clinics/clinics-page.webp";
 import {
   Search,
   MapPin,
@@ -204,6 +204,8 @@ const ClinicsPage = () => {
                         <option>Hubli</option>
                         <option>Mumbai</option>
                         <option>Raichur</option>
+                        <option>Chennai</option>
+                        <option>Coimbatore</option>
                         <option>Kozhikode</option>
                         <option>Kochi</option>
                         <option>Digital</option>
@@ -525,7 +527,7 @@ const ClinicsPage = () => {
                   <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden bg-white">
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full px-8 py-6 flex items-center justify-between text-left bg-secondary transition-colors"
+                      className="w-full px-6 py-3 flex items-center justify-between text-left bg-secondary transition-colors"
                     >
                       <span className="font-display font-medium text-[#1A2E35]">{faq.q}</span>
                       <ChevronDown className={`h-5 w-5 text-primary transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
@@ -538,7 +540,7 @@ const ClinicsPage = () => {
                           exit={{ height: 0, opacity: 0 }}
                           className="overflow-hidden"
                         >
-                          <div className="px-8 pb-8 pt-4 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
+                          <div className="px-6 pb-3 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
                             {faq.a}
                           </div>
                         </motion.div>

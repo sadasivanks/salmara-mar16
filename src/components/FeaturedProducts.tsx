@@ -242,18 +242,10 @@ const FeaturedProducts = () => {
                             const productReviews = reviewsMap[product.node.id] || [];
                             const hasReviews = productReviews.length > 0;
                             
-                            // Fallback calculations
-                            const defaultRating = product.node.handle === 'triphala-churna' ? 4.9 : 
-                                                 product.node.handle === 'brahmi-hair-oil' ? 4.8 : 
-                                                 product.node.handle === 'triphala-tablets' ? 4.7 : 4.5;
-                            const defaultCount = product.node.handle === 'triphala-churna' ? 248 : 
-                                               product.node.handle === 'brahmi-hair-oil' ? 186 : 
-                                               product.node.handle === 'triphala-tablets' ? 92 : 124;
-
                             const avgRating = hasReviews 
                               ? Number((productReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / productReviews.length).toFixed(1))
-                              : defaultRating;
-                            const count = hasReviews ? productReviews.length : defaultCount;
+                              : 0;
+                            const count = hasReviews ? productReviews.length : 0;
 
                             return (
                               <>
@@ -266,7 +258,7 @@ const FeaturedProducts = () => {
                                   ))}
                                 </div>
                                 <span className="text-[9px] font-bold text-[#1A2E35]/40 tracking-tighter truncate">
-                                  {avgRating} ({count})
+                                  {count > 0 ? `${avgRating} (${count})` : 'No reviews'}
                                 </span>
                               </>
                             );
@@ -280,9 +272,17 @@ const FeaturedProducts = () => {
                         )}
                       </div>
                       
-                      <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed mb-6 line-clamp-2 h-10">
-                        {product.node.description}
-                      </p>
+                      <div className="min-h-[60px] mb-4">
+                        <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed line-clamp-2">
+                          {product.node.description}
+                        </p>
+                        <Link 
+                          to={`/product/${product.node.handle}`} 
+                          className="text-[9px] font-bold uppercase tracking-widest text-[#5A7A5C] hover:underline mt-1 inline-block"
+                        >
+                          Read more +
+                        </Link>
+                      </div>
                       {!variant?.availableForSale ? (
                         <button
                           disabled

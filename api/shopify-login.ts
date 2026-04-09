@@ -87,9 +87,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const storedPassword = customer.password?.value;
 
+    console.log(`[DEBUG LOGIN] Email: ${email}`);
+    console.log(`[DEBUG LOGIN] Stored Password Found: ${!!storedPassword}`);
+    console.log(`[DEBUG LOGIN] Admin Token Configured: ${!!adminToken}`);
+    
     // 2. Simple password verification
     if (storedPassword !== password) {
-      return res.status(401).json({ errors: [{ message: "Invalid password." }] });
+      console.log(`[DEBUG LOGIN] Password Mismatch. Provided: "${password}", Stored: "${storedPassword}"`);
+      return res.status(401).json({ errors: [{ message: "Invalid email or password." }] });
     }
 
     // 3. Generate 6-digit OTP
@@ -152,9 +157,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log(`🔑 [PRODUCTION LOGIN] Generated OTP: ${otp}\n`);
 
     // 5. Send Real SMS via Edumarc
-    const smsApiKey = "56682895f69247d386c1c38121485c36";
-    const senderId = "SLMAYU";
-    const templateId = "1707176959332051773";
+    const smsApiKey = process.env.EDUMARC_SMS_API_KEY;
+    const senderId = process.env.EDUMARC_SENDER_ID || "SLMAYU";
+    const templateId = process.env.EDUMARC_TEMPLATE_ID;
     const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
     
     const customerPhone = customer.phone;
@@ -169,7 +174,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Format phone number: Remove '+' and ensure it's a string in an array
     const formattedPhone = customerPhone.replace(/^\+/, '');
 
-    console.log(`[AUTH] Sending SMS OTP to ${formattedPhone}...`);
+    if (!smsApiKey || !templateId) {
+      console.error("[AUTH ERROR] SMS configuration missing");
+      return res.status(500).json({ errors: [{ message: "SMS service not configured." }] });
+    }
 
     try {
       const smsRes = await fetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {

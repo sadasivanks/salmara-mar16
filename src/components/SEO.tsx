@@ -13,7 +13,7 @@ interface SEOProps {
 const SEO = ({ 
   title, 
   description = "Authentic Ayurvedic formulations rooted in tradition. Salmara Ayurveda offers clinically-backed herbal remedies for holistic wellness.",
-  image = "/images/brand/salamara_icon.jpg", 
+  image = "/images/brand/salamara_icon.webp", 
   url,
   type = "website",
   keywords = "Ayurveda, herbal remedies, natural wellness, Salmara, clinics, holistic healing, certified ayurveda",

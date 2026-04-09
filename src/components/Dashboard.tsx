@@ -34,16 +34,17 @@ import {
 } from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
 import { Image } from "@/components/ui/Image";
 
 
-const logo = "/images/brand/salamara_icon.jpg";
+const logo = "/images/brand/salamara_icon.webp";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "cart">("profile");
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "cart">("orders");
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +64,13 @@ const Dashboard = () => {
   const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
   useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "profile" || tabParam === "orders" || tabParam === "cart") {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     const init = async () => {
       await fetchProfile();
     };
@@ -80,7 +88,22 @@ const Dashboard = () => {
   const [selectedOrderForTracking, setSelectedOrderForTracking] = useState<any>(null);
 
   const handleTrackOrder = (order: any) => {
-    setSelectedOrderForTracking(order);
+    const fulfillmentStatus = (order.displayFulfillmentStatus || '').toUpperCase();
+    const isActuallyFulfilled = fulfillmentStatus === 'FULFILLED' || fulfillmentStatus === 'PARTIALLY_FULFILLED';
+    
+    // Find the latest AWB from any fulfillment
+    const trackingNumbers = order.fulfillments
+      ?.flatMap((f: any) => f.trackingInfo?.map((t: any) => t.number))
+      .filter(Boolean);
+    
+    const awb = isActuallyFulfilled ? (trackingNumbers?.[trackingNumbers.length - 1]) : null;
+    const orderId = order.id.split('/').pop();
+    
+    if (awb) {
+      navigate(`/track-order?awb=${awb}`);
+    } else {
+      navigate(`/track-order?order=${orderId}&email=${user.email}`);
+    }
   };
 
   const fetchOrders = async () => {
@@ -251,7 +274,7 @@ const Dashboard = () => {
       <aside className="w-72 bg-[#1A1A1A] text-white flex flex-col shrink-0 sticky top-0 h-screen overflow-y-auto z-50">
         <div className="p-8 pb-12 space-y-8">
           <button 
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-all group"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back
@@ -485,35 +508,43 @@ const Dashboard = () => {
                                 {order.name.startsWith('#') ? order.name : `#${order.name}`}</span>
                             </div>
                             
-                            <div className="flex flex-col sm:flex-row gap-4">
-                              <div className="space-y-1">
-                                <p className="text-[8px] uppercase tracking-widest font-bold text-[#1A2E35]/30">Payment Status</p>
-                                <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                            <div className="flex flex-col gap-4">
+                              <div className="flex flex-wrap items-center gap-2">
+                                {/* Payment Badge */}
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border transition-all ${
                                   order.displayFinancialStatus === 'PAID' 
-                                    ? 'bg-green-100 text-green-700' 
-                                    : 'bg-yellow-100 text-yellow-700'
+                                    ? 'bg-[#5A7A5C]/10 text-[#5A7A5C] border-[#5A7A5C]/20' 
+                                    : 'bg-[#C5A059]/10 text-[#C5A059] border-[#C5A059]/20'
                                 }`}>
+                                  <div className={`h-1 w-1 rounded-full ${order.displayFinancialStatus === 'PAID' ? 'bg-[#5A7A5C]' : 'bg-[#C5A059]'}`} />
                                   {order.displayFinancialStatus}
                                 </span>
-                              </div>
-                              <div className="space-y-1">
-                                <p className="text-[8px] uppercase tracking-widest font-bold text-[#1A2E35]/30">Order Status</p>
-                                <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+
+                                {/* Order Status Badge */}
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border transition-all ${
                                   order.cancelledAt
-                                    ? 'bg-red-100 text-red-700'
+                                    ? 'bg-red-50 text-red-600 border-red-100'
                                     : order.displayFulfillmentStatus === 'DELIVERED' 
-                                      ? 'bg-green-100 text-green-700' 
-                                      : 'bg-blue-100 text-blue-700'
+                                      ? 'bg-blue-50 text-blue-600 border-blue-100' 
+                                      : order.displayFulfillmentStatus === 'FULFILLED'
+                                        ? 'bg-[#5A7A5C]/10 text-[#5A7A5C] border-[#5A7A5C]/20'
+                                        : 'bg-[#C5A059]/10 text-[#C5A059] border-[#C5A059]/20'
                                 }`}>
-                                {order.cancelledAt ? (
-                                  'CANCELLED'
-                                ) : order.displayFulfillmentStatus === 'UNFULFILLED' ? (
-                                  'PROCESSING'
-                                ) : order.displayFulfillmentStatus === 'FULFILLED' ? (
-                                  'SHIPPED'
-                                ) : (
-                                  order.displayFulfillmentStatus.replace('_', ' ')
-                                )}
+                                  <div className={`h-1 w-1 rounded-full ${
+                                    order.cancelledAt ? 'bg-red-500' : 
+                                    order.displayFulfillmentStatus === 'DELIVERED' ? 'bg-blue-500' :
+                                    order.displayFulfillmentStatus === 'FULFILLED' ? 'bg-[#5A7A5C]' : 'bg-[#C5A059]'
+                                  } ${!order.cancelledAt && order.displayFulfillmentStatus !== 'DELIVERED' ? 'animate-pulse' : ''}`} />
+                                  
+                                  {order.cancelledAt ? (
+                                    'CANCELLED'
+                                  ) : (order.displayFulfillmentStatus || '').toUpperCase() === 'FULFILLED' ? (
+                                    'SHIPPED'
+                                  ) : (order.displayFulfillmentStatus || '').toUpperCase() === 'DELIVERED' ? (
+                                    'DELIVERED'
+                                  ) : (
+                                    'READY TO PACK'
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -574,7 +605,7 @@ const Dashboard = () => {
                         </div>
 
                         {/* Order Items Preview */}
-                        <div className="mt-8 pt-8 border-t border-[#F2EDE4] flex items-center gap-4">
+                        <div className="mt-4 pt-4 border-t border-[#F2EDE4] flex items-center gap-4">
                           {order.lineItems.edges.slice(0, 4).map((edge: any, idx: number) => (
                             <div key={idx} className="flex items-center gap-4 p-2 bg-[#F8F9FA] rounded-2xl border border-[#F2EDE4] flex-1 max-w-[280px]">
                               <div className="w-12 h-12 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">

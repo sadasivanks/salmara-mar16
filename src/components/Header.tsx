@@ -13,7 +13,7 @@ import { Image } from "@/components/ui/Image";
 import { siteConfig } from "@/config/site.config";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-const logo = "/images/brand/salamara_icon.jpg";
+const logo = "/images/brand/salamara_icon.webp";
 
 const navItems = [
   { label: "About Us", href: "/about" },

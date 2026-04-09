@@ -2,9 +2,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-const heroHerbs = "/images/lifestyle/hero-ayurveda.jpg";
-const heroConsultation = "/images/clinics/consultation.jpg";
-const heroProduct = "/images/lifestyle/skincare-wellness.jpg";
+const heroHerbs = "/images/lifestyle/hero-ayurveda.webp";
+const heroConsultation = "/images/clinics/consultation.webp";
+const heroProduct = "/images/lifestyle/skincare-wellness.webp";
 
 const badges = [
   "GMP\nCERTIFIED",

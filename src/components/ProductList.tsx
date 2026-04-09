@@ -49,7 +49,7 @@ const ProductList = () => {
   return (
     <section id="product-list" className="py-24 bg-[#FDFBF7]" ref={ref}>
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-6 md:mb-8 lg:mb-10 xl:mb-12 gap-6">
           <SectionHeading 
             title={<>Botanical <span className="italic">Solutions</span></>} 
             eyebrow="Our Collections" 

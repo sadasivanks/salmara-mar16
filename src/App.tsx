@@ -16,6 +16,7 @@ const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const WishlistPage = lazy(() => import("@/pages/WishlistPage"));
 const AffiliatePage = lazy(() => import("@/pages/AffiliatePage"));
 const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const TrackOrder = lazy(() => import("@/pages/TrackOrder"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const AdminTestimonials = lazy(() => import("@/pages/AdminTestimonials"));
@@ -73,6 +74,7 @@ const App = () => (
               <Route path="/wishlist" element={<WishlistPage />} />
               <Route path="/affiliate" element={<AffiliatePage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/track-order" element={<TrackOrder />} />
               <Route path="/admin-login" element={<AdminLoginPage />} />
               {/* Admin Salmara Routes */}
               <Route path="/admin-salmara" element={

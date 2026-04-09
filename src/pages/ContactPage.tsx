@@ -444,7 +444,7 @@ const ContactPage = () => {
         </section>
 
         {/* CLINIC HIGHLIGHTS */}
-        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white relative">
+        <section className="py-2 md:py-4 xl:py-6 bg-white relative">
           <div className="container mx-auto px-6 md:px-4">
             <div className="max-w-6xl mx-auto">
               <div className="flex flex-col md:flex-row justify-between items-left md:items-center">
@@ -478,7 +478,7 @@ const ContactPage = () => {
                           <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden bg-white">
                             <button
                               onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                              className="w-full px-8 py-6 flex items-center justify-between text-left bg-secondary transition-colors"
+                              className="w-full px-6 py-3 flex items-center justify-between text-left bg-secondary transition-colors"
                             >
                               <span className="font-display font-medium text-[#1A2E35]">{faq.q}</span>
                               <ChevronDown className={`h-5 w-5 text-primary transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
@@ -491,7 +491,7 @@ const ContactPage = () => {
                                   exit={{ height: 0, opacity: 0 }}
                                   className="overflow-hidden"
                                 >
-                                  <div className="px-8 pb-8 pt-4 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
+                                  <div className="px-6 pb-3 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
                                     {faq.a}
                                   </div>
                                 </motion.div>

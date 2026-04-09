@@ -22,16 +22,18 @@ import { Link } from "react-router-dom";
 import { 
   type ShopifyProduct, 
   fetchProductsViaAdmin, 
+  fetchCollectionsViaAdmin,
   createHybridCheckout, 
   getStoredSession,
   type Address,
-  fetchBulkReviews
+  fetchBulkReviews,
+  type ShopifyCollection
 } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
 import AddressSelectionModal from "@/components/AddressSelectionModal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
 import SEO from "@/components/SEO";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -49,14 +51,6 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
-const concerns = [
-  { id: "pain", title: "Pain & Mobility", desc: "For muscle relief, joints, and inflammation support." },
-  { id: "women", title: "Women’s Wellness", desc: "Hormonal balance and cycle-specific nutritional care." },
-  { id: "kidney", title: "Kidney & Urinary Health", desc: "Natural support for stone clearance and urinary tract health." },
-  { id: "liver", title: "Liver & Detox", desc: "Hepatic support and metabolic waste elimination." },
-  { id: "gut", title: "Gut Health & Digestion", desc: "Restoring digestive fire and smooth bowel movements." },
-  { id: "immunity", title: "Immunity (Tulsi Range)", desc: "Seasonal protection and respiratory shield formulations." },
-];
 
 const priceRanges = [
   { label: "All Prices", value: "all" },
@@ -85,7 +79,7 @@ const ShopPage = () => {
   const navigate = useNavigate();
 
   // Filter & Sort State
-  const [selectedConcern, setSelectedConcern] = useState<string | null>(null);
+  const [availableCollections, setAvailableCollections] = useState<ShopifyCollection[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("all");
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
@@ -101,11 +95,18 @@ const ShopPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchProductsViaAdmin(50) // Fetch more for better filtering
-      .then(async (fetchedProducts) => {
+    
+    // Fetch products and collections in parallel
+    Promise.all([
+      fetchProductsViaAdmin(50),
+      fetchCollectionsViaAdmin(20)
+    ])
+      .then(async ([fetchedProducts, fetchedCollections]) => {
         setProducts(fetchedProducts);
+        setAvailableCollections(fetchedCollections);
+        
         // Fetch reviews in bulk
-        const ids = fetchedProducts.map(p => p.node.id);
+        const ids = fetchedProducts.map((p: any) => p.node.id);
         const reviewsData = await fetchBulkReviews(ids);
         const map: Record<string, any[]> = {};
         reviewsData.forEach((item: any) => {
@@ -124,27 +125,21 @@ const ShopPage = () => {
     }
   }, []);
 
-  // Derived Categories
+  // Derived Categories from Shopify Collections
   const categories = useMemo(() => {
-    const cats = new Set(products.map(p => p.node.productType).filter(Boolean));
-    return ["All Categories", ...Array.from(cats)];
-  }, [products]);
+    const colls = availableCollections.map(c => c.title);
+    return ["All Categories", ...colls];
+  }, [availableCollections]);
 
   // Filtering Logic
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      // 1. Concern Filter (Search in description or tags)
-      if (selectedConcern) {
-        const query = selectedConcern.toLowerCase();
-        const matchesConcern = p.node.description.toLowerCase().includes(query) ||
-                               p.node.title.toLowerCase().includes(query) ||
-                               p.node.tags.some(t => t.toLowerCase().includes(query));
-        if (!matchesConcern) return false;
-      }
-
-      // 2. Category Filter
-      if (selectedCategory !== "All Categories" && p.node.productType !== selectedCategory) {
-        return false;
+      // 1. Category Filter (Check if product belongs to the selected Shopify Collection)
+      if (selectedCategory !== "All Categories") {
+        const belongsToCollection = p.node.collections?.edges.some(
+          edge => edge.node.title === selectedCategory
+        );
+        if (!belongsToCollection) return false;
       }
 
       // 3. Price Filter
@@ -193,7 +188,7 @@ const ShopPage = () => {
       }
       return 0; // Default Bestselling
     });
-  }, [products, selectedConcern, selectedCategory, selectedPriceRange, inStockOnly, sortBy, searchQuery]);
+  }, [products, selectedCategory, selectedPriceRange, inStockOnly, sortBy, searchQuery]);
 
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
@@ -262,7 +257,6 @@ const ShopPage = () => {
   };
 
   const clearFilters = () => {
-    setSelectedConcern(null);
     setSelectedCategory("All Categories");
     setSelectedPriceRange("all");
     setInStockOnly(false);
@@ -278,65 +272,27 @@ const ShopPage = () => {
       <Header />
 
       <main className="overflow-x-hidden">
-        {/* 1) Hero Section */}
-        <section className="relative min-h-[60vh] md:h-[60vh] py-6 md:py-8 lg:py-10 xl:py-12 flex items-center justify-center bg-herbal-dark overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-herbal-dark via-herbal-dark/90 to-herbal-dark/80" />
-
-          <div className="container px-4 relative z-10 text-center max-w-4xl">
+    
+        {/* Clean Header Section */}
+        <section className="pt-8 pb-8 md:pb-12 bg-white">
+          <div className="container px-4 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-4"
             >
-              <h1 className="text-2xl sm:text-4xl md:text-6xl font-display font-medium text-white mb-6 md:mb-8 lg:mb-10 xl:mb-12 leading-tight">
-                Explore Our Certified <br className="sm:hidden" /> Ayurvedic Range
+              <h1 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">
+                Our Collection
               </h1>
-              <p className="text-white/80 text-xs sm:text-sm md:text-xl font-body leading-relaxed mb-10 max-w-2xl mx-auto px-4">
-                From muscle relief oils to immunity blends, each Salmara formulation is crafted under GMP-certified conditions and tested with quality standards for consistent results.
+              <div className="w-12 h-1 bg-primary/20 mx-auto rounded-full" />
+              <p className="text-xs sm:text-base md:text-lg text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed">
+                Time-Honored Healing, Standardized by Science & GMP Quality
               </p>
-              <button
-                onClick={() => {
-                  document.getElementById('product-grid')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-white text-[#1A2E35] px-10 py-4 sm:px-12 sm:py-5 rounded-2xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-[#F2EDE4] transition-all shadow-2xl"
-              >
-                Shop All Products
-              </button>
             </motion.div>
           </div>
         </section>
 
-        {/* 2) Shop by Concern */}
-        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary">
-          <div className="container px-4">
-            <SectionHeading 
-              title="Find What Fits Your Wellness"
-              description="Selecting a concern will tailor the formulations shown in the grid below."
-              animate={false}
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {concerns.map((concern) => (
-                <button
-                  key={concern.id}
-                  onClick={() => setSelectedConcern(selectedConcern === concern.id ? null : concern.id)}
-                  className={`p-10 rounded-3xl border text-left transition-all group ${
-                    selectedConcern === concern.id
-                    ? 'bg-primary border-primary shadow-2xl shadow-primary/20 text-white'
-                    : 'bg-white border-[#F2EDE4] hover:border-primary hover:shadow-xl'
-                  }`}
-                >
-                  <h3 className={`text-xl font-display font-medium mb-3 transition-colors ${selectedConcern === concern.id ? 'text-white' : 'text-[#1A2E35]'}`}>
-                    {concern.title}
-                  </h3>
-                  <p className={`text-sm font-sans-clean leading-relaxed transition-colors ${selectedConcern === concern.id ? 'text-white/80' : 'text-[#1A2E35]/50'}`}>
-                    {concern.desc}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* 3) Filter & Sort Bar */}
         <section id="product-grid" className="sticky top-[64px] lg:top-[80px] z-30 bg-white/95 backdrop-blur-md border-y border-[#F2EDE4] py-4 md:py-5 shadow-sm">
@@ -357,11 +313,11 @@ const ShopPage = () => {
                 </div>
 
                 {/* Mobile Filter Toggle */}
-                <button
+                  <button
                   onClick={() => setShowMobileFilters(!showMobileFilters)}
                   className={cn(
                     "lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all",
-                    showMobileFilters || selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly
+                    showMobileFilters || selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly
                     ? "bg-primary border-primary text-white"
                     : "bg-white border-[#F2EDE4] text-[#1A2E35]"
                   )}
@@ -483,11 +439,6 @@ const ShopPage = () => {
                   Showing {filteredProducts.length} formulations
                 </p>
                 {/* Active Chips */}
-                {selectedConcern && (
-                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
-                    Concern: {selectedConcern} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedConcern(null)} />
-                  </div>
-                )}
                 {selectedCategory !== "All Categories" && (
                   <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
                     {selectedCategory} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedCategory("All Categories")} />
@@ -495,7 +446,7 @@ const ShopPage = () => {
                 )}
               </div>
 
-              {(selectedConcern || selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly || searchQuery) && (
+              {(selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly || searchQuery) && (
                 <button
                   onClick={clearFilters}
                   className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors"
@@ -585,18 +536,10 @@ const ShopPage = () => {
                             const productReviews = reviewsMap[product.node.id] || [];
                             const hasReviews = productReviews.length > 0;
                             
-                            // Fallback calculations
-                            const defaultRating = product.node.handle === 'triphala-churna' ? 4.9 : 
-                                                 product.node.handle === 'brahmi-hair-oil' ? 4.8 : 
-                                                 product.node.handle === 'triphala-tablets' ? 4.7 : 4.5;
-                            const defaultCount = product.node.handle === 'triphala-churna' ? 248 : 
-                                               product.node.handle === 'brahmi-hair-oil' ? 186 : 
-                                               product.node.handle === 'triphala-tablets' ? 92 : 124;
-
                             const avgRating = hasReviews 
                               ? Number((productReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / productReviews.length).toFixed(1))
-                              : defaultRating;
-                            const count = hasReviews ? productReviews.length : defaultCount;
+                              : 0;
+                            const count = hasReviews ? productReviews.length : 0;
 
                             return (
                               <>
@@ -609,13 +552,23 @@ const ShopPage = () => {
                                   ))}
                                 </div>
                                 <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
-                                  {avgRating} ({count} reviews)
+                                  {count > 0 ? `${avgRating} (${count} reviews)` : 'No reviews yet'}
                                 </span>
                               </>
                             );
                           })()}
                         </div>
-                        <p className="text-muted-foreground font-body text-sm mb-3 line-clamp-2">{product.node.description}</p>
+                        <div className="min-h-[40px] mb-3">
+                          <p className="text-muted-foreground font-body text-sm line-clamp-2">
+                            {product.node.description}
+                          </p>
+                          <Link 
+                            to={`/product/${product.node.handle}`} 
+                            className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mt-1 inline-block"
+                          >
+                            Read more +
+                          </Link>
+                        </div>
 
                         {price && (
                           <div className="flex items-baseline gap-2 mb-4">

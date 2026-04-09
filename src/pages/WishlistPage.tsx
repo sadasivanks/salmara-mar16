@@ -92,7 +92,7 @@ const WishlistPage = () => {
       
       <main className="container mx-auto px-4 py-6 md:py-8 lg:py-10 xl:py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-6">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}

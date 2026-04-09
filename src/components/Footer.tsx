@@ -1,7 +1,7 @@
 import { Facebook, Instagram, Youtube, Linkedin, Lock, Wallet, BadgeCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/config/site.config";
-const logo = "/images/brand/salamara_icon.jpg";
+const logo = "/images/brand/salamara_icon.webp";
 
 const Footer = () => (
   <footer className="bg-[#5A7A5C] text-white py-6 md:py-8 lg:py-10 xl:py-12">

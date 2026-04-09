@@ -286,7 +286,7 @@ const ProductDetail = () => {
   };
 
   const firstBenefit = getMetafieldValue('benefits')?.split(/[,\n]+/)[0]?.trim();
-  const benefitLine = firstBenefit || "-";
+  const benefitLine = firstBenefit || "Ayurvedic Formulation";
   const subtitle = product.description?.split('.')[0] + '.' || "-";
 
   const variants = product.variants?.edges || [];
@@ -388,7 +388,7 @@ const ProductDetail = () => {
       
       <main className="py-6 md:py-8 lg:py-10 xl:py-12 overflow-x-hidden">
         <div className="container px-4 mx-auto max-w-7xl">
-          <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-12">
+          <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <Link to="/" className="hover:text-[#5A7A5C]">Home</Link>
             <ChevronRight className="h-3 w-3" />
             <Link to="/shop" className="hover:text-[#5A7A5C]">Shop</Link>
@@ -588,41 +588,54 @@ const ProductDetail = () => {
                   </>
                 )}
               </div>
-              <div className="pt-8 space-y-4">
+            </div>
+          </div>
+
+          {/* New Full-Width Detailed Section */}
+          <div className="grid lg:grid-cols-12 gap-12 pt-6 md:pt-8 lg:pt-10 xl:pt-12 border-t border-[#F2EDE4]">
+            {/* Main Content Area (Left/Middle) */}
+            <div className="lg:col-span-8 space-y-12 pb-6 md:pb-8 lg:pb-10 xl:pb-12">
+              <div className="space-y-6">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1">Detailed Description</label>
                 <div 
-                  className="text-sm text-[#1A2E35]/60 font-sans-clean leading-relaxed prose prose-sm prose-stone max-w-none"
+                  className="text-sm md:text-base text-[#1A2E35]/70 font-sans-clean leading-relaxed prose prose-stone max-w-none 
+                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
                 />
               </div>
+            </div>
 
+            {/* Sidebar/Secondary Actions (Right) */}
+            <div className="lg:col-span-4 space-y-8">
               {getMetafieldValue('doctorsinsight') && (
-                <div className="pt-2">
-                  <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-6 relative overflow-hidden mt-6">
-                    <div className="absolute top-0 left-0 w-1.5 h-full bg-[#5A7A5C]" />
-                    <div className="flex gap-4 items-start">
-                      <div className="bg-white p-2.5 rounded-xl border border-[#5A7A5C]/10 shrink-0 shadow-sm">
-                         <Leaf className="h-4 w-4 text-[#5A7A5C]" />
-                      </div>
-                      <div>
-                        <h2 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-1.5">Doctor's Insight</h2>
-                        <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
-                          "{getMetafieldValue('doctorsinsight')}"
-                        </p>
-                      </div>
+                <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-8 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1.5 h-full bg-[#5A7A5C]" />
+                  <div className="flex gap-4 items-start">
+                    <div className="bg-white p-2.5 rounded-xl border border-[#5A7A5C]/10 shrink-0 shadow-sm">
+                       <Leaf className="h-4 w-4 text-[#5A7A5C]" />
+                    </div>
+                    <div>
+                      <h2 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-2">Doctor's Insight</h2>
+                      <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
+                        "{getMetafieldValue('doctorsinsight')}"
+                      </p>
                     </div>
                   </div>
                 </div>
               )}
 
-              <div className="pt-2">
+              <div className="bg-[#FDFBF7] border border-[#F2EDE4] rounded-3xl p-6 md:p-8 space-y-4">
+                <h3 className="text-xs font-bold text-[#1A2E35] uppercase tracking-widest px-1">Need Guidance?</h3>
+                <p className="text-xs text-[#1A2E35]/50 leading-relaxed px-1">
+                  Connect with our Ayurvedic practitioners for personalized advice on how to integrate this formulation into your daily regimen.
+                </p>
                 <a 
                   href={`https://wa.me/919353436373?text=${encodeURIComponent(`Hello Salmara Team, I would like to consult a doctor regarding ${product.title}.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#FDFBF7] border-2 border-[#5A7A5C] text-[#5A7A5C] h-16 rounded-2xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#5A7A5C] hover:text-white transition-all shadow-lg flex items-center justify-center gap-2 group"
+                  className="w-full bg-white border-2 border-[#5A7A5C] text-[#5A7A5C] h-14 rounded-2xl font-bold uppercase tracking-widest text-[9px] hover:bg-[#5A7A5C] hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 group"
                 >
-                  <MessageCircle className="h-5 w-5 transition-transform group-hover:scale-110" />
+                  <MessageCircle className="h-4 w-4 transition-transform group-hover:scale-110" />
                   Consult a Doctor
                 </a>
               </div>
@@ -884,7 +897,7 @@ const ProductDetail = () => {
             )}
           </AnimatePresence>
 
-          <section className="py-12 md:py-24 max-w-3xl mx-auto">
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 max-w-3xl mx-auto">
             <SectionHeading 
               title="Product Information & FAQ"
               animate={false}
@@ -990,7 +1003,7 @@ const ProductDetail = () => {
             </div>
           </section>
 
-          <section className="py-24 border-t border-[#F2EDE4]">
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 border-t border-[#F2EDE4]">
             <div className="max-w-4xl mx-auto">
               <div className="bg-[#1A2E35] rounded-[3rem] p-8 md:p-16 relative overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/5 rounded-full blur-3xl" />

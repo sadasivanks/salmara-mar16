@@ -29,6 +29,12 @@ export interface ShopifyAdminCustomer {
   addresses?: Address[];
 }
 
+export interface ShopifyCollection {
+  id: string;
+  title: string;
+  handle: string;
+}
+
 export interface ShopifyProduct {
   node: {
     id: string;
@@ -38,6 +44,11 @@ export interface ShopifyProduct {
     handle: string;
     productType: string;
     tags: string[];
+    collections?: {
+      edges: Array<{
+        node: ShopifyCollection;
+      }>;
+    };
     priceRange: {
       minVariantPrice: {
         amount: string;
@@ -243,6 +254,15 @@ const PRODUCTS_ADMIN_QUERY = `
           handle
           productType
           tags
+          collections(first: 5) {
+            edges {
+              node {
+                id
+                title
+                handle
+              }
+            }
+          }
           images(first: 5) {
             edges {
               node {
@@ -271,6 +291,20 @@ const PRODUCTS_ADMIN_QUERY = `
   }
 `;
 
+const COLLECTIONS_ADMIN_QUERY = `
+  query GetCollections($first: Int!) {
+    collections(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+        }
+      }
+    }
+  }
+`;
+
 const PRODUCT_BY_HANDLE_ADMIN_QUERY = `
   query GetProductByHandle($handle: String!) {
     productByHandle(handle: $handle) {
@@ -281,6 +315,15 @@ const PRODUCT_BY_HANDLE_ADMIN_QUERY = `
       handle
       productType
       tags
+      collections(first: 5) {
+        edges {
+          node {
+            id
+            title
+            handle
+          }
+        }
+      }
       images(first: 10) {
         edges {
           node {
@@ -796,6 +839,20 @@ export async function fetchProductByHandleViaAdmin(handle: string): Promise<any 
   } catch (error) {
     console.error("Error fetching product by handle via Admin API:", error);
     return null;
+  }
+}
+
+/**
+ * Fetch all collections via the Admin API.
+ */
+export async function fetchCollectionsViaAdmin(first = 50): Promise<ShopifyCollection[]> {
+  try {
+    const data = await adminApiRequest(COLLECTIONS_ADMIN_QUERY, { first });
+    const collectionEdges = data?.data?.collections?.edges || [];
+    return collectionEdges.map((edge: any) => edge.node);
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    return [];
   }
 }
 

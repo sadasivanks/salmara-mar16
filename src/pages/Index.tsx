@@ -23,7 +23,7 @@ const Index = () => (
         "@type": "Organization",
         "name": "Salmara Ayurveda",
         "url": "https://salmara.com",
-        "logo": "https://salmara.com/salamara_icon.jpg",
+        "logo": "https://salmara.com/salamara_icon.webp",
         "sameAs": [
           "https://www.facebook.com/share/18GfJXco63/?mibextid=wwXIfr",
           "https://www.instagram.com/salmara_ayurveda?igsh=ejhxdHA0NGFoeWNj",

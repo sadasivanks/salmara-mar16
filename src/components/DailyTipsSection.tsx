@@ -3,9 +3,9 @@ import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
-const neemImg = "/images/products/neem_dark.jpg";
-const meditationImg = "/images/lifestyle/meditation_dark.jpg";
-const skincareImg = "/images/lifestyle/skincare-wellness.jpg";
+const neemImg = "/images/products/neem_dark.webp";
+const meditationImg = "/images/lifestyle/meditation_dark.webp";
+const skincareImg = "/images/lifestyle/skincare-wellness.webp";
 
 const tips = [
   {

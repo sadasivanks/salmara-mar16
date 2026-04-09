@@ -25,12 +25,9 @@ const AffiliateSection = () => {
             Join the Salmara Affiliate Program and grow with India's trusted Ayurvedic brand.
           </p>
 
-          <a
-            href="#"
-            className="inline-block bg-[#C5A059] hover:bg-[#B48F48] text-white px-12 py-4 rounded-lg font-sans-clean font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:shadow-xl shadow-lg"
-          >
-            Become an Affiliate
-          </a>
+          <div className="inline-block px-12 py-4 rounded-lg bg-[#C5A059]/10 border border-[#C5A059]/30 text-[#C5A059] font-sans-clean font-bold text-xs uppercase tracking-[0.2em] cursor-default">
+            Coming Soon
+          </div>
         </div>
       </div>
     </section>

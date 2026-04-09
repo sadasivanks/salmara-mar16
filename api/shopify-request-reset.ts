@@ -126,15 +126,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 4. Send Real SMS via Edumarc
-    const smsApiKey = "56682895f69247d386c1c38121485c36";
-    const senderId = "SLMAYU";
-    const templateId = "1707176959332051773";
+    const smsApiKey = process.env.EDUMARC_SMS_API_KEY;
+    const senderId = process.env.EDUMARC_SENDER_ID || "SLMAYU";
+    const templateId = process.env.EDUMARC_TEMPLATE_ID;
     const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
     
     // Format phone number: Remove '+' and ensure it's a string in an array
     const formattedPhone = customerPhone.replace(/^\+/, '');
 
-    console.log(`[RESET PWD] Sending SMS OTP to ${formattedPhone}...`);
+    if (!smsApiKey || !templateId) {
+      console.error("[RESET PWD ERROR] SMS configuration missing");
+      return res.status(500).json({ errors: [{ message: "SMS service not configured." }] });
+    }
 
     try {
       const smsRes = await fetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {

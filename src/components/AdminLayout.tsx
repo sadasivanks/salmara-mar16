@@ -42,9 +42,9 @@ const AdminLayout = () => {
       <AdminSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-72 relative z-0">
         {/* Header */}
-        <header className="sticky top-0 z-30 h-20 bg-white/80 backdrop-blur-md border-b border-[#F2EDE4] px-4 sm:px-8 flex items-center justify-between">
+        <header className="sticky top-0 z-40 h-20 bg-white border-b border-[#F2EDE4] px-4 sm:px-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsMobileOpen(true)}
@@ -82,15 +82,18 @@ const AdminLayout = () => {
               <AnimatePresence>
                 {isProfileOpen && (
                   <>
-                    <div 
-                      className="fixed inset-0 z-40" 
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="fixed inset-0 z-[45] bg-transparent cursor-default" 
                       onClick={() => setIsProfileOpen(false)} 
                     />
                     <motion.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 mt-3 w-56 bg-white rounded-[32px] shadow-2xl shadow-[#1A2E35]/10 border border-[#F2EDE4] p-3 z-50 overflow-hidden"
+                      className="absolute right-0 mt-3 w-56 bg-white rounded-[32px] shadow-2xl shadow-[#1A2E35]/20 border border-[#F2EDE4] p-3 z-[50] overflow-hidden"
                     >
                       <div className="px-4 py-3 border-b border-[#F2EDE4] mb-2">
                         <p className="text-xs font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Signed in as</p>

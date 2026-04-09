@@ -13,15 +13,15 @@ import SEO from "@/components/SEO";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 // Award Images - Now from public/images
-const awardIMG7909 = "/images/awards/IMG_7909.JPG";
-const awardIMG7913 = "/images/awards/IMG_7913.JPG";
-const awardIMG7915 = "/images/awards/IMG_7915.JPG";
-const awardIMG7916 = "/images/awards/IMG_7916.JPG";
-const awardIMG7918 = "/images/awards/IMG_7918.JPG";
-const awardIMG7921 = "/images/awards/IMG_7921.JPG";
-const awardNobleMan = "/images/awards/Noble-Man-Award.png";
-const founder = "/images/brand/founder.jpeg";
-const aboutLab = "/images/clinics/about-lab.jpg";
+const awardIMG7909 = "/images/awards/IMG_7909.webp";
+const awardIMG7913 = "/images/awards/IMG_7913.webp";
+const awardIMG7915 = "/images/awards/IMG_7915.webp";
+const awardIMG7916 = "/images/awards/IMG_7916.webp";
+const awardIMG7918 = "/images/awards/IMG_7918.webp";
+const awardIMG7921 = "/images/awards/IMG_7921.webp";
+const awardNobleMan = "/images/awards/Noble-Man-Award.webp";
+const founder = "/images/brand/founder.webp";
+const aboutLab = "/images/clinics/about-lab.webp";
 
 const AboutUsPage = () => {
   const navigate = useNavigate();
