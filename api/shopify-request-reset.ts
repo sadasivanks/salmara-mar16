@@ -36,15 +36,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: "SHOPIFY_ADMIN_API_ACCESS_TOKEN is not configured" });
     }
 
-    // 1. Find customer by email
+    // 1. Find customers by search (fuzzy)
     const customerQuery = `
-      query getCustomerByEmail($query: String!) {
-        customers(first: 1, query: $query) {
+      query getCustomersBySearch($query: String!) {
+        customers(first: 10, query: $query) {
           edges {
             node {
               id
               email
               phone
+              defaultAddress {
+                phone
+              }
             }
           }
         }
@@ -70,26 +73,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ errors: findData.errors });
     }
 
-    const customer = findData?.data?.customers?.edges?.[0]?.node;
+    const customerEdges = findData?.data?.customers?.edges || [];
+    
+    // 2. Strict filtering for EXACT email match
+    const customer = customerEdges.find((edge: any) => 
+      edge.node.email.toLowerCase().trim() === email.toLowerCase().trim()
+    )?.node;
 
     if (!customer) {
-      return res.status(404).json({ errors: [{ message: "Account not found with this email." }] });
+      console.error(`[RESET PWD ERROR] No exact email match found for: ${email}`);
+      return res.status(404).json({ errors: [{ message: "Account not found with this exact email." }] });
     }
 
-    const customerPhone = customer.phone;
+    // Capture and clean phone number
+    // Priority: Profile Phone > Default Address Phone
+    const rawPhone = customer.phone || customer.defaultAddress?.phone;
 
-    if (!customerPhone) {
+    if (!rawPhone) {
       console.error(`[RESET PWD ERROR] No phone number found for customer: ${email}`);
       return res.status(400).json({ 
         errors: [{ message: "This account doesn't have a linked phone number for recovery. Please contact support." }] 
       });
     }
 
-    // 2. Generate 6-digit OTP
+    const sanitizedPhone = rawPhone.trim().replace(/\s+/g, ''); // Remove spaces
+    const formattedPhone = sanitizedPhone.replace(/^\+/, ''); // Remove + for Edumarc
+
+    // 3. Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
 
-    // 3. Store OTP in Metafields via Admin API
+    // 4. Store OTP in Metafields via Admin API
     const updateMetafieldsMutation = `
       mutation customerUpdate($input: CustomerInput!) {
         customerUpdate(input: $input) {
@@ -125,15 +139,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: "Failed to securely store reset code" });
     }
 
-    // 4. Send Real SMS via Edumarc
+    // 5. Send Real SMS via Edumarc
     const smsApiKey = process.env.EDUMARC_SMS_API_KEY;
     const senderId = process.env.EDUMARC_SENDER_ID || "SLMAYU";
     const templateId = process.env.EDUMARC_TEMPLATE_ID;
     const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
     
-    // Format phone number: Remove '+' and ensure it's a string in an array
-    const formattedPhone = customerPhone.replace(/^\+/, '');
-
     if (!smsApiKey || !templateId) {
       console.error("[RESET PWD ERROR] SMS configuration missing");
       return res.status(500).json({ errors: [{ message: "SMS service not configured." }] });
@@ -168,7 +179,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).json({
       success: true,
       email: customer.email,
-      phoneHint: customerPhone.replace(/.(?=.{4})/g, '*') // e.g. ******1234
+      phoneHint: sanitizedPhone.replace(/.(?=.{4})/g, '*') // Use sanitized version for hint
     });
   } catch (error: any) {
     console.error("Forgot Password Error:", error);

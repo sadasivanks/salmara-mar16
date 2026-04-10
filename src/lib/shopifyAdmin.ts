@@ -72,6 +72,10 @@ export interface ShopifyProduct {
             amount: string;
             currencyCode: string;
           };
+          compareAtPrice?: {
+            amount: string;
+            currencyCode: string;
+          };
           availableForSale: boolean;
           selectedOptions: Array<{
             name: string;
@@ -277,6 +281,7 @@ const PRODUCTS_ADMIN_QUERY = `
                 id
                 title
                 price
+                compareAtPrice
                 inventoryQuantity
                 selectedOptions {
                   name
@@ -338,6 +343,7 @@ const PRODUCT_BY_HANDLE_ADMIN_QUERY = `
             id
             title
             price
+            compareAtPrice
             inventoryQuantity
             selectedOptions {
               name
@@ -783,6 +789,10 @@ export async function fetchProductsViaAdmin(first = 20): Promise<any[]> {
                 amount: vEdge.node.price,
                 currencyCode: "INR" 
               },
+              compareAtPrice: vEdge.node.compareAtPrice ? {
+                amount: vEdge.node.compareAtPrice,
+                currencyCode: "INR"
+              } : undefined,
               // Storefront uses availableForSale, Admin uses inventoryQuantity
               availableForSale: vEdge.node.inventoryQuantity > 0
             }
@@ -824,6 +834,10 @@ export async function fetchProductByHandleViaAdmin(handle: string): Promise<any 
               amount: vEdge.node.price,
               currencyCode: "INR"
             },
+            compareAtPrice: vEdge.node.compareAtPrice ? {
+              amount: vEdge.node.compareAtPrice,
+              currencyCode: "INR"
+            } : undefined,
             availableForSale: vEdge.node.inventoryQuantity > 0
           }
         }))

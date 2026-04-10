@@ -86,6 +86,7 @@ const ShopPage = () => {
   const [sortBy, setSortBy] = useState("Bestselling");
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const { addItem, isLoading: isCartStoreLoading } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
@@ -123,6 +124,14 @@ const ShopPage = () => {
     if (searchParam) {
       setSearchQuery(searchParam);
     }
+
+    // Scroll listener for sticky header 'dull' effect
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 120);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Derived Categories from Shopify Collections
@@ -271,31 +280,20 @@ const ShopPage = () => {
       />
       <Header />
 
-      <main className="overflow-x-hidden">
+      <main className="w-full">
     
-        {/* Clean Header Section */}
-        <section className="pt-8 pb-8 md:pb-12 bg-white">
-          <div className="container px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-4"
-            >
-              <h1 className="text-3xl md:text-5xl font-display font-medium text-[#1A2E35]">
-                Our Collection
-              </h1>
-              <div className="w-12 h-1 bg-primary/20 mx-auto rounded-full" />
-              <p className="text-xs sm:text-base md:text-lg text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed">
-                Time-Honored Healing, Standardized by Science & GMP Quality
-              </p>
-            </motion.div>
-          </div>
-        </section>
 
 
         {/* 3) Filter & Sort Bar */}
-        <section id="product-grid" className="sticky top-[64px] lg:top-[80px] z-30 bg-white/95 backdrop-blur-md border-y border-[#F2EDE4] py-4 md:py-5 shadow-sm">
+        <section 
+          id="product-grid" 
+          className={cn(
+            "sticky top-[64px] lg:top-[80px] z-30 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2",
+            isScrolled 
+              ? "bg-white/60 backdrop-blur-xl opacity-60 hover:opacity-100 shadow-none border-[#F2EDE4]/30" 
+              : "bg-white/95 backdrop-blur-md shadow-sm opacity-100"
+          )}
+        >
           <div className="container px-4">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
               
@@ -308,7 +306,7 @@ const ShopPage = () => {
                     placeholder="SEARCH PRODUCTS..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-secondary border border-[#F2EDE4] rounded-xl py-2.5 pl-11 pr-4 text-[10px] sm:text-xs tracking-widest text-[#1A2E35] placeholder:text-[#1A2E35]/40 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/50 transition-all font-sans-clean"
+                    className="w-full bg-secondary border border-[#F2EDE4] rounded-xl py-1.5 pl-11 pr-4 text-[10px] sm:text-xs tracking-widest text-[#1A2E35] placeholder:text-[#1A2E35]/40 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/50 transition-all font-sans-clean"
                   />
                 </div>
 
@@ -316,7 +314,7 @@ const ShopPage = () => {
                   <button
                   onClick={() => setShowMobileFilters(!showMobileFilters)}
                   className={cn(
-                    "lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all",
+                    "lg:hidden flex items-center gap-2 px-4 py-1.5 rounded-xl border transition-all",
                     showMobileFilters || selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly
                     ? "bg-primary border-primary text-white"
                     : "bg-white border-[#F2EDE4] text-[#1A2E35]"
@@ -343,7 +341,7 @@ const ShopPage = () => {
                     <div className="flex flex-wrap items-center gap-4 lg:gap-8 py-2 lg:py-0 border-t lg:border-none border-[#F2EDE4]/50">
                       {/* Category Filter */}
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
                           <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Category</span>
                           <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-primary transition-colors" />
                         </DropdownMenuTrigger>
@@ -368,7 +366,7 @@ const ShopPage = () => {
 
                       {/* Price Filter */}
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
                           <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Price</span>
                           <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-primary transition-colors" />
                         </DropdownMenuTrigger>
@@ -392,7 +390,7 @@ const ShopPage = () => {
                       </DropdownMenu>
 
                       {/* Availability Toggle */}
-                      <div className="flex items-center gap-3 py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all cursor-pointer group" onClick={() => setInStockOnly(!inStockOnly)}>
+                      <div className="flex items-center gap-3 py-1 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all cursor-pointer group" onClick={() => setInStockOnly(!inStockOnly)}>
                         <span className="text-[11px] font-bold tracking-[0.2em] text-[#1A2E35] uppercase select-none">In Stock</span>
                         <Switch
                           checked={inStockOnly}
@@ -406,7 +404,7 @@ const ShopPage = () => {
                     <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto border-t lg:border-none pt-4 lg:pt-0">
                       <span className="text-[10px] lg:hidden uppercase tracking-[0.2em] text-[#1A2E35]/40 font-bold">Sort By</span>
                       <DropdownMenu>
-                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1.5 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
+                        <DropdownMenuTrigger className="group flex items-center gap-2 outline-none py-1 px-3 rounded-lg hover:bg-white border border-transparent hover:border-[#F2EDE4] hover:shadow-sm transition-all text-[#1A2E35]">
                           <span className="text-[11px] font-bold tracking-[0.2em] uppercase">{sortByLabels[sortBy] || sortBy}</span>
                           <ChevronDown className="h-4 w-4 text-[#1A2E35]/40 group-hover:text-primary transition-colors" />
                         </DropdownMenuTrigger>
@@ -432,29 +430,29 @@ const ShopPage = () => {
               </AnimatePresence>
             </div>
 
-            {/* Status Bar */}
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 p-4 bg-white/50 border border-[#F2EDE4] rounded-2xl">
-              <div className="flex flex-wrap items-center gap-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]">
-                  Showing {filteredProducts.length} formulations
-                </p>
-                {/* Active Chips */}
-                {selectedCategory !== "All Categories" && (
-                  <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
-                    {selectedCategory} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedCategory("All Categories")} />
-                  </div>
-                )}
-              </div>
+            {/* Status Bar - Only show when filters are active */}
+            {(selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly || searchQuery) && (
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-4 py-1.5 px-4 bg-white/50 border border-[#F2EDE4] rounded-xl">
+                <div className="flex flex-wrap items-center gap-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]">
+                    Showing {filteredProducts.length} formulations
+                  </p>
+                  {/* Active Chips */}
+                  {selectedCategory !== "All Categories" && (
+                    <div className="bg-primary/10 text-primary px-3 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest flex items-center gap-2">
+                      {selectedCategory} <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedCategory("All Categories")} />
+                    </div>
+                  )}
+                </div>
 
-              {(selectedCategory !== "All Categories" || selectedPriceRange !== "all" || inStockOnly || searchQuery) && (
                 <button
                   onClick={clearFilters}
                   className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors"
                 >
                   Reset All Filters <X className="h-3 w-3" />
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -575,6 +573,11 @@ const ShopPage = () => {
                             <span className="text-xl font-sans-clean font-bold text-foreground">
                               {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
                             </span>
+                            {variant.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > parseFloat(price.amount) && (
+                              <span className="text-sm text-muted-foreground/50 line-through">
+                                {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
+                              </span>
+                            )}
                           </div>
                         )}
                                     {!variant?.availableForSale ? (

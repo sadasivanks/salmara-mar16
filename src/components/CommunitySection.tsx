@@ -1,7 +1,8 @@
 import { motion, useInView } from "framer-motion";
+import { Link } from "react-router-dom";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef, useState } from "react";
-import { Mail, Sparkles, Loader2, Users, Gift, ArrowRight } from "lucide-react";
+import { Mail, Sparkles, Loader2, Users, ArrowRight, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 const CommunitySection = () => {
@@ -138,10 +139,21 @@ const CommunitySection = () => {
                 ))}
               </ul>
             </div>
+            
 
-            <div className="w-full py-4 border border-[#C5A059]/30 rounded-xl font-sans-clean font-bold text-xs uppercase tracking-[0.2em] text-[#C5A059] text-center cursor-default">
-              Coming Soon
-            </div>
+            <Link 
+              to="/affiliate" 
+              className="w-full group"
+            >
+              <motion.div
+                whileHover={{ scale: 1.02, backgroundColor: "rgba(197, 160, 89, 0.15)" }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-4 border border-[#C5A059]/30 rounded-xl font-sans-clean font-bold text-xs uppercase tracking-[0.2em] text-[#C5A059] text-center bg-[#C5A059]/5 transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-[#C5A059]/60"
+              >
+                Become Affiliate
+                <TrendingUp className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </motion.div>
+            </Link>
           </motion.div>
         </div>
       </div>

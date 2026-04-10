@@ -22,8 +22,11 @@ function apiRouter() {
           return next();
         }
 
-        // Clean up URL and find the matching file in /api
+        // Parse query parameters
         const url = new URL(req.url, `http://${req.headers.host}`);
+        (req as any).query = Object.fromEntries(url.searchParams);
+
+        // Clean up URL and find the matching file in /api
         const apiFilePath = path.resolve(__dirname, `.${url.pathname}.ts`);
 
         try {

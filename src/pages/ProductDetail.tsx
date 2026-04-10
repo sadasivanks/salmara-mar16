@@ -29,7 +29,13 @@ import {
   X,
   Send,
   ChevronRight,
-  MessageCircle
+  MessageCircle,
+  Droplets,
+  Activity,
+  Zap,
+  Wind,
+  Sparkles,
+  Stethoscope
 } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -270,19 +276,50 @@ const ProductDetail = () => {
 
   const getMetafieldValue = (keyMatch: string) => {
     if (!product?.metafields?.edges) return null;
+    
     const cleanMatch = keyMatch.toLowerCase().replace(/[^a-z0-9]/g, '');
     const cleanHandle = (handle || '').toLowerCase().replace(/-/g, '_').replace(/[^a-z0-9_]/g, '');
 
+    // Common mapping for keys that might have different names in Shopify
+    const keyMap: Record<string, string[]> = {
+      ingredients: ['ingredients', 'ingrediants', 'triphala_churna', 'herb_list', cleanHandle],
+      doctorsinsight: ['doctor_s_insight', 'doctors_insight', 'insight'],
+      benefits: ['benefits', 'key_benefits'],
+      dosage: ['dosage', 'recommended_dosage'],
+      usage: ['usage', 'how_to_use', 'timing'],
+      shelf: ['shelf', 'shelf_life_duration'],
+      shelflife: ['shelf_life', 'country_of_origin'], // User mentioned shelf_life contains "India"
+      netquantity: ['net_quantity', 'quantity'],
+      manufacturedby: ['manufactured_by', 'manufacturer'],
+      batchno: ['batch_no', 'batch_number'],
+      licenseno: ['license_no', 'license_number'],
+      formulationtype: ['formulation_type', 'type_of_formulation']
+    };
+
+    const possibleKeys = keyMap[cleanMatch] || [cleanMatch];
+
     const node = product.metafields.edges.find((e: any) => {
-      const cleanKey = e.node.key.toLowerCase().replace(/[^a-z0-9]/g, '');
       const rawKey = e.node.key.toLowerCase();
+      const cleanKey = rawKey.replace(/[^a-z0-9]/g, '');
+      
       return (
-        cleanKey === cleanMatch ||
-        (cleanMatch === 'ingredients' && (cleanKey === 'ingrediants' || rawKey === cleanHandle))
+        cleanKey === cleanMatch || 
+        possibleKeys.includes(rawKey) ||
+        possibleKeys.includes(cleanKey)
       );
     })?.node;
 
     return node ? node.value : null;
+  };
+
+  const getBenefitIcon = (text: string) => {
+    const t = text.toLowerCase();
+    if (t.includes('bleeding') || t.includes('blood') || t.includes('digestion') || t.includes('stomach')) return <Droplets className="h-4 w-4" />;
+    if (t.includes('energy') || t.includes('stamina') || t.includes('metabolism')) return <Zap className="h-4 w-4" />;
+    if (t.includes('lung') || t.includes('breathing') || t.includes('respiratory')) return <Wind className="h-4 w-4" />;
+    if (t.includes('skin') || t.includes('glow') || t.includes('detox')) return <Sparkles className="h-4 w-4" />;
+    if (t.includes('heart') || t.includes('stress') || t.includes('mind')) return <Heart className="h-4 w-4" />;
+    return <Activity className="h-4 w-4" />;
   };
 
   const firstBenefit = getMetafieldValue('benefits')?.split(/[,\n]+/)[0]?.trim();
@@ -485,14 +522,24 @@ const ProductDetail = () => {
 
               <div className="space-y-6">
                 <div className="flex flex-wrap items-center gap-4">
-                  <span className="text-4xl font-sans-clean font-bold text-[#1A2E35]">
-                    {selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode}{' '}
-                    {parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
-                  </span>
                   <div className="flex flex-col">
-                    <span className="text-sm text-[#1A2E35]/30 line-through">₹ {((parseFloat(selectedVariant?.price.amount || "0") * 1.25)).toFixed(2)}</span>
-                    <span className="text-[#5A7A5C] text-[10px] font-bold uppercase tracking-wider">Save 25% Today</span>
+                    <span className="text-4xl font-sans-clean font-bold text-[#1A2E35]">
+                      {selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode}{' '}
+                      {parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
+                    </span>
                   </div>
+                  
+                  {selectedVariant?.compareAtPrice && parseFloat(selectedVariant.compareAtPrice.amount) > parseFloat(selectedVariant.price.amount) && (
+                    <div className="flex flex-col justify-center">
+                      <span className="text-sm text-[#1A2E35]/30 line-through">
+                        {selectedVariant.compareAtPrice.currencyCode === 'INR' ? '₹' : selectedVariant.compareAtPrice.currencyCode}{' '}
+                        {parseFloat(selectedVariant.compareAtPrice.amount).toFixed(2)}
+                      </span>
+                      <span className="text-[#5A7A5C] text-[10px] font-bold uppercase tracking-wider">
+                        Save {Math.round(((parseFloat(selectedVariant.compareAtPrice.amount) - parseFloat(selectedVariant.price.amount)) / parseFloat(selectedVariant.compareAtPrice.amount)) * 100)}% Today
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-2 mb-6 whitespace-nowrap">
@@ -535,7 +582,7 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="space-y-4 pt-6 border-t border-[#F2EDE4]">
+              <div className="space-y-2 md:space-y-4">
                 {!selectedVariant?.availableForSale ? (
                   <button
                     disabled
@@ -591,227 +638,356 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* New Full-Width Detailed Section */}
-          <div className="grid lg:grid-cols-12 gap-12 pt-6 md:pt-8 lg:pt-10 xl:pt-12 border-t border-[#F2EDE4]">
-            {/* Main Content Area (Left/Middle) */}
-            <div className="lg:col-span-8 space-y-12 pb-6 md:pb-8 lg:pb-10 xl:pb-12">
-              <div className="space-y-6">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1">Detailed Description</label>
+          {/* Detailed Description Section */}
+          <div className="pt-2 md:pt-4 lg:pt-6 border-t border-[#F2EDE4]">
+            <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 lg:space-y-10 xl:space-y-12">
+              <div className="space-y-2">
+                <label className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1 font-sans-clean">Detailed Description</label>
                 <div 
                   className="text-sm md:text-base text-[#1A2E35]/70 font-sans-clean leading-relaxed prose prose-stone max-w-none 
-                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold"
+                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35]"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
                 />
               </div>
-            </div>
 
-            {/* Sidebar/Secondary Actions (Right) */}
-            <div className="lg:col-span-4 space-y-8">
-              {getMetafieldValue('doctorsinsight') && (
-                <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-8 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1.5 h-full bg-[#5A7A5C]" />
-                  <div className="flex gap-4 items-start">
-                    <div className="bg-white p-2.5 rounded-xl border border-[#5A7A5C]/10 shrink-0 shadow-sm">
-                       <Leaf className="h-4 w-4 text-[#5A7A5C]" />
+              {/* Combined Clinical Guidance & Doctor's Insight */}
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-[2rem] md:rounded-[3.5rem] p-6 md:p-12 relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-48 md:w-64 h-48 md:h-64 bg-[#5A7A5C]/10 rounded-full blur-2xl md:blur-3xl -mr-24 md:-mr-32 -mt-24 md:-mt-32" />
+                
+                <div className="relative z-10 grid lg:grid-cols-12 gap-8 md:gap-10 lg:gap-16 items-center">
+                  <div className="lg:col-span-7 space-y-4 md:space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-white p-2.5 md:p-3 rounded-xl md:rounded-2xl shadow-sm">
+                        <Leaf className="h-4 w-4 md:h-5 md:w-5 text-[#5A7A5C]" />
+                      </div>
+                      <h2 className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-[#5A7A5C] font-sans-clean">Doctor's Clinical Insight</h2>
                     </div>
-                    <div>
-                      <h2 className="text-[10px] font-bold uppercase tracking-widest text-[#5A7A5C] mb-2">Doctor's Insight</h2>
-                      <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed italic">
+                    
+                    {getMetafieldValue('doctorsinsight') ? (
+                      <blockquote className="text-base md:text-lg lg:text-xl text-[#1A2E35]/80 font-sans-clean leading-relaxed italic border-l-4 border-[#5A7A5C]/20 pl-4 md:pl-6">
                         "{getMetafieldValue('doctorsinsight')}"
+                      </blockquote>
+                    ) : (
+                      <p className="text-sm text-[#1A2E35]/40 italic px-1 font-sans-clean">Expert clinical analysis for this formulation is being finalized.</p>
+                    )}
+                  </div>
+
+                  <div className="lg:col-span-5 bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-[#5A7A5C]/10 shadow-xl shadow-[#5A7A5C]/5 space-y-5 md:space-y-6">
+                    <div>
+                      <h3 className="text-[11px] md:text-xs font-bold text-[#1A2E35] uppercase tracking-widest mb-1 md:mb-2 font-sans-clean">Need Guidance?</h3>
+                      <p className="text-[11px] md:text-xs text-[#1A2E35]/50 leading-relaxed font-sans-clean">
+                        Connect with our Ayurvedic practitioners for personalized advice on how to integrate this formulation into your regimen.
                       </p>
                     </div>
+                    <a 
+                      href={`https://wa.me/919353436373?text=${encodeURIComponent(`Hello Salmara Team, I would like to consult a doctor regarding ${product.title}.`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full bg-[#5A7A5C] text-white h-14 md:h-16 rounded-xl md:rounded-2xl font-bold uppercase tracking-widest text-[9px] md:text-[10px] hover:bg-[#4A634B] transition-all shadow-lg shadow-[#5A7A5C]/20 flex items-center justify-center gap-3 group"
+                    >
+                      <MessageCircle className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:scale-110" />
+                      Consult via WhatsApp
+                    </a>
                   </div>
                 </div>
-              )}
-
-              <div className="bg-[#FDFBF7] border border-[#F2EDE4] rounded-3xl p-6 md:p-8 space-y-4">
-                <h3 className="text-xs font-bold text-[#1A2E35] uppercase tracking-widest px-1">Need Guidance?</h3>
-                <p className="text-xs text-[#1A2E35]/50 leading-relaxed px-1">
-                  Connect with our Ayurvedic practitioners for personalized advice on how to integrate this formulation into your daily regimen.
-                </p>
-                <a 
-                  href={`https://wa.me/919353436373?text=${encodeURIComponent(`Hello Salmara Team, I would like to consult a doctor regarding ${product.title}.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-white border-2 border-[#5A7A5C] text-[#5A7A5C] h-14 rounded-2xl font-bold uppercase tracking-widest text-[9px] hover:bg-[#5A7A5C] hover:text-white transition-all shadow-sm flex items-center justify-center gap-2 group"
-                >
-                  <MessageCircle className="h-4 w-4 transition-transform group-hover:scale-110" />
-                  Consult a Doctor
-                </a>
-              </div>
+              </motion.div>
             </div>
           </div>
 
           {getMetafieldValue('benefits') && (
-            <section className="py-6 md:py-8 lg:py-10 xl:py-12 border-t border-[#F2EDE4]">
-              <div className="max-w-4xl mx-auto text-center">
-                <SectionHeading 
-                  title="How it Supports Your Wellness"
-                  eyebrow="THE SALMARA EXPERIENCE"
-                  animate={false}
-                />
-                <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 text-left">
+            <section className="py-6 md:py-8 lg:py-10 xl:py-12 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-white via-[#FDFBF7]/50 to-white -z-10" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#5A7A5C]/3 rounded-full blur-[100px] -z-10" />
+              
+              <div className="container px-4 mx-auto">
+                <div className="max-w-2xl mx-auto text-center mb-10 md:mb-12">
+                  <SectionHeading 
+                    title="How it Supports Your Wellness"
+                    eyebrow="THE SALMARA EXPERIENCE"
+                    animate={false}
+                    className="mb-4"
+                  />
+                  <p className="text-sm text-[#1A2E35]/40 font-params-body max-w-lg mx-auto leading-relaxed">
+                    Authentic clinical standards localized in every batch for holistic care.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                   {getMetafieldValue('benefits')
                     .split(/[,\n]+/)
                     .map((s: string) => s.trim())
                     .filter(Boolean)
-                    .map((benefit: string, i: number) => (
-                    <div key={i} className="flex gap-4 p-8 bg-white rounded-3xl border border-[#F2EDE4] hover:border-[#5A7A5C]/30 transition-all">
-                      <div className="h-8 w-8 bg-[#5A7A5C]/5 rounded-xl flex items-center justify-center text-[#5A7A5C] shrink-0">
-                        <CheckCircle2 className="h-4 w-4" />
-                      </div>
-                      <p className="text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed">{benefit}</p>
-                    </div>
-                  ))}
+                    .map((benefit: string, i: number) => {
+                      const isRecommended = i === 0;
+                      return (
+                        <motion.div 
+                          key={i} 
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.5, delay: i * 0.05 }}
+                          className="group relative h-full"
+                        >
+                          <div className={`h-full p-5 md:p-8 bg-white/60 backdrop-blur-sm rounded-[2rem] md:rounded-[3rem] border transition-all duration-500 overflow-hidden shadow-sm flex flex-col ${
+                            isRecommended ? 'border-[#5A7A5C]/30 ring-1 ring-[#5A7A5C]/10' : 'border-[#F2EDE4]'
+                          }`}>
+                            {isRecommended && (
+                              <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 px-2.5 py-1 bg-[#5A7A5C] rounded-full shadow-lg shadow-[#5A7A5C]/20 z-10">
+                                <Star className="h-2.5 w-2.5 fill-white text-white" />
+                                <span className="text-[7px] md:text-[8px] font-bold text-white uppercase tracking-widest whitespace-nowrap">Core Support</span>
+                              </div>
+                            )}
+                            
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#5A7A5C]/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
+                            
+                            <div className={`h-10 w-10 md:h-12 md:w-12 rounded-2xl flex items-center justify-center mb-5 md:mb-6 shrink-0 transition-colors ${
+                              isRecommended ? 'bg-[#5A7A5C] text-white shadow-xl shadow-[#5A7A5C]/20' : 'bg-[#5A7A5C]/10 text-[#5A7A5C]'
+                            }`}>
+                              {getBenefitIcon(benefit)}
+                            </div>
+                            
+                            <div className="flex items-center gap-2 mb-3 md:mb-4">
+                              <div className={`h-px w-4 md:w-6 ${isRecommended ? 'bg-[#5A7A5C]' : 'bg-[#5A7A5C]/30'}`} />
+                              <h4 className={`text-[8px] md:text-[10px] font-sans-clean font-bold uppercase tracking-[0.3em] ${
+                                isRecommended ? 'text-[#5A7A5C]' : 'text-[#5A7A5C]/60'
+                              }`}>Instruction 0{i + 1}</h4>
+                            </div>
+                            
+                            <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed italic flex-1">
+                              "{benefit}"
+                            </p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
                 </div>
               </div>
             </section>
           )}
 
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-white -mx-4 px-4 border-y border-[#F2EDE4]">
-            <div className="max-w-4xl mx-auto space-y-16">
-              <SectionHeading 
-                title="Core Herbs & Extracts"
-                eyebrow="Ingredient Insights"
-                description="We believe transparency is the root of trust. Every milligram in this formulation is ethically sourced and standardized."
-                animate={false}
-              />
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-t from-white via-[#FDFBF7]/30 to-white -z-10" />
+            
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="max-w-2xl mx-auto text-center mb-10 md:mb-12">
+                <SectionHeading 
+                  title="Core Herbs & Extracts"
+                  eyebrow="Ingredient Insights"
+                  animate={false}
+                  className="mb-4"
+                />
+                <p className="text-sm text-[#1A2E35]/50 font-sans-clean max-w-lg mx-auto leading-relaxed italic">
+                  "Transparency is the root of trust. Every milligram is ethically sourced and standardized."
+                </p>
+              </div>
               
               {getMetafieldValue('ingredients') ? (
-                <div className={getMetafieldValue('ingredients').includes(',') ? "grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12" : "max-w-2xl mx-auto"}>
-                  {getMetafieldValue('ingredients').includes(',') ? (
-                    getMetafieldValue('ingredients').split(',').map((s: string) => s.trim()).filter(Boolean).map((ing: string) => (
-                      <div key={ing} className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group">
-                        <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
-                          <Leaf className="h-6 w-6 text-[#5A7A5C]" />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+                  {getMetafieldValue('ingredients')
+                    .split(/\n+/)
+                    .map((line: string) => line.trim())
+                    .filter(Boolean)
+                    .map((item: string, i: number) => {
+                      const [name, ...descParts] = item.split(/\s*-\s*/);
+                      const description = descParts.join(' - ').trim();
+                      
+                      return (
+                        <motion.div 
+                          key={i}
+                          initial={{ opacity: 0, y: 15 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.05 }}
+                          className="h-full p-3 md:p-5 bg-white/70 backdrop-blur-sm rounded-2xl border border-[#F2EDE4] shadow-sm flex flex-col"
+                        >
+                          <div className="w-8 h-8 bg-[#5A7A5C]/5 rounded-lg flex items-center justify-center text-[#5A7A5C] mb-2 md:mb-4 shrink-0">
+                            <Leaf className="h-4 w-4" />
+                          </div>
+                          
+                          <div className="flex flex-col flex-1">
+                            <h3 className="text-[10px] md:text-sm font-bold text-[#1A2E35] uppercase tracking-wider mb-1 md:mb-2 leading-tight">
+                              {name}
+                            </h3>
+                            {description && (
+                              <p className="text-[8px] md:text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean line-clamp-3">
+                                {description}
+                              </p>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                </div>
+              ) : (
+                <div className="p-8 rounded-2xl border border-[#F2EDE4] text-center bg-white/50 max-w-xs mx-auto">
+                  <p className="text-xs text-[#1A2E35]/40 font-sans-clean italic">Details updating soon.</p>
+                </div>
+              )}
+
+              <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12 p-6 md:p-10 bg-white/40 backdrop-blur-md rounded-[2rem] md:rounded-[3rem] text-center max-w-4xl mx-auto border border-[#5A7A5C]/10 relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-2 h-full bg-[#5A7A5C] transition-colors duration-500" />
+                <div className="flex flex-col md:flex-row items-center gap-8 md:text-left">
+                  <div className="h-20 w-20 bg-[#5A7A5C]/5 rounded-full flex items-center justify-center shrink-0">
+                    <ShieldCheck className="h-10 w-10 text-[#5A7A5C] stroke-[1]" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2 justify-center md:justify-start">
+                      <CheckCircle2 className="h-3 w-3 text-[#5A7A5C]" />
+                      <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#1A2E35]">Quality Assurance</h3>
+                    </div>
+                    <h4 className="text-base md:text-lg font-display font-medium text-[#1A2E35] mb-3">Standardization Protocol</h4>
+                    <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">
+                      This formulation aligns with GMP (Good Manufacturing Practices) and rigorous hygiene standards. Every batch is ethically sourced, free from synthetic additives, and standardized for maximum therapeutic efficacy.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto border-t border-[#F2EDE4]/30">
+            <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
+              <SectionHeading 
+                title="Suggested Use"
+                eyebrow="DOSAGE & GUIDELINES"
+                animate={false}
+              />
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-10 max-w-6xl mx-auto">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="p-8 bg-white/60 backdrop-blur-sm rounded-[2.5rem] border border-[#F2EDE4] shadow-sm flex gap-6 items-start"
+              >
+                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0 shadow-lg shadow-[#1A2E35]/10">01</div>
+                <div>
+                  <h3 className="text-[10px] font-bold text-[#1A2E35] uppercase tracking-[0.2em] mb-3">Recommended Dosage</h3>
+                  <p className="text-[15px] text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
+                    {getMetafieldValue('dosage') ? `"${getMetafieldValue('dosage')}"` : "Consult your practitioner for personalized dosage details."}
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="p-8 bg-white/60 backdrop-blur-sm rounded-[2.5rem] border border-[#F2EDE4] shadow-sm flex gap-6 items-start"
+              >
+                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0 shadow-lg shadow-[#1A2E35]/10">02</div>
+                <div>
+                  <h3 className="text-[10px] font-bold text-[#1A2E35] uppercase tracking-[0.2em] mb-3">Timing & Usage</h3>
+                  <p className="text-[15px] text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
+                    {getMetafieldValue('usage') ? `"${getMetafieldValue('usage')}"` : "Instructions updated per individual therapeutic recommendations."}
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+          {hasPurchased && (
+            <section id="reviews" className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto">
+              <div className="bg-[#FDFBF7]/50 border border-[#F2EDE4] rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12">
+                <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-16 mb-12">
+                  <div className="flex-1 space-y-4">
+                    <SectionHeading 
+                      title="Customer Experience"
+                      eyebrow="VERIFIED FEEDBACK"
+                      centered={false}
+                      animate={false}
+                      className="mb-0"
+                    />
+                    <div className="flex flex-wrap items-center gap-5">
+                      <div className="flex items-center gap-1.5 text-[#C5A059]">
+                        {[1, 2, 3, 4, 5].map(s => (
+                          <Star 
+                            key={s} 
+                            className={`h-5 w-5 ${s <= Math.round(averageRating) ? 'fill-current' : 'text-[#F2EDE4]'}`} 
+                          />
+                        ))}
+                      </div>
+                      <div className="h-4 w-px bg-[#F2EDE4]" />
+                      <span className="text-[11px] font-bold text-[#1A2E35] uppercase tracking-widest">
+                        {averageRating} / 5.0
+                      </span>
+                      <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest">
+                        ({safeReviews.length} Verified Ratings)
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="shrink-0 flex items-center">
+                    <button 
+                      onClick={() => setReviewModalOpen(true)}
+                      className="w-full sm:w-auto bg-[#1A2E35] text-white px-10 py-5 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#5A7A5C] transition-all shadow-xl shadow-[#1A2E35]/10 flex items-center justify-center gap-3 active:scale-[0.98]"
+                      disabled={isCheckingEligibility}
+                    >
+                      {isCheckingEligibility ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4" /> Write a Review</>}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+                  <AnimatePresence mode="popLayout">
+                    {safeReviews.map((review, idx) => (
+                      <motion.div
+                        key={review.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="bg-white/70 backdrop-blur-sm p-6 md:p-8 rounded-3xl border border-[#F2EDE4] shadow-sm flex flex-col justify-between"
+                      >
+                        <div className="space-y-4">
+                          <div className="flex justify-between items-start">
+                            <div className="flex gap-1 text-[#C5A059]">
+                              {[1, 2, 3, 4, 5].map(s => (
+                                <Star key={s} className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-[#F2EDE4]'}`} />
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-1 bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-full">
+                              <CheckCircle2 className="h-3 w-3 text-[#5A7A5C]" />
+                              <span className="text-[8px] font-bold text-[#5A7A5C] uppercase tracking-wider">Verified Buyer</span>
+                            </div>
+                          </div>
+                          <p className="text-sm md:text-base text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
+                            "{review.review_text}"
+                          </p>
                         </div>
-                        <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-loose">{ing}</h3>
+                        
+                        <div className="mt-6 pt-6 border-t border-[#F2EDE4]/50 flex justify-between items-center">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-[#1A2E35] uppercase tracking-wide">{review.customer_name || "Verified Customer"}</span>
+                            <span className="text-[9px] text-[#1A2E35]/40 font-bold uppercase tracking-widest">{new Date(review.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                          </div>
+                          <div className="h-8 w-8 bg-[#FDFBF7] rounded-full flex items-center justify-center border border-[#F2EDE4]">
+                            <Star className="h-3 w-3 text-[#C5A059]" />
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {safeReviews.length === 0 && (
+                    <div className="col-span-full text-center py-20 bg-white/40 border border-dashed border-[#F2EDE4] rounded-3xl">
+                      <div className="h-12 w-12 bg-[#F2EDE4]/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Star className="h-6 w-6 text-[#1A2E35]/10" />
                       </div>
-                    ))
-                  ) : (
-                    <div className="p-10 rounded-3xl border border-[#F2EDE4] text-center hover:bg-[#FDFBF7] transition-all group max-w-2xl mx-auto bg-white">
-                      <div className="w-16 h-16 bg-[#FDFBF7] rounded-2xl mx-auto mb-6 flex items-center justify-center group-hover:bg-[#5A7A5C]/5 transition-colors">
-                        <Leaf className="h-6 w-6 text-[#5A7A5C]" />
-                      </div>
-                      <p className="text-base font-sans-clean text-[#1A2E35]/80 mt-3 leading-relaxed italic">{getMetafieldValue('ingredients')}</p>
+                      <p className="text-xs text-[#1A2E35]/40 italic font-body uppercase tracking-[0.2em]">"No reviews yet. Be the first to share your journey."</p>
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="p-10 rounded-3xl border border-[#F2EDE4] text-center bg-white max-w-md mx-auto">
-                  <p className="text-sm text-[#1A2E35]/40 font-sans-clean italic">-</p>
-                </div>
-              )}
-
-              <div className="p-10 bg-[#F2EDE4]/20 rounded-3xl text-center space-y-4">
-                <ShieldCheck className="h-8 w-8 text-[#5A7A5C] mx-auto mb-2" />
-                <h3 className="text-xl font-display font-medium text-[#1A2E35]">Clinical Formulation Standards</h3>
-                <p className="text-sm text-[#1A2E35]/60 max-w-2xl mx-auto leading-relaxed font-sans-clean">
-                  Salmara Ayurveda aligns with GMP (Good Manufacturing Practices) and rigorous hygiene standards. Every batch is tested for consistency and ensures no added harmful synthetics, supporting a holistic journey without compromise.
-                </p>
               </div>
-            </div>
-          </section>
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 max-w-4xl mx-auto">
-            <SectionHeading 
-              title="Suggested Use"
-              animate={false}
-            />
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12">
-              <div className="flex gap-6">
-                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">01</div>
-                <div>
-                  <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Dosage</h3>
-                  <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">{getMetafieldValue('dosage') || "-"}</p>
-                </div>
-              </div>
-              <div className="flex gap-6">
-                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0">02</div>
-                <div>
-                  <h3 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Timing & Usage</h3>
-                  <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">{getMetafieldValue('usage') || "-"}</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section id="reviews" className="py-6 md:py-8 lg:py-10 xl:py-12 max-w-4xl mx-auto border-b border-[#F2EDE4]">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-              <div className="space-y-2">
-                <SectionHeading 
-                  title="Customer Reviews"
-                  centered={false}
-                  animate={false}
-                  className="mb-0"
-                />
-                <div className="flex flex-wrap items-center gap-3 md:gap-4">
-                  <div className="flex items-center gap-1 text-[#C5A059]">
-                    {[1, 2, 3, 4, 5].map(s => (
-                      <Star 
-                        key={s} 
-                        className={`h-4 w-4 ${s <= Math.round(averageRating) ? 'fill-current' : 'text-[#F2EDE4]'}`} 
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs font-bold text-[#1A2E35]/40 uppercase tracking-widest whitespace-nowrap">
-                    Based on {safeReviews.length} verified ratings
-                  </span>
-                </div>
-              </div>
-              <button 
-                onClick={() => setReviewModalOpen(true)}
-                className="w-full sm:w-auto bg-[#1A2E35] text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#1A2E35]/90 transition-all shadow-lg shadow-[#1A2E35]/20 disabled:opacity-50"
-                disabled={!hasPurchased || isCheckingEligibility}
-              >
-                {isCheckingEligibility ? "Verifying..." : "Write a Review"}
-              </button>
-            </div>
-            
-            {!hasPurchased && !isCheckingEligibility && (
-              <div className="mb-12 p-6 bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-2xl flex items-center gap-4">
-                <Info className="h-5 w-5 text-[#5A7A5C]" />
-                <p className="text-sm font-sans-clean text-[#5A7A5C]/80">
-                  Only customers who purchased this product can leave a review.
-                </p>
-              </div>
-            )}
-            
-            <div className="space-y-8">
-              <AnimatePresence mode="popLayout">
-                {safeReviews.map((review) => (
-                  <motion.div
-                    key={review.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white p-8 rounded-3xl border border-[#F2EDE4] space-y-4"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                      <div className="space-y-1">
-                        <div className="flex gap-1 text-[#C5A059]">
-                          {[1, 2, 3, 4, 5].map(s => (
-                            <Star key={s} className={`h-3 w-3 ${s <= review.rating ? 'fill-current' : 'text-[#F2EDE4]'}`} />
-                          ))}
-                        </div>
-                        <p className="font-display font-medium text-[#1A2E35]">{review.customer_name || "Verified Customer"}</p>
-                      </div>
-                      <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest shrink-0">{new Date(review.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <p className="text-sm text-[#1A2E35]/60 leading-relaxed font-sans-clean">
-                      {review.review_text}
-                    </p>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {safeReviews.length === 0 && (
-                <div className="text-center py-20 bg-white border border-[#F2EDE4] rounded-3xl">
-                  <p className="text-sm text-[#1A2E35]/40 italic font-body mb-6">"Be the first to review this formulation."</p>
-                  <div className="h-10 w-px bg-[#F2EDE4] mx-auto" />
-                </div>
-              )}
-            </div>
-          </section>
+            </section>
+          )}
 
           <AnimatePresence>
             {reviewModalOpen && (
@@ -907,9 +1083,9 @@ const ProductDetail = () => {
               <div className="border border-[#F2EDE4] rounded-2xl overflow-hidden">
                 <button 
                   onClick={() => setIsProductInfoOpen(!isProductInfoOpen)}
-                  className="w-full text-left px-8 py-6 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group bg-[#FDFBF7]"
+                  className="w-full text-left px-6 py-4 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group bg-[#FDFBF7]"
                 >
-                  <span className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">Know Your Product</span>
+                  <span className="text-xs md:text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">Know Your Product</span>
                   <ChevronDown className={`h-4 w-4 text-[#1A2E35]/30 transition-transform ${isProductInfoOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence>
@@ -918,7 +1094,7 @@ const ProductDetail = () => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="px-0 sm:px-8 pb-8 bg-[#FDFBF7]"
+                      className="px-6 pb-6 bg-[#FDFBF7]"
                     >
                       <div className="pt-4 border-t border-[#F2EDE4] overflow-x-auto">
                         <table className="w-full text-left bg-white border border-[#F2EDE4] rounded-2xl overflow-hidden shadow-sm">
@@ -939,7 +1115,7 @@ const ProductDetail = () => {
                             </tr>
                             <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Formulation Type:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{product.productType || "-"}</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('formulationtype') || product.productType || "-"}</td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Manufactured By:</th>
@@ -963,7 +1139,7 @@ const ProductDetail = () => {
                             </tr>
                             <tr className="hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Country of Origin:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('countryoforigin') || getMetafieldValue('shelflife') || "-"}</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('shelflife') || "India"}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -978,9 +1154,9 @@ const ProductDetail = () => {
                 <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden">
                   <button 
                     onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                    className="w-full text-left px-8 py-6 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group"
+                    className="w-full text-left px-6 py-4 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group"
                   >
-                    <span className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">{faq.q}</span>
+                    <span className="text-xs md:text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">{faq.q}</span>
                     <ChevronDown className={`h-4 w-4 text-[#1A2E35]/30 transition-transform ${activeFaq === i ? 'rotate-180' : ''}`} />
                   </button>
                   <AnimatePresence>
@@ -989,9 +1165,9 @@ const ProductDetail = () => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="px-8 pb-8"
+                        className="px-6 pb-6"
                       >
-                        <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean pt-2 border-t border-[#F2EDE4]">
+                        <p className="text-[11px] md:text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean pt-2 border-t border-[#F2EDE4]">
                           {faq.a}
                         </p>
                       </motion.div>
