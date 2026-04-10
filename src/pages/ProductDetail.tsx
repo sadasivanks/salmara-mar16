@@ -733,9 +733,11 @@ const ProductDetail = () => {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                   {getMetafieldValue('benefits')
                     .split(/[,\n]+/)
-                    .map((s: string) => s.trim())
-                    .filter(Boolean)
                     .map((benefit: string, i: number) => {
+                      // Split by common dash separators: — (em), – (en), - (hyphen)
+                      const [title, ...descParts] = benefit.split(/\s*[—–-]\s*/);
+                      const description = descParts.join(' — ');
+
                       return (
                         <motion.div 
                           key={i} 
@@ -745,26 +747,35 @@ const ProductDetail = () => {
                           transition={{ duration: 0.5, delay: i * 0.05 }}
                           className="group relative h-full"
                         >
-                          <div className="h-full p-5 md:p-8 bg-white/60 backdrop-blur-sm rounded-[2rem] md:rounded-[3rem] border transition-all duration-500 overflow-hidden shadow-sm flex flex-col ${
-                            border-[#F2EDE4]">
-                           
+                          <div className="h-full p-6 md:p-8 bg-white/60 backdrop-blur-sm rounded-[2.5rem] md:rounded-[3rem] border border-[#F2EDE4] transition-all duration-500 overflow-hidden shadow-sm flex flex-col hover:border-[#5A7A5C]/30 hover:shadow-lg hover:shadow-[#5A7A5C]/5">
                             
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[#5A7A5C]/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
                             
-                            <div className="h-10 w-10 md:h-12 md:w-12 rounded-2xl flex items-center justify-center mb-5 md:mb-6 shrink-0 transition-colors ${
-                              bg-[#5A7A5C]/10 text-[#5A7A5C]">
-                              {getBenefitIcon(benefit)}
+                            <div className="h-10 w-10 md:h-12 md:w-12 rounded-2xl flex items-center justify-center mb-5 md:mb-6 shrink-0 bg-[#5A7A5C]/10 text-[#5A7A5C] transition-colors group-hover:bg-[#5A7A5C] group-hover:text-white">
+                              {getBenefitIcon(title)}
                             </div>
                             
-                            <div className="flex items-center gap-2 mb-3 md:mb-4">
-                              <div className="h-px w-4 md:w-6 bg-[#5A7A5C]/30"/>
-                              <h4 className="text-[8px] md:text-[10px] font-sans-clean font-bold uppercase tracking-[0.3em] ${
-                              text-[#5A7A5C]/60">Instruction 0{i + 1}</h4>
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="h-px w-3 md:w-5 bg-[#5A7A5C]/30"/>
+                              <h4 className="text-[8px] md:text-[9px] font-sans-clean font-bold uppercase tracking-[0.2em] text-[#5A7A5C]/60 truncate">
+                                Support {i + 1}
+                              </h4>
                             </div>
-                            
-                            <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed italic flex-1">
-                              "{benefit}"
-                            </p>
+
+                            {description ? (
+                              <>
+                                <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-display">
+                                  {title}
+                                </h3>
+                                <p className="text-[11px] md:text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed italic flex-1">
+                                  {description}
+                                </p>
+                              </>
+                            ) : (
+                              <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed italic flex-1 uppercase font-bold tracking-tight">
+                                {title}
+                              </p>
+                            )}
                           </div>
                         </motion.div>
                       );
@@ -797,28 +808,29 @@ const ProductDetail = () => {
                     .map((line: string) => line.trim())
                     .filter(Boolean)
                     .map((item: string, i: number) => {
-                      const [name, ...descParts] = item.split(/\s*-\s*/);
-                      const description = descParts.join(' - ').trim();
+                      // Split by common dash separators: — (em), – (en), - (hyphen)
+                      const [name, ...descParts] = item.split(/\s*[—–-]\s*/);
+                      const description = descParts.join(' — ');
                       
                       return (
                         <motion.div 
                           key={i}
-                          initial={{ opacity: 0, y: 15 }}
-                          whileInView={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
-                          transition={{ delay: i * 0.05 }}
-                          className="h-full p-3 md:p-5 bg-white/70 backdrop-blur-sm rounded-2xl border border-[#F2EDE4] shadow-sm flex flex-col"
+                          transition={{ duration: 0.4, delay: i * 0.03 }}
+                          className="group flex flex-col h-full p-6 md:p-8 bg-white/60 hover:bg-white/90 backdrop-blur-sm rounded-[2.5rem] md:rounded-[3rem] border border-[#F2EDE4] hover:border-[#5A7A5C]/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-[#5A7A5C]/5"
                         >
-                          <div className="w-8 h-8 bg-[#5A7A5C]/5 rounded-lg flex items-center justify-center text-[#5A7A5C] mb-2 md:mb-4 shrink-0">
-                            <Leaf className="h-4 w-4" />
+                          <div className="w-10 h-10 md:w-12 md:h-12 bg-[#5A7A5C]/10 rounded-2xl flex items-center justify-center text-[#5A7A5C] mb-5 md:mb-6 shrink-0 transition-colors group-hover:bg-[#5A7A5C] group-hover:text-white">
+                            <Leaf className="h-5 w-5" />
                           </div>
                           
                           <div className="flex flex-col flex-1">
-                            <h3 className="text-[10px] md:text-sm font-bold text-[#1A2E35] uppercase tracking-wider mb-1 md:mb-2 leading-tight">
+                            <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-display transition-colors group-hover:text-[#5A7A5C]">
                               {name}
                             </h3>
                             {description && (
-                              <p className="text-[8px] md:text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean line-clamp-3">
+                              <p className="text-[11px] md:text-sm text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
                                 {description}
                               </p>
                             )}
