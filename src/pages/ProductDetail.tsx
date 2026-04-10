@@ -94,7 +94,7 @@ const ProductDetail = () => {
   const safeReviews = Array.isArray(reviews) ? reviews : [];
   const averageRating = safeReviews.length > 0
     ? parseFloat((safeReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / safeReviews.length).toFixed(1))
-    : 4.9; // Fallback to premium default
+    : 0;
 
   useEffect(() => {
     const session = getStoredSession();
@@ -543,17 +543,30 @@ const ProductDetail = () => {
                 </div>
 
                 <div className="flex items-center gap-2 mb-6 whitespace-nowrap">
-                  <div className="flex gap-1 shrink-0">
-                    {[1, 2, 3, 4, 5].map((s) => (
-                      <Star 
-                        key={s} 
-                        className={`h-4 w-4 ${s <= Math.round(averageRating) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs font-bold text-[#1A2E35] shrink-0">
-                    {averageRating}
-                  </span>
+                  {safeReviews.length > 0 ? (
+                    <>
+                      <div className="flex gap-1 shrink-0">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star 
+                            key={s} 
+                            className={`h-4 w-4 ${s <= Math.round(averageRating) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs font-bold text-[#1A2E35] shrink-0">
+                        {averageRating}
+                      </span>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <div className="flex gap-1 shrink-0">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} className="h-4 w-4 text-[#F2EDE4]" />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tight uppercase">New Launch / No reviews yet</span>
+                    </div>
+                  )}
                   <a href="#reviews" className="text-xs text-[#1A2E35]/40 shrink-0 hover:text-[#5A7A5C] underline underline-offset-4">
                     ({safeReviews.length} reviews)
                   </a>
@@ -723,7 +736,6 @@ const ProductDetail = () => {
                     .map((s: string) => s.trim())
                     .filter(Boolean)
                     .map((benefit: string, i: number) => {
-                      const isRecommended = i === 0;
                       return (
                         <motion.div 
                           key={i} 
@@ -733,29 +745,21 @@ const ProductDetail = () => {
                           transition={{ duration: 0.5, delay: i * 0.05 }}
                           className="group relative h-full"
                         >
-                          <div className={`h-full p-5 md:p-8 bg-white/60 backdrop-blur-sm rounded-[2rem] md:rounded-[3rem] border transition-all duration-500 overflow-hidden shadow-sm flex flex-col ${
-                            isRecommended ? 'border-[#5A7A5C]/30 ring-1 ring-[#5A7A5C]/10' : 'border-[#F2EDE4]'
-                          }`}>
-                            {isRecommended && (
-                              <div className="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 px-2.5 py-1 bg-[#5A7A5C] rounded-full shadow-lg shadow-[#5A7A5C]/20 z-10">
-                                <Star className="h-2.5 w-2.5 fill-white text-white" />
-                                <span className="text-[7px] md:text-[8px] font-bold text-white uppercase tracking-widest whitespace-nowrap">Core Support</span>
-                              </div>
-                            )}
+                          <div className="h-full p-5 md:p-8 bg-white/60 backdrop-blur-sm rounded-[2rem] md:rounded-[3rem] border transition-all duration-500 overflow-hidden shadow-sm flex flex-col ${
+                            border-[#F2EDE4]">
+                           
                             
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[#5A7A5C]/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
                             
-                            <div className={`h-10 w-10 md:h-12 md:w-12 rounded-2xl flex items-center justify-center mb-5 md:mb-6 shrink-0 transition-colors ${
-                              isRecommended ? 'bg-[#5A7A5C] text-white shadow-xl shadow-[#5A7A5C]/20' : 'bg-[#5A7A5C]/10 text-[#5A7A5C]'
-                            }`}>
+                            <div className="h-10 w-10 md:h-12 md:w-12 rounded-2xl flex items-center justify-center mb-5 md:mb-6 shrink-0 transition-colors ${
+                              bg-[#5A7A5C]/10 text-[#5A7A5C]">
                               {getBenefitIcon(benefit)}
                             </div>
                             
                             <div className="flex items-center gap-2 mb-3 md:mb-4">
-                              <div className={`h-px w-4 md:w-6 ${isRecommended ? 'bg-[#5A7A5C]' : 'bg-[#5A7A5C]/30'}`} />
-                              <h4 className={`text-[8px] md:text-[10px] font-sans-clean font-bold uppercase tracking-[0.3em] ${
-                                isRecommended ? 'text-[#5A7A5C]' : 'text-[#5A7A5C]/60'
-                              }`}>Instruction 0{i + 1}</h4>
+                              <div className="h-px w-4 md:w-6 bg-[#5A7A5C]/30"/>
+                              <h4 className="text-[8px] md:text-[10px] font-sans-clean font-bold uppercase tracking-[0.3em] ${
+                              text-[#5A7A5C]/60">Instruction 0{i + 1}</h4>
                             </div>
                             
                             <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed italic flex-1">
