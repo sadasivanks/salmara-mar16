@@ -148,7 +148,7 @@ const Header = () => {
     <>
       {/* Promo Bar */}
       <div className="bg-[#5A7A5C] text-[#F2EDE4] text-center py-2 text-[10px] md:text-xs font-sans-clean tracking-[0.3em] uppercase font-bold">
-        Free Shipping on all orders
+        Free Shipping on all orders 
       </div>
 
       {/* Main Header */}
