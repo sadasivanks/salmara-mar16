@@ -1,10 +1,12 @@
 import { Facebook, Instagram, Youtube, Linkedin, Lock, Wallet, BadgeCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/config/site.config";
-const logo = "/images/brand/salamara_icon.webp";
+import { memo } from "react";
 
 const Footer = () => (
-  <footer className="bg-[#5A7A5C] text-white py-6 md:py-8 lg:py-10 xl:py-12">
+  <footer className="bg-[#5A7A5C] text-white py-6 md:py-8 lg:pt-10 xl:pt-12 pb-20 sm:pb-12">
+
+
     <div className="container mx-auto px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12">
         {/* Brand Column */}
@@ -117,4 +119,5 @@ const Footer = () => (
   </footer>
 );
 
-export default Footer;
+export default memo(Footer);
+

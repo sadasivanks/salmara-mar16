@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, Phone, Users, ChevronUp } from "lucide-react";
 import { m, AnimatePresence } from "framer-motion";
+import { throttle } from "@/lib/utils";
 
 const buttons = [
   { icon: MessageCircle, label: "WhatsApp", color: "bg-green-600 hover:bg-green-700", href: "https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products." },
@@ -12,17 +13,18 @@ const FloatingButtons = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
+    const toggleVisibility = throttle(() => {
       if (window.pageYOffset > 300) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
-    };
+    }, 100);
 
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
+
 
   const scrollToTop = () => {
     window.scrollTo({

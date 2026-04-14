@@ -18,9 +18,10 @@ const navItems = [
   { label: "About Us", href: "/about" },
   { label: "Shop Now", href: "/shop" },
   { label: "Clinics", href: "/clinics" },
-  { label: "Book Appointment", href: `https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20book%20an%20Ayurvedic%20consultation.`, external: true },
+  { label: "Book Appointment", href: `https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products.`, external: true },
   { label: "Contact Us", href: "/contact" },
 ];
+
 
 const shopByConcern = [
   "Pain Relief",
@@ -30,6 +31,25 @@ const shopByConcern = [
   "Skin Care",
   "Digestion",
 ];
+
+
+/**
+ * Route prefetching map to trigger dynamic imports on hover.
+ */
+const routeImports: Record<string, () => Promise<any>> = {
+  "/about": () => import("@/pages/AboutUsPage"),
+  "/shop": () => import("@/pages/ShopPage"),
+  "/clinics": () => import("@/pages/ClinicsPage"),
+  "/contact": () => import("@/pages/ContactPage"),
+  "/wishlist": () => import("@/pages/WishlistPage"),
+  "/login": () => import("@/pages/LoginPage"),
+};
+
+const prefetchRoute = (path: string) => {
+  const importer = routeImports[path];
+  if (importer) importer().catch(() => {});
+};
+
 
 const Header = () => {
   const { clearCart } = useCartStore();
@@ -203,6 +223,7 @@ const Header = () => {
                 <Link
                   key={item.label}
                   to={item.href}
+                  onMouseEnter={() => prefetchRoute(item.href)}
                   onClick={(e) => {
                     const isHomePage = window.location.pathname === "/";
                     const hrefHasHash = item.href.includes("#");
@@ -219,6 +240,7 @@ const Header = () => {
                       : "text-foreground/80 hover:text-primary"
                   }`}
                 >
+
                   {item.label}
                   <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-primary transition-all duration-300 rounded-full ${
                     location.pathname === item.href ? "w-3/4" : "w-0 group-hover:w-3/4"
@@ -246,6 +268,7 @@ const Header = () => {
 
             <Link 
               to="/wishlist" 
+              onMouseEnter={() => prefetchRoute("/wishlist")}
               className={`p-2 text-foreground/70 hover:text-red-500 transition-colors relative group ${searchOpen ? 'hidden sm:block' : ''}`}
               aria-label={`Wishlist ${wishlistCount > 0 ? `(${wishlistCount} items)` : ''}`}
             >
@@ -265,8 +288,10 @@ const Header = () => {
               <div className={`hidden sm:flex items-center gap-4 ${searchOpen ? 'md:flex' : ''}`}>
                 <Link 
                   to="/dashboard"
+                  onMouseEnter={() => prefetchRoute("/dashboard")}
                   className="flex items-center gap-2 px-3 py-1.5 bg-[#FDFBF7] rounded-full border border-[#F2EDE4] hover:bg-[#5A7A5C]/5 transition-colors group"
                 >
+
                   <User className="h-4 w-4 text-[#5A7A5C] group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-sans-clean font-medium text-[#1A2E35]">
                   {(user.name ?.split('@')[0])?.slice(0, 15)}

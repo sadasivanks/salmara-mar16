@@ -29,7 +29,9 @@ import {
   fetchBulkReviews,
   type ShopifyCollection
 } from "@/lib/shopifyAdmin";
+import { throttle } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
+
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
 import { lazy, Suspense } from "react";
@@ -127,13 +129,14 @@ const ShopPage = () => {
     }
 
     // Scroll listener for sticky header 'dull' effect
-    const handleScroll = () => {
+    const handleScroll = throttle(() => {
       setIsScrolled(window.scrollY > 120);
-    };
+    }, 50);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
 
   // Derived Categories from Shopify Collections
   const categories = useMemo(() => {

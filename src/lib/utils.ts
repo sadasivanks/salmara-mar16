@@ -7,6 +7,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+
 export const markCurrentStep = (steps: TimelineStep[]): TimelineStep[] => {
   let foundCurrent = false;
 
@@ -22,3 +23,17 @@ export const markCurrentStep = (steps: TimelineStep[]): TimelineStep[] => {
     };
   });
 };
+
+/**
+ * Throttle a function to be called at most once every `limit` milliseconds.
+ */
+export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
+  let inThrottle: boolean;
+  return function(this: any, ...args: Parameters<T>) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}

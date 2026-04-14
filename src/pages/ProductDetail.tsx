@@ -765,7 +765,7 @@ const ProductDetail = () => {
 
                             {description ? (
                               <>
-                                <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-display">
+                                <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-sans-clean uppercase tracking-tight">
                                   {title}
                                 </h3>
                                 <p className="text-[11px] md:text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed italic flex-1">
@@ -773,10 +773,12 @@ const ProductDetail = () => {
                                 </p>
                               </>
                             ) : (
-                              <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed italic flex-1 uppercase font-bold tracking-tight">
+                              <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed flex-1 uppercase font-bold tracking-tight">
                                 {title}
                               </p>
                             )}
+
+
                           </div>
                         </m.div>
                       );
