@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
@@ -45,7 +45,7 @@ const IngredientHighlights = () => {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {ingredients.map((item, i) => (
-            <motion.div
+            <m.div
               key={item.name}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -69,7 +69,7 @@ const IngredientHighlights = () => {
               <p className="text-[#1A2E35]/60 text-sm font-body leading-relaxed max-w-[180px]">
                 {item.benefit}
               </p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>

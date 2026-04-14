@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { ShoppingCart, Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, Heart } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
@@ -6,7 +6,8 @@ import { type ShopifyProduct, fetchProductsViaAdmin, createHybridCheckout, getSt
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
-import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { lazy, Suspense } from "react";
+const AddressSelectionModal = lazy(() => import("@/components/AddressSelectionModal"));
 import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -132,7 +133,7 @@ const FeaturedProducts = () => {
         <div className="relative">
           {/* Marquee Container */}
           <div className="flex overflow-hidden group">
-            <motion.div 
+            <m.div 
               className="flex gap-6 md:gap-8 lg:gap-10 xl:gap-12"
               animate={{ x: ["0%", "-33.33%"] }}
               transition={{ 
@@ -150,7 +151,7 @@ const FeaturedProducts = () => {
                 const price = variant?.price;
 
                 return (
-                  <motion.div
+                  <m.div
                     key={`${product.node.id}-${idx}`}
                     className="w-[280px] md:w-[320px] bg-white rounded-[2rem] p-4 border border-[#F2EDE4] shadow-sm hover:shadow-xl hover:shadow-[#5A7A5C]/5 transition-all duration-700 relative overflow-hidden flex-shrink-0"
                     whileHover={{ y: -8 }}
@@ -325,10 +326,10 @@ const FeaturedProducts = () => {
                         </div>
                       )}
                     </div>
-                  </motion.div>
+                  </m.div>
                 );
               })}
-            </motion.div>
+            </m.div>
           </div>
         </div>
       )}
@@ -362,13 +363,15 @@ const FeaturedProducts = () => {
 
       {/* Address Selection Modal */}
       {selectedProductForCheckout && (
-        <AddressSelectionModal
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          customerId={getStoredSession()?.user?.id || ""}
-          onSelect={onAddressSelect}
-          isProcessing={!!buyingId}
-        />
+        <Suspense fallback={null}>
+          <AddressSelectionModal
+            isOpen={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            customerId={getStoredSession()?.user?.id || ""}
+            onSelect={onAddressSelect}
+            isProcessing={!!buyingId}
+          />
+        </Suspense>
       )}
     </section>
   );

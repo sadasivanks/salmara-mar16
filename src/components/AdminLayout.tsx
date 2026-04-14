@@ -11,7 +11,7 @@ import {
   ExternalLink,
   LogOut
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { getStoredAdminSession, logoutAdmin } from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
 
@@ -82,14 +82,14 @@ const AdminLayout = () => {
               <AnimatePresence>
                 {isProfileOpen && (
                   <>
-                    <motion.div 
+                    <m.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       className="fixed inset-0 z-[45] bg-transparent cursor-default" 
                       onClick={() => setIsProfileOpen(false)} 
                     />
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
@@ -113,7 +113,7 @@ const AdminLayout = () => {
                           <span className="font-bold">Logout</span>
                         </button>
                       </div>
-                    </motion.div>
+                    </m.div>
                   </>
                 )}
               </AnimatePresence>

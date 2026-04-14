@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef, useState } from "react";
@@ -61,7 +61,7 @@ const CommunitySection = () => {
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {/* Newsletter Card */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -103,10 +103,10 @@ const CommunitySection = () => {
                 )}
               </button>
             </form>
-          </motion.div>
+          </m.div>
 
           {/* Affiliate Card */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
@@ -145,16 +145,16 @@ const CommunitySection = () => {
               to="/affiliate" 
               className="w-full group"
             >
-              <motion.div
+              <m.div
                 whileHover={{ scale: 1.02, backgroundColor: "rgba(197, 160, 89, 0.15)" }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-4 border border-[#C5A059]/30 rounded-xl font-sans-clean font-bold text-xs uppercase tracking-[0.2em] text-[#C5A059] text-center bg-[#C5A059]/5 transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-[#C5A059]/60"
               >
                 Become Affiliate
                 <TrendingUp className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-              </motion.div>
+              </m.div>
             </Link>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

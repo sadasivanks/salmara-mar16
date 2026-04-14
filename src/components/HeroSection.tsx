@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ChevronDown, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
@@ -30,6 +30,7 @@ const slides = [
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -40,6 +41,7 @@ const HeroSection = () => {
   }, [slides.length]);
 
   useEffect(() => {
+    setIsInitialRender(false);
     const timer = setInterval(nextSlide, 8000); // 8 seconds per slide
     return () => clearInterval(timer);
   }, [nextSlide]);
@@ -49,33 +51,40 @@ const HeroSection = () => {
       {/* Background Carousel */}
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
-          <motion.div
+          <m.div
             key={currentSlide}
-            initial={{ opacity: 0, scale: 1.1 }}
+            initial={{ opacity: isInitialRender && currentSlide === 0 ? 1 : 0, scale: isInitialRender && currentSlide === 0 ? 1 : 1.1 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
             className="absolute inset-0 w-full h-full"
           >
-            <img 
-              src={slides[currentSlide].url} 
-              alt="Salmara Hero" 
-              className="w-full h-full object-cover brightness-[0.7]"
-              width="1920"
-              height="1080"
-              loading={currentSlide === 0 ? "eager" : "lazy"}
-              {...({ fetchpriority: currentSlide === 0 ? "high" : "auto" } as any)}
-              decoding="async"
-            />
+            <picture>
+              {/* This source tag allows you to provide a mobile-optimized version later */}
+              <source
+                media="(max-width: 640px)"
+                srcSet={slides[currentSlide].url}
+              />
+              <img 
+                src={slides[currentSlide].url} 
+                alt="Salmara Hero" 
+                className="w-full h-full object-cover brightness-[0.7]"
+                width="1920"
+                height="1080"
+                loading={currentSlide === 0 ? "eager" : "lazy"}
+                {...({ fetchpriority: currentSlide === 0 ? "high" : "auto" } as any)}
+                decoding="async"
+              />
+            </picture>
             {/* Global Gradient Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/90 via-[#1A2E35]/40 to-transparent" />
             <div className="absolute inset-0 bg-black/20" />
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </div>
 
       {/* Badges Overlay */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.8 }}
@@ -91,12 +100,12 @@ const HeroSection = () => {
             </span>
           </div>
         ))}
-      </motion.div>
+      </m.div>
  
       {/* Main Content Overlay */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-7xl lg:pr-32 xl:pr-48">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
@@ -161,7 +170,7 @@ const HeroSection = () => {
   </span>
 </a>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
@@ -184,13 +193,13 @@ const HeroSection = () => {
       </div> */}
 
       {/* Scroll indicator */}
-      <motion.div
+      <m.div
         animate={{ y: [0, 8, 0] }}
         transition={{ duration: 2, repeat: Infinity }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
       >
         <ChevronDown className="h-8 w-8 text-white/50" />
-      </motion.div>
+      </m.div>
     </section>
   );
 };

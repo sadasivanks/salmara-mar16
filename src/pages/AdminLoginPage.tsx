@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Mail, Lock } from "lucide-react";
 import { adminLogin, saveAdminSession, getStoredAdminSession } from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
@@ -88,7 +88,7 @@ const AdminLoginPage = () => {
           {/* Right Side: Form */}
           <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-white">
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
@@ -145,7 +145,7 @@ const AdminLoginPage = () => {
                   unauthorized entry is strictly prohibited.
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </main>

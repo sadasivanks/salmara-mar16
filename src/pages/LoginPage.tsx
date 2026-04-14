@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Image } from "@/components/ui/Image";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Mail, Lock, User, Phone, Eye, EyeOff } from "lucide-react";
 import { 
   loginViaProxy, 
@@ -442,7 +442,7 @@ const LoginPage = () => {
 
             <AnimatePresence mode="wait">
               {view === "login" ? (
-                <motion.div
+                <m.div
                   key="login"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -525,9 +525,9 @@ const LoginPage = () => {
                       </button>
                     </p>
                   </div>
-                </motion.div>
+                </m.div>
               ) : view === "forgot-password" ? (
-                <motion.div
+                <m.div
                   key="forgot"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -569,9 +569,9 @@ const LoginPage = () => {
                   <div className="mt-8 text-center md:text-left">
                     <button onClick={() => setView("login")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Back to Login</button>
                   </div>
-                </motion.div>
+                </m.div>
               ) : view === "verify-reset-otp" ? (
-                <motion.div
+                <m.div
                   key="verify-otp"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -612,9 +612,9 @@ const LoginPage = () => {
                   <div className="mt-8 text-center md:text-left">
                     <button onClick={() => setView("forgot-password")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Change Email</button>
                   </div>
-                </motion.div>
+                </m.div>
               ) : view === "set-new-password" ? (
-                <motion.div
+                <m.div
                   key="set-pwd"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -684,9 +684,9 @@ const LoginPage = () => {
                       {loading ? "Updating..." : "Update Password"}
                     </button>
                   </form>
-                </motion.div>
+                </m.div>
               ) : view === "verify-registration-otp" ? (
-                <motion.div
+                <m.div
                   key="verify-reg-otp"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -725,9 +725,9 @@ const LoginPage = () => {
                     </button>
                   </form>
 
-                </motion.div>
+                </m.div>
               ) : view === "otp" ? (
-                <motion.div
+                <m.div
                   key="otp"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -769,9 +769,9 @@ const LoginPage = () => {
                   <div className="mt-8 text-center md:text-left">
                     <button onClick={() => setView("login")} className="text-sm text-[#5A7A5C] font-bold hover:underline underline-offset-4 font-sans-clean">Back to Login</button>
                   </div>
-                </motion.div>
+                </m.div>
               ) : (
-                <motion.div
+                <m.div
                   key="register"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -862,7 +862,7 @@ const LoginPage = () => {
                       </button>
                     </p>
                   </div>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </div>

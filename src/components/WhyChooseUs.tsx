@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
 import { ShieldCheck, Stethoscope, ThumbsUp, Leaf } from "lucide-react";
@@ -37,7 +37,7 @@ const WhyChooseUs = () => {
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {features.map((feature, i) => (
-            <motion.div
+            <m.div
               key={feature.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -51,11 +51,11 @@ const WhyChooseUs = () => {
               <p className="text-[#4A5568] font-body text-sm leading-relaxed max-w-[240px] mx-auto">
                 {feature.desc}
               </p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
@@ -75,7 +75,7 @@ const WhyChooseUs = () => {
           >
             SHOP NOW
           </Link>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

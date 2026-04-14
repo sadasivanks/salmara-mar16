@@ -1,10 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from './lib/supabase';
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase = createClient(supabaseUrl || '', supabaseKey || '');
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -32,9 +28,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Name and Email are required.' });
     }
 
+    // Get lazily initialized client
+    const supabase = getSupabaseClient();
+
     // Insert into contact_us table
     const { data, error } = await supabase
       .from('contact_us')
+
       .insert([
         { 
           name,

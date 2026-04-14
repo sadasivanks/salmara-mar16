@@ -17,7 +17,7 @@ import {
   MessageSquare,
   ChevronRight
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -287,14 +287,14 @@ const AdminTestimonials = () => {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div 
+            <m.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
               className="absolute inset-0 bg-[#1A2E35]/40 backdrop-blur-sm"
             />
-            <motion.div 
+            <m.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -397,7 +397,7 @@ const AdminTestimonials = () => {
                   {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : (editingItem ? 'Save Changes' : 'Publish Testimonial')}
                 </button>
               </form>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

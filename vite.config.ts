@@ -10,70 +10,79 @@ dns.setDefaultResultOrder("ipv4first");
 
 // Tiny plugin to route /api requests to the local ./api/*.ts files during development
 function apiRouter() {
+  const setupMiddleware = (server: any) => {
+    // Load .env variables
+    const env = loadEnv('development', process.cwd(), '');
+    Object.assign(process.env, env);
+
+    server.middlewares.use(async (req: IncomingMessage, res: ServerResponse, next: Connect.NextFunction) => {
+      if (!req.url || !req.url.startsWith('/api/')) {
+        return next();
+      }
+
+      // ssrLoadModule is only available in ViteDevServer (npm run dev), not in PreviewServer (npm run preview)
+      if (!server.ssrLoadModule) {
+        console.warn(`[API Router] SSR module loading not available for ${req.url}. Skipping proxy.`);
+        return next();
+      }
+
+      // Parse query parameters
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      (req as any).query = Object.fromEntries(url.searchParams);
+
+      // Clean up URL and find the matching file in /api
+      const apiFilePath = path.resolve(__dirname, `.${url.pathname}.ts`);
+
+      try {
+        // Load the API handler dynamically using Vite's SSR engine
+        const module = await server.ssrLoadModule(apiFilePath);
+        const handler = module.default;
+
+        if (!handler) {
+          res.statusCode = 404;
+          res.end(JSON.stringify({ error: `No default export found in ${url.pathname}.ts` }));
+          return;
+        }
+
+        // Parse body if it's a POST/PUT request and not yet parsed
+        if (['POST', 'PUT', 'PATCH'].includes(req.method || '') && !(req as any).body) {
+          let body = '';
+          for await (const chunk of req) {
+            body += chunk;
+          }
+          try {
+            (req as any).body = JSON.parse(body);
+          } catch (e) {
+            (req as any).body = body;
+          }
+        }
+
+        // Add helper methods to match Vercel/Express-like response objects
+        (res as any).status = (code: number) => {
+          res.statusCode = code;
+          return res;
+        };
+        (res as any).json = (data: any) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(data));
+          return res;
+        };
+
+        // Execute the handler
+        await handler(req, res);
+      } catch (error: any) {
+        console.error(`[API Error] ${url.pathname}:`, error.message);
+        res.statusCode = 500;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: "Internal Server Error", message: error.message }));
+      }
+    });
+  };
+
   return {
     name: 'api-router',
-    configureServer(server: any) {
-      // Load .env variables into process.env for local development
-      const env = loadEnv('development', process.cwd(), '');
-      Object.assign(process.env, env);
-
-      server.middlewares.use(async (req: IncomingMessage, res: ServerResponse, next: Connect.NextFunction) => {
-        if (!req.url || !req.url.startsWith('/api/')) {
-          return next();
-        }
-
-        // Parse query parameters
-        const url = new URL(req.url, `http://${req.headers.host}`);
-        (req as any).query = Object.fromEntries(url.searchParams);
-
-        // Clean up URL and find the matching file in /api
-        const apiFilePath = path.resolve(__dirname, `.${url.pathname}.ts`);
-
-        try {
-          // Load the API handler dynamically using Vite's SSR engine
-          const module = await server.ssrLoadModule(apiFilePath);
-          const handler = module.default;
-
-          if (!handler) {
-            res.statusCode = 404;
-            res.end(JSON.stringify({ error: `No default export found in ${url.pathname}.ts` }));
-            return;
-          }
-
-          // Parse body if it's a POST/PUT request and not yet parsed
-          if (['POST', 'PUT', 'PATCH'].includes(req.method || '') && !(req as any).body) {
-            let body = '';
-            for await (const chunk of req) {
-              body += chunk;
-            }
-            try {
-              (req as any).body = JSON.parse(body);
-            } catch (e) {
-              (req as any).body = body;
-            }
-          }
-
-          // Add helper methods to match Vercel/Express-like response objects
-          (res as any).status = (code: number) => {
-            res.statusCode = code;
-            return res;
-          };
-          (res as any).json = (data: any) => {
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(data));
-            return res;
-          };
-
-          // Execute the handler
-          await handler(req, res);
-        } catch (error: any) {
-          console.error(`[API Error] ${url.pathname}:`, error.message);
-          res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify({ error: "Internal Server Error", message: error.message }));
-        }
-      });
-    },
+    configureServer(server: any) { setupMiddleware(server); },
+    configurePreviewServer(server: any) { setupMiddleware(server); },
   };
 }
 
@@ -128,15 +137,45 @@ export default defineConfig(({ mode }) => ({
         quality: 80,
       },
       webp: {
-        lossless: true,
+        quality: 70,
       },
       avif: {
-        lossless: true,
+        quality: 60,
       },
       cache: true,
       cacheLocation: undefined,
     }),
   ].filter(Boolean),
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler') || id.includes('react-router')) {
+              return 'vendor-core';
+            }
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('framer-motion')) return 'vendor-animation';
+            if (id.includes('@supabase')) return 'vendor-supabase';
+            if (id.includes('@radix-ui') || id.includes('floating-ui') || id.includes('class-variance-authority')) return 'vendor-ui-foundation';
+            if (id.includes('bcryptjs')) return 'vendor-crypto';
+            if (id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind-merge')) return 'vendor-utils';
+            if (id.includes('embla-carousel') || id.includes('vaul') || id.includes('cmdk')) return 'vendor-ui-extra';
+            
+            return 'vendor-others';
+          }
+
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+    cssMinify: true,
+    minify: 'esbuild',
+    reportCompressedSize: false,
+  },
+  esbuild: {
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { Star, BadgeCheck, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,7 +63,7 @@ const TestimonialsSection = () => {
             <>
             
 
-              <motion.div 
+              <m.div 
                 className="flex gap-6 w-max"
                 animate={{
                   x: [0, -1750], // Adjust based on content width
@@ -117,7 +117,7 @@ const TestimonialsSection = () => {
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </m.div>
             </>
           )}
         </div>

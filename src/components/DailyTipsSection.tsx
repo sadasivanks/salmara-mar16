@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
@@ -40,7 +40,7 @@ const DailyTipsSection = () => {
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {tips.map((tip, i) => (
-            <motion.article
+            <m.article
               key={tip.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -66,7 +66,7 @@ const DailyTipsSection = () => {
                   <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
                 </div> */}
               </div>
-            </motion.article>
+            </m.article>
           ))}
         </div>
       </div>

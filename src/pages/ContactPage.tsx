@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { 
   Mail, 
   MessageSquare, 
@@ -134,7 +134,7 @@ const ContactPage = () => {
           </div>
           
           <div className="container mx-auto px-6 md:px-4 text-center relative z-10">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -145,7 +145,7 @@ const ContactPage = () => {
               <p className="text-xs sm:text-base md:text-lg text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed px-4">
                 Have a question, feedback, or collaboration idea? We'd love to hear from you.
               </p>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -153,7 +153,7 @@ const ContactPage = () => {
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 container mx-auto px-6 md:px-4">
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto items-stretch">
             {/* General Enquiries Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -178,10 +178,10 @@ const ContactPage = () => {
                   {siteConfig.contact.email}
                 </a>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Clinic & Consultations Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -211,10 +211,10 @@ const ContactPage = () => {
                 Book Appointment <ArrowRight className="h-3 w-3" />
               </a>
             </div>
-            </motion.div>
+            </m.div>
 
             {/* Affiliate & Partnerships Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -242,7 +242,7 @@ const ContactPage = () => {
                 Join the Program <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -315,7 +315,7 @@ const ContactPage = () => {
               <div className="bg-white p-10 md:p-14 rounded-[3.5rem] border border-[#F2EDE4] shadow-2xl shadow-[#1A2E35]/5 relative">
                 <AnimatePresence mode="wait">
                   {formState === 'success' ? (
-                    <motion.div 
+                    <m.div 
                       key="success"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -332,9 +332,9 @@ const ContactPage = () => {
                       >
                         Send another message
                       </button>
-                    </motion.div>
+                    </m.div>
                   ) : (
-                    <motion.form 
+                    <m.form 
                       key="form"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -435,7 +435,7 @@ const ContactPage = () => {
                           <>Send Message <Send className="h-3 w-3" /></>
                         )}
                       </button>
-                    </motion.form>
+                    </m.form>
                   )}
                 </AnimatePresence>
               </div>
@@ -485,7 +485,7 @@ const ContactPage = () => {
                             </button>
                             <AnimatePresence>
                               {openFaq === i && (
-                                <motion.div
+                                <m.div
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: "auto", opacity: 1 }}
                                   exit={{ height: 0, opacity: 0 }}
@@ -494,7 +494,7 @@ const ContactPage = () => {
                                   <div className="px-6 pb-3 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
                                     {faq.a}
                                   </div>
-                                </motion.div>
+                                </m.div>
                               )}
                             </AnimatePresence>
                           </div>

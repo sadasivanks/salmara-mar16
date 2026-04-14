@@ -40,12 +40,13 @@ import {
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useReviewStore } from "@/stores/reviewStore";
 import { useQuestionStore } from "@/stores/questionStore";
 import { Image } from "@/components/ui/Image";
-import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { lazy, Suspense } from "react";
+const AddressSelectionModal = lazy(() => import("@/components/AddressSelectionModal"));
 import SEO from "@/components/SEO";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -436,7 +437,7 @@ const ProductDetail = () => {
           <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <div className="space-y-6">
               <div className="sticky top-32">
-                <motion.div 
+                <m.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   onMouseMove={handleMouseMove}
@@ -470,7 +471,7 @@ const ProductDetail = () => {
                   >
                     <Heart className={`h-5 w-5 ${selectedVariant && isInWishlist(selectedVariant.id) ? 'fill-white' : ''}`} />
                   </button>
-                </motion.div>
+                </m.div>
                 
                 {images.length > 1 && (
                   <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
@@ -490,14 +491,14 @@ const ProductDetail = () => {
 
             <div className="space-y-10">
               <div className="space-y-4">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="inline-flex items-center gap-2 px-3 py-1 bg-[#5A7A5C]/5 rounded-full border border-[#5A7A5C]/10"
                 >
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C]" />
                   <span className="text-[9px] uppercase tracking-[0.22em] text-[#5A7A5C] font-bold">{benefitLine}</span>
-                </motion.div>
+                </m.div>
                 
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
                   {product.title}
@@ -664,7 +665,7 @@ const ProductDetail = () => {
               </div>
 
               {/* Combined Clinical Guidance & Doctor's Insight */}
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -708,7 +709,7 @@ const ProductDetail = () => {
                     </a>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </div>
 
@@ -739,7 +740,7 @@ const ProductDetail = () => {
                       const description = descParts.join(' — ');
 
                       return (
-                        <motion.div 
+                        <m.div 
                           key={i} 
                           initial={{ opacity: 0, y: 20 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -777,7 +778,7 @@ const ProductDetail = () => {
                               </p>
                             )}
                           </div>
-                        </motion.div>
+                        </m.div>
                       );
                     })}
                 </div>
@@ -813,7 +814,7 @@ const ProductDetail = () => {
                       const description = descParts.join(' — ');
                       
                       return (
-                        <motion.div 
+                        <m.div 
                           key={i}
                           initial={{ opacity: 0, scale: 0.95 }}
                           whileInView={{ opacity: 1, scale: 1 }}
@@ -835,7 +836,7 @@ const ProductDetail = () => {
                               </p>
                             )}
                           </div>
-                        </motion.div>
+                        </m.div>
                       );
                     })}
                 </div>
@@ -876,7 +877,7 @@ const ProductDetail = () => {
             </div>
             
             <div className="grid md:grid-cols-2 gap-6 lg:gap-10 max-w-6xl mx-auto">
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -889,9 +890,9 @@ const ProductDetail = () => {
                     {getMetafieldValue('dosage') ? `"${getMetafieldValue('dosage')}"` : "Consult your practitioner for personalized dosage details."}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
 
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -905,7 +906,7 @@ const ProductDetail = () => {
                     {getMetafieldValue('usage') ? `"${getMetafieldValue('usage')}"` : "Instructions updated per individual therapeutic recommendations."}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </section>
 
@@ -954,7 +955,7 @@ const ProductDetail = () => {
                 <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
                   <AnimatePresence mode="popLayout">
                     {safeReviews.map((review, idx) => (
-                      <motion.div
+                      <m.div
                         key={review.id}
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -988,7 +989,7 @@ const ProductDetail = () => {
                             <Star className="h-3 w-3 text-[#C5A059]" />
                           </div>
                         </div>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </AnimatePresence>
 
@@ -1008,14 +1009,14 @@ const ProductDetail = () => {
           <AnimatePresence>
             {reviewModalOpen && (
               <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setReviewModalOpen(false)}
                   className="absolute inset-0 bg-[#1A2E35]/40 backdrop-blur-sm"
                 />
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -1084,7 +1085,7 @@ const ProductDetail = () => {
                       {isSubmittingReview ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Submit Review <Send className="h-4 w-4" /></>}
                     </button>
                   </form>
-                </motion.div>
+                </m.div>
               </div>
             )}
           </AnimatePresence>
@@ -1106,7 +1107,7 @@ const ProductDetail = () => {
                 </button>
                 <AnimatePresence>
                   {isProductInfoOpen && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -1160,7 +1161,7 @@ const ProductDetail = () => {
                           </tbody>
                         </table>
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </div>
@@ -1177,7 +1178,7 @@ const ProductDetail = () => {
                   </button>
                   <AnimatePresence>
                     {activeFaq === i && (
-                      <motion.div
+                      <m.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -1186,7 +1187,7 @@ const ProductDetail = () => {
                         <p className="text-[11px] md:text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean pt-2 border-t border-[#F2EDE4]">
                           {faq.a}
                         </p>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
@@ -1283,13 +1284,15 @@ const ProductDetail = () => {
       </main>
       <Footer />
       {getStoredSession()?.user?.id && (
-        <AddressSelectionModal 
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          customerId={getStoredSession()?.user?.id}
-          onSelect={onAddressSelect}
-          isProcessing={isBuyingNow}
-        />
+        <Suspense fallback={null}>
+          <AddressSelectionModal 
+            isOpen={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            customerId={getStoredSession()?.user?.id}
+            onSelect={onAddressSelect}
+            isProcessing={isBuyingNow}
+          />
+        </Suspense>
       )}
     </div>
   );

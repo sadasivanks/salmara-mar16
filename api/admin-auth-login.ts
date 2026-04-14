@@ -1,6 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from './lib/supabase';
 import bcrypt from 'bcryptjs';
+
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -25,18 +26,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const { email, password } = req.body;
     
-    // Fallback to process.env if VITE_ prefix is missing on server
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+    // Get lazily initialized client (centralized helper)
+    const supabase = getSupabaseClient();
 
-    if (!supabaseUrl || !supabaseKey) {
-      const missing = !supabaseUrl ? "VITE_SUPABASE_URL" : "SUPABASE_KEY";
-      console.error(`[ADMIN LOGIN ERROR] Supabase credential missing: ${missing}`);
-      return res.status(500).json({ error: `Supabase configuration missing: ${missing}` });
-    }
-
-    // Initialize local Supabase client with service key for role-joining
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Query users and join roles
     const { data: user, error: userError } = await (supabase

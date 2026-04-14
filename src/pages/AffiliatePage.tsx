@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import SEO from "@/components/SEO";
@@ -24,7 +24,7 @@ const AffiliatePage = () => {
 
         <section className="container px-4 relative z-10 py-6 md:py-8 lg:py-10 xl:py-12">
           <div className="max-w-3xl mx-auto text-center">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
@@ -46,7 +46,7 @@ const AffiliatePage = () => {
                   Return to Sanctuary <ArrowRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </section>
       </main>

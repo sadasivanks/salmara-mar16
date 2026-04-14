@@ -3,7 +3,7 @@ import { Image } from "@/components/ui/Image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, CheckCircle2, Award, ShieldCheck, Microscope, 
   FlaskConical, MapPin, ArrowRight, ChevronRight,
@@ -68,7 +68,7 @@ const AboutUsPage = () => {
           </div>
           
           <div className="container relative z-10 px-4 text-center">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -101,7 +101,7 @@ const AboutUsPage = () => {
                   Discover Our Clinics
                 </Link>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -206,7 +206,7 @@ const AboutUsPage = () => {
                     { year: "2024", label: "National Health Award for Innovation" },
                     { year: "2025", label: "Three prestigious honors in healing" },
                   ].map((milestone, idx) => (
-                    <motion.div 
+                    <m.div 
                       key={idx}
                       initial={{ opacity: 0, x: -10 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -221,7 +221,7 @@ const AboutUsPage = () => {
                         <span className="text-sm font-bold text-primary tracking-widest">{milestone.year}</span>
                         <span className="text-[#1A2E35]/80 font-sans-clean leading-snug">{milestone.label}</span>
                       </div>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
               </div>
@@ -311,14 +311,14 @@ const AboutUsPage = () => {
               {/* Featured Awards (with images) */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {awards.map((award, idx) => (
-                  <motion.div 
+                  <m.div 
                     key={idx}
                     whileHover={{ y: -5 }}
                     onClick={() => setSelectedAwardIndex(idx)}
                     className="bg-white rounded-3xl overflow-hidden border border-[#F2EDE4] shadow-sm group cursor-pointer"
                   >
                     <div className="aspect-[4/5] bg-gray-100 relative">
-                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 transition-all duration-500" />
+                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 transition-all duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" loading={idx < 3 ? "eager" : "lazy"} />
                       
                       {/* Hover Overlay */}
                       <div className="absolute inset-0 bg-[#1A2E35]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -333,7 +333,7 @@ const AboutUsPage = () => {
                         <div className="text-base md:text-xl font-display leading-tight drop-shadow-lg">{award.title}</div>
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </div>
@@ -359,7 +359,7 @@ const AboutUsPage = () => {
               animate={false}
             />            
             <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-              <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
+              <m.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
                 <div className="h-14 w-14 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
                   <Leaf className="h-7 w-7" />
                 </div>
@@ -367,9 +367,9 @@ const AboutUsPage = () => {
                 <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
                   Ethically sourced from the richest soil, every ingredient is verified and tested for absolute authenticity before it enters our lab.
                 </p>
-              </motion.div>
+              </m.div>
               
-              <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
+              <m.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
                 <div className="h-14 w-14 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center text-[#5A7A5C]">
                   <Microscope className="h-7 w-7" />
                 </div>
@@ -377,9 +377,9 @@ const AboutUsPage = () => {
                 <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
                   Our GMP-certified manufacturing processes combine traditional extraction techniques with advanced modern quality controls for consistency.
                 </p>
-              </motion.div>
+              </m.div>
               
-              <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
+              <m.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
                 <div className="h-14 w-14 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center text-[#5A7A5C]">
                   <ShieldCheck className="h-7 w-7" />
                 </div>
@@ -387,7 +387,7 @@ const AboutUsPage = () => {
                 <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
                   Guided by clinical evidence and validated processes, every batch is tested and trusted by thousands for its predictable efficiency.
                 </p>
-              </motion.div>
+              </m.div>
             </div>
           </div>
         </section>
@@ -607,14 +607,14 @@ const AboutUsPage = () => {
       {/* Lightbox for Award Images */}
       <AnimatePresence>
         {selectedAwardIndex !== null && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedAwardIndex(null)}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 cursor-zoom-out"
           >
-            <motion.div
+            <m.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -649,7 +649,7 @@ const AboutUsPage = () => {
               
               <div className="w-full h-full flex flex-col items-center justify-center p-4">
                 <div className="relative w-full h-[70vh] flex items-center justify-center">
-                  <motion.img 
+                  <m.img 
                     key={awards[selectedAwardIndex].img}
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -668,8 +668,8 @@ const AboutUsPage = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

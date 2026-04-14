@@ -3,7 +3,7 @@ import { Image } from "@/components/ui/Image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 const clinicImg = "/images/clinics/clinics-page.webp";
 import {
   Search,
@@ -130,7 +130,7 @@ const ClinicsPage = () => {
           </div>
 
           <div className="container relative z-10 px-4">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               className="max-w-xl py-6 md:py-8 lg:py-10 xl:py-12"
@@ -150,7 +150,7 @@ const ClinicsPage = () => {
                 Book Appointment
               </a>
               <br />
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -281,7 +281,7 @@ const ClinicsPage = () => {
                 <div className="space-y-6 h-[600px] overflow-y-auto pr-4 custom-scrollbar scroll-smooth">
                   {filteredClinics.length > 0 ? (
                     filteredClinics.map((clinic) => (
-                      <motion.div
+                      <m.div
                         key={clinic.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -356,10 +356,10 @@ const ClinicsPage = () => {
                         >
                           Book Appointment
                         </a>
-                      </motion.div>
+                      </m.div>
                     ))
                   ) : (
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="p-12 text-center bg-[#F8F9FA] rounded-2xl border-2 border-dashed border-[#F2EDE4] space-y-4"
@@ -382,7 +382,7 @@ const ClinicsPage = () => {
                       >
                         Clear all filters
                       </button>
-                    </motion.div>
+                    </m.div>
                   )}
                 </div>
               </div>
@@ -390,7 +390,7 @@ const ClinicsPage = () => {
               {/* Google Map Integration */}
               <div className="sticky top-60 h-[600px] bg-secondary rounded-3xl overflow-hidden border border-[#F2EDE4] hidden lg:block shadow-2xl shadow-[#1A2E35]/5">
                 <AnimatePresence mode="wait">
-                  <motion.div
+                  <m.div
                     key={selectedClinicId}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -408,7 +408,7 @@ const ClinicsPage = () => {
                       title={`Map for ${clinics.find(c => c.id === selectedClinicId)?.name}`}
                       src={`https://maps.google.com/maps?q=${encodeURIComponent(clinics.find(c => c.id === selectedClinicId)?.address || 'Bengaluru')}&t=&z=15&ie=UTF8&iwloc=near&output=embed`}
                     />
-                  </motion.div>
+                  </m.div>
                 </AnimatePresence>
 
                 <div className="absolute top-6 left-6 right-6">
@@ -534,7 +534,7 @@ const ClinicsPage = () => {
                     </button>
                     <AnimatePresence>
                       {openFaq === i && (
-                        <motion.div
+                        <m.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
@@ -543,7 +543,7 @@ const ClinicsPage = () => {
                           <div className="px-6 pb-3 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
                             {faq.a}
                           </div>
-                        </motion.div>
+                        </m.div>
                       )}
                     </AnimatePresence>
                   </div>

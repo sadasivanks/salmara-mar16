@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { m, AnimatePresence, useInView } from "framer-motion";
 import { 
   Search, 
   Filter, 
@@ -32,7 +32,8 @@ import {
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
-import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { lazy, Suspense } from "react";
+const AddressSelectionModal = lazy(() => import("@/components/AddressSelectionModal"));
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
 import SEO from "@/components/SEO";
@@ -328,7 +329,7 @@ const ShopPage = () => {
               {/* Selective Filters Content */}
               <AnimatePresence>
                 {(showMobileFilters || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
-                  <motion.div
+                  <m.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -425,7 +426,7 @@ const ShopPage = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>
@@ -482,7 +483,7 @@ const ShopPage = () => {
                   const price = variant?.price;
                   
                   return (
-                    <motion.div
+                    <m.div
                       key={product.node.id}
                       initial={{ opacity: 0, y: 30 }}
                       animate={isGridInView ? { opacity: 1, y: 0 } : {}}
@@ -624,7 +625,7 @@ const ShopPage = () => {
                           </div>
                         )}
                       </div>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>
@@ -677,13 +678,15 @@ const ShopPage = () => {
 
       {/* Address Selection Modal */}
       {selectedProductForCheckout && (
-        <AddressSelectionModal
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          customerId={getStoredSession()?.user?.id || ""}
-          onSelect={onAddressSelect}
-          isProcessing={!!buyingId}
-        />
+        <Suspense fallback={null}>
+          <AddressSelectionModal
+            isOpen={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            customerId={getStoredSession()?.user?.id || ""}
+            onSelect={onAddressSelect}
+            isProcessing={!!buyingId}
+          />
+        </Suspense>
       )}
     </div>
   );

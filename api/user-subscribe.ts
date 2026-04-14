@@ -1,10 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from './lib/supabase';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-
-const supabase = createClient(supabaseUrl || '', supabaseKey || '');
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -32,18 +28,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Email is required.' });
     }
 
-    // Insert or update subscription
-    const { data, error } = await supabase
+    // Get lazily initialized client
+    const supabase = getSupabaseClient();
+
+    // 1. Check if subscription already exists for this email
+    const { data: existing, error: fetchError } = await supabase
       .from('subscribes')
-      .upsert(
-        { 
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('Supabase Fetch Error:', fetchError);
+      return res.status(500).json({ error: fetchError.message });
+    }
+
+    let result;
+    if (existing) {
+      // 2. Update existing subscription
+      result = await supabase
+        .from('subscribes')
+        .update({ 
+          user_id: userId || null,
+          is_subscribed: true 
+        })
+        .eq('id', existing.id)
+        .select();
+    } else {
+      // 3. Insert new subscription
+      result = await supabase
+        .from('subscribes')
+        .insert({ 
           email: email.toLowerCase(), 
           user_id: userId || null,
           is_subscribed: true 
-        }, 
-        { onConflict: 'email' }
-      )
-      .select();
+        })
+        .select();
+    }
+
+    const { data, error } = result;
+
 
     if (error) {
       console.error('Supabase Error:', error);

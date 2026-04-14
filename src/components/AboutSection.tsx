@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useInView } from "framer-motion";
@@ -50,32 +50,38 @@ const AboutSection = () => {
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 items-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
           {/* Main Image with Badge */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
             className="relative"
           >
             <div className="rounded-2xl overflow-hidden shadow-2xl">
-              <Image 
-                src={aboutLab} 
-                alt="Salmara Laboratory" 
-                className="w-full aspect-[4/3] object-cover"
-              />
+              <picture>
+                <source
+                  media="(max-width: 640px)"
+                  srcSet={aboutLab}
+                />
+                <Image 
+                  src={aboutLab} 
+                  alt="Salmara Laboratory" 
+                  className="w-full aspect-[4/3] object-cover"
+                />
+              </picture>
             </div>
             {/* 27+ Years Badge */}
-            <motion.div 
+            <m.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={isInView ? { scale: 1, opacity: 1 } : {}}
               transition={{ delay: 0.5, duration: 0.5 }}
               className="absolute bottom-4 right-4 bg-[#5A7A5C] text-white px-6 py-4 rounded-lg shadow-xl"
             >
               <p className="text-base font-sans-clean font-bold tracking-wider">27+ Years</p>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Content */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
@@ -100,7 +106,7 @@ const AboutSection = () => {
               </p>
             </div>
 
-            <motion.div
+            <m.div
               whileHover={{ x: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
@@ -126,12 +132,12 @@ const AboutSection = () => {
                   </svg>
                 </span>
               </Link>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
 
         {/* Horizontal Timeline */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -187,7 +193,7 @@ const AboutSection = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );
