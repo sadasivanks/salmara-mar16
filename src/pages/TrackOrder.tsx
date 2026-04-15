@@ -375,9 +375,23 @@ const TrackOrder = () => {
                       {currentStatus}
                     </div>
                     <div>
-                      <h1 className="text-2xl md:text-4xl font-display font-medium text-white mb-2">
-                        {shopifyOrder?.name || (orderIdParam ? `#${orderIdParam}` : (awbParam || 'Order Tracking'))}
-                      </h1>
+                  <h1 className="text-2xl md:text-4xl font-display font-medium text-white mb-2">
+  {shopifyOrder?.name ? (
+    <span className="font-mono tracking-wider">
+      {shopifyOrder.name}
+    </span>
+  ) : orderIdParam ? (
+    <span className="font-mono tracking-wider">
+      #{orderIdParam}
+    </span>
+  ) : awbParam ? (
+    <span className="font-mono tracking-wider">
+      {awbParam}
+    </span>
+  ) : (
+    'Order Tracking'
+  )}
+</h1>
                       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] md:text-xs text-white/50 font-sans-clean">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-3.5 w-3.5" /> 

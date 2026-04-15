@@ -1072,25 +1072,11 @@ export async function createHybridCheckout(
 
       const draftInput: Record<string, any> = {
         lineItems: draftLineItems,
-        useCustomerDefaultAddress: !shippingAddress,
+        useCustomerDefaultAddress: false, // Force "Information" step in Shopify Checkout
       };
 
       if (customerEmail) {
         draftInput.email = customerEmail;
-      }
-
-      if (shippingAddress) {
-        draftInput.shippingAddress = {
-          firstName: shippingAddress.firstName || "",
-          lastName: shippingAddress.lastName || "",
-          address1: shippingAddress.address1 || "",
-          address2: shippingAddress.address2 || "",
-          city: shippingAddress.city || "",
-          province: shippingAddress.province || "",
-          zip: shippingAddress.zip || "",
-          country: shippingAddress.country || "",
-          phone: shippingAddress.phone || "",
-        };
       }
 
       const draftResponse = await adminApiRequest(DRAFT_ORDER_CREATE_MUTATION, { input: draftInput });
@@ -1131,17 +1117,9 @@ export async function createHybridCheckout(
         params.append('checkout[email]', customerEmail);
       }
       
-      if (shippingAddress) {
-        if (shippingAddress.firstName) params.set('checkout[shipping_address][first_name]', shippingAddress.firstName);
-        if (shippingAddress.lastName) params.set('checkout[shipping_address][last_name]', shippingAddress.lastName);
-        if (shippingAddress.address1) params.set('checkout[shipping_address][address1]', shippingAddress.address1);
-        if (shippingAddress.address2) params.set('checkout[shipping_address][address2]', shippingAddress.address2);
-        if (shippingAddress.city) params.set('checkout[shipping_address][city]', shippingAddress.city);
-        if (shippingAddress.province) params.set('checkout[shipping_address][province]', shippingAddress.province);
-        if (shippingAddress.zip) params.set('checkout[shipping_address][zip]', shippingAddress.zip);
-        if (shippingAddress.country) params.set('checkout[shipping_address][country]', shippingAddress.country);
-        if (shippingAddress.phone) params.set('checkout[shipping_address][phone]', shippingAddress.phone);
-      }
+      // Note: We intentionally skip pre-filling the shipping address here 
+      // to ensure the user lands on the "Information" page (Image 1 goal)
+      // rather than skipping to Payment/Shipping method.
       
       permalinkUrl += `?${params.toString()}`;
       
