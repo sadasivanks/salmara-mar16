@@ -19,6 +19,32 @@ const ProductList = () => {
   const { addItem } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
 
+  const getDisplayPrice = (product: ShopifyProduct) => {
+    const metafields = (product.node as any)?.metafields?.edges || [];
+    const priceMeta = metafields.find(
+      (edge: any) =>
+        edge?.node?.namespace === "custom" &&
+        ["price", "mrp", "selling_price"].includes(String(edge?.node?.key || "").toLowerCase())
+    )?.node?.value as string | undefined;
+
+    if (priceMeta) {
+      const firstPart = priceMeta
+        .split("/")
+        .map((part) => part.trim())
+        .find(Boolean);
+      const parsed = Number((firstPart || "").replace(/[^\d.]/g, ""));
+      if (Number.isFinite(parsed) && parsed > 0) {
+        return { amount: parsed, currency: "INR" };
+      }
+    }
+
+    const variant = product.node.variants.edges[0]?.node;
+    return {
+      amount: Number(variant?.price?.amount || 0),
+      currency: variant?.price?.currencyCode || "INR",
+    };
+  };
+
   useEffect(() => {
     fetchProductsViaAdmin(8) // Fetch top 8 products for the home page list
       .then(setProducts)
@@ -29,6 +55,7 @@ const ProductList = () => {
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
     if (!variant) return;
+    const displayPrice = getDisplayPrice(product);
     
     setAddingId(product.node.id);
     try {
@@ -36,7 +63,10 @@ const ProductList = () => {
         product,
         variantId: variant.id,
         variantTitle: variant.title,
-        price: variant.price,
+        price: {
+          amount: displayPrice.amount.toFixed(2),
+          currencyCode: displayPrice.currency,
+        },
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
@@ -87,7 +117,7 @@ const ProductList = () => {
             {products.map((product, idx) => {
               const variant = product.node.variants.edges[0]?.node;
               const image = product.node.images.edges[0]?.node;
-              const price = variant?.price;
+              const displayPrice = getDisplayPrice(product);
 
               return (
                 <motion.div
@@ -189,9 +219,9 @@ const ProductList = () => {
                            '4.5 (124 reviews)'}
                         </span>
                       </div>
-                      {price && (
+                      {displayPrice.amount > 0 && (
                         <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
-                          {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+                          {displayPrice.currency === 'INR' ? '₹' : displayPrice.currency} {displayPrice.amount.toFixed(2)}
                         </span>
                       )}
                     </div>

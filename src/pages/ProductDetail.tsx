@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   fetchProductByHandleViaAdmin,
+  fetchProductsByIdsViaAdmin,
   checkCustomerHasPurchased,
   getStoredSession,
   fetchReviewStatsViaAdmin,
@@ -63,6 +64,7 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
+  const [selectedMetafieldOptionIdx, setSelectedMetafieldOptionIdx] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -89,6 +91,8 @@ const ProductDetail = () => {
   const [hasPurchased, setHasPurchased] = useState(false);
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
+  const [isLoadingRelatedProducts, setIsLoadingRelatedProducts] = useState(false);
 
   // Safely calculate average rating
   const safeReviews = Array.isArray(reviews) ? reviews : [];
@@ -244,6 +248,7 @@ const ProductDetail = () => {
           if (data.variants?.edges?.length > 0) {
             setSelectedVariantIdx(0);
           }
+          setSelectedMetafieldOptionIdx(0);
         }
       } catch (error) {
         console.error("Error loading product:", error);
@@ -254,6 +259,60 @@ const ProductDetail = () => {
 
     loadProduct();
   }, [handle]);
+
+  useEffect(() => {
+    const loadRelatedProducts = async () => {
+      if (!product?.metafields?.edges?.length) {
+        setRelatedProducts([]);
+        return;
+      }
+
+      const relatedMetafield = product.metafields.edges.find(
+        (edge: any) =>
+          edge?.node?.namespace === "custom" &&
+          edge?.node?.key?.toLowerCase() === "related_products"
+      );
+
+      const rawValue = relatedMetafield?.node?.value;
+      if (!rawValue) {
+        setRelatedProducts([]);
+        return;
+      }
+
+      let parsedIds: string[] = [];
+
+      try {
+        const parsed = JSON.parse(rawValue);
+        if (Array.isArray(parsed)) {
+          parsedIds = parsed.map((id) => String(id)).filter(Boolean);
+        }
+      } catch {
+        parsedIds = rawValue
+          .split(",")
+          .map((id: string) => id.trim())
+          .filter(Boolean);
+      }
+
+      if (!parsedIds.length) {
+        setRelatedProducts([]);
+        return;
+      }
+
+      setIsLoadingRelatedProducts(true);
+      try {
+        const products = await fetchProductsByIdsViaAdmin(parsedIds);
+        const currentProductId = product.id;
+        setRelatedProducts(products.filter((p: any) => p.id !== currentProductId));
+      } catch (error) {
+        console.error("Failed to load related products:", error);
+        setRelatedProducts([]);
+      } finally {
+        setIsLoadingRelatedProducts(false);
+      }
+    };
+
+    loadRelatedProducts();
+  }, [product?.id, product?.metafields?.edges]);
 
   if (loading) {
     return (
@@ -290,10 +349,14 @@ const ProductDetail = () => {
       shelf: ['shelf', 'shelf_life_duration'],
       shelflife: ['shelf_life', 'country_of_origin'], // User mentioned shelf_life contains "India"
       netquantity: ['net_quantity', 'quantity'],
+      price: ['price', 'mrp', 'selling_price'],
       manufacturedby: ['manufactured_by', 'manufacturer'],
       batchno: ['batch_no', 'batch_number'],
       licenseno: ['license_no', 'license_number'],
-      formulationtype: ['formulation_type', 'type_of_formulation']
+      formulationtype: ['formulation_type', 'type_of_formulation'],
+      keyhighlights: ['key_highlights', 'highlights', 'key_points'],
+      deliveryreturns: ['delivery_and_returns', 'delivery_returns', 'returns', 'shipping_returns'],
+      relatedproducts: ['related_products']
     };
 
     const possibleKeys = keyMap[cleanMatch] || [cleanMatch];
@@ -325,21 +388,65 @@ const ProductDetail = () => {
   const firstBenefit = getMetafieldValue('benefits')?.split(/[,\n]+/)[0]?.trim();
   const benefitLine = firstBenefit || "Ayurvedic Formulation";
   const subtitle = product.description?.split('.')[0] + '.' || "-";
+  const parseRows = (value: string | null) => {
+    if (!value) return [];
+    const normalized = value
+      .replace(/\r/g, "\n")
+      .split(/\n+|\|+/)
+      .map((row) => row.trim())
+      .filter(Boolean);
+
+    if (normalized.length === 1 && normalized[0].includes(",")) {
+      return normalized[0]
+        .split(",")
+        .map((row) => row.trim())
+        .filter(Boolean);
+    }
+
+    return normalized;
+  };
+  const keyHighlights = parseRows(getMetafieldValue("keyhighlights"));
+  const deliveryReturnsRows = parseRows(getMetafieldValue("deliveryreturns"));
 
   const variants = product.variants?.edges || [];
   const selectedVariant = variants[selectedVariantIdx]?.node;
   const images = product.images?.edges || [];
   const hasMultipleVariants = variants.length > 1 && !(variants.length === 1 && variants[0].node.title === "Default Title");
+  const parseMetafieldParts = (value: string | null) =>
+    (value || "")
+      .split("/")
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+  const metafieldNetQuantities = parseMetafieldParts(getMetafieldValue("netquantity"));
+  const metafieldPrices = parseMetafieldParts(getMetafieldValue("price"));
+  const metafieldOptionsCount = Math.max(metafieldNetQuantities.length, metafieldPrices.length);
+  const usesMetafieldVariantOptions = !hasMultipleVariants && metafieldOptionsCount > 1;
+
+  const selectedMetafieldNetQty = metafieldNetQuantities[selectedMetafieldOptionIdx] || metafieldNetQuantities[0] || "";
+  const selectedMetafieldPriceRaw = metafieldPrices[selectedMetafieldOptionIdx] || metafieldPrices[0] || "";
+  const selectedMetafieldPrice = Number((selectedMetafieldPriceRaw || "").replace(/[^\d.]/g, ""));
+  const hasValidMetafieldPrice = Number.isFinite(selectedMetafieldPrice) && selectedMetafieldPrice > 0;
 
   const handleAddToCart = async () => {
     if (!selectedVariant) return;
+    const cartPrice = hasValidMetafieldPrice
+      ? { amount: selectedMetafieldPrice.toFixed(2), currencyCode: "INR" }
+      : selectedVariant.price;
+    const selectedFormatLabel =
+      selectedMetafieldNetQty ||
+      (selectedVariant?.title !== "Default Title" ? selectedVariant.title : "Default Title");
+
     await addItem({
       product: { node: product },
       variantId: selectedVariant.id,
-      variantTitle: selectedVariant.title,
-      price: selectedVariant.price,
+      variantTitle: selectedFormatLabel,
+      price: cartPrice,
       quantity: quantity,
-      selectedOptions: selectedVariant.selectedOptions || [],
+      selectedOptions:
+        usesMetafieldVariantOptions && selectedMetafieldNetQty
+          ? [{ name: "Net Quantity", value: selectedMetafieldNetQty }]
+          : selectedVariant.selectedOptions || [],
     });
     toast.success("Added to cart", { description: product.title, position: "top-center" });
   };
@@ -351,7 +458,16 @@ const ProductDetail = () => {
     if (!session?.user) {
        toast.info("Please sign in to proceed with direct checkout");
       const encodedId = encodeURIComponent(selectedVariant.id);
-      navigate(`/login?redirect=buy_now&variantId=${encodedId}&quantity=${quantity}`);
+      const checkoutUnitPrice = hasValidMetafieldPrice
+        ? selectedMetafieldPrice
+        : Number(selectedVariant?.price?.amount || 0);
+      const checkoutTitle =
+        selectedMetafieldNetQty || (selectedVariant?.title !== "Default Title" ? selectedVariant?.title : "");
+      navigate(
+        `/login?redirect=buy_now&variantId=${encodedId}&quantity=${quantity}&unitPrice=${encodeURIComponent(
+          checkoutUnitPrice.toString()
+        )}&title=${encodeURIComponent(checkoutTitle ? `${product.title} - ${checkoutTitle}` : product.title)}`
+      );
       return;
     }
 
@@ -362,7 +478,17 @@ const ProductDetail = () => {
     setIsBuyingNow(true);
     
     try {
-      const lineItems = [{ variantId: selectedVariant.id, quantity: quantity }];
+      const checkoutUnitPrice = hasValidMetafieldPrice
+        ? selectedMetafieldPrice
+        : Number(selectedVariant?.price?.amount || 0);
+      const checkoutTitle =
+        selectedMetafieldNetQty || (selectedVariant?.title !== "Default Title" ? selectedVariant?.title : "");
+      const lineItems = [{
+        variantId: selectedVariant.id,
+        quantity: quantity,
+        unitPrice: checkoutUnitPrice,
+        title: checkoutTitle ? `${product.title} - ${checkoutTitle}` : product.title,
+      }];
       const result = await createHybridCheckout(lineItems, getStoredSession()?.user?.id, getStoredSession()?.user?.email, address);
 
        if (result.success && result.checkoutUrl) {
@@ -508,15 +634,19 @@ const ProductDetail = () => {
                 </p>
 
                 <div className="flex flex-wrap items-center gap-6 pt-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
-                    <ShieldCheck className="h-4 w-4 text-[#5A7A5C]" /> GMP Certified
-                  </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
-                    <Leaf className="h-4 w-4 text-[#C5A059]" /> 100% Herbal
-                  </div>
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
-                    <CheckCircle2 className="h-4 w-4 text-[#5A7A5C]" /> CLINICAL
-                  </div>
+                  {(keyHighlights.length > 0 ? keyHighlights : []).map((item, idx) => {
+                    const t = item.toLowerCase();
+                    // const icon = t.includes("herbal")
+                    //   ? <Leaf className="h-4 w-4 text-[#C5A059]" />
+                    //   : t.includes("clinical")
+                    //   ? <CheckCircle2 className="h-4 w-4 text-[#5A7A5C]" />
+                    //   : <ShieldCheck className="h-4 w-4 text-[#5A7A5C]" />;
+                    return (
+                      <div key={`${item}-${idx}`} className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
+                         {item}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -524,8 +654,8 @@ const ProductDetail = () => {
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex flex-col">
                     <span className="text-4xl font-sans-clean font-bold text-[#1A2E35]">
-                      {selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode}{' '}
-                      {parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
+                      {hasValidMetafieldPrice ? '₹' : (selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode)}{' '}
+                      {hasValidMetafieldPrice ? selectedMetafieldPrice.toFixed(2) : parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
                     </span>
                   </div>
                   
@@ -573,24 +703,43 @@ const ProductDetail = () => {
                 </div>
               </div>
 
-              {hasMultipleVariants && (
+              {(hasMultipleVariants || usesMetafieldVariantOptions) && (
                 <div className="space-y-4">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1">Select Format</label>
                   <div className="flex flex-wrap gap-3">
-                    {variants.map((v: any, i: number) => (
-                      <button
-                        key={v.node.id}
-                        onClick={() => { setSelectedVariantIdx(i); setSelectedImage(0); }}
-                        disabled={!v.node.availableForSale}
-                        className={`px-8 py-4 rounded-2xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
-                          i === selectedVariantIdx
-                            ? 'bg-[#1A2E35] border-[#1A2E35] text-white shadow-[#1A2E35]/20 shadow-xl'
-                            : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-[#5A7A5C]'
-                        } ${!v.node.availableForSale ? 'opacity-40 cursor-not-allowed' : ''}`}
-                      >
-                        {v.node.title}
-                      </button>
-                    ))}
+                    {hasMultipleVariants ? (
+                      variants.map((v: any, i: number) => (
+                        <button
+                          key={v.node.id}
+                          onClick={() => { setSelectedVariantIdx(i); setSelectedImage(0); }}
+                          disabled={!v.node.availableForSale}
+                          className={`px-8 py-4 rounded-2xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
+                            i === selectedVariantIdx
+                              ? 'bg-[#1A2E35] border-[#1A2E35] text-white shadow-[#1A2E35]/20 shadow-xl'
+                              : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-[#5A7A5C]'
+                          } ${!v.node.availableForSale ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        >
+                          {v.node.title}
+                        </button>
+                      ))
+                    ) : (
+                      Array.from({ length: metafieldOptionsCount }).map((_, i) => {
+                        const label = metafieldNetQuantities[i] || `Option ${i + 1}`;
+                        return (
+                          <button
+                            key={`meta-option-${i}`}
+                            onClick={() => setSelectedMetafieldOptionIdx(i)}
+                            className={`px-8 py-4 rounded-2xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
+                              i === selectedMetafieldOptionIdx
+                                ? 'bg-[#1A2E35] border-[#1A2E35] text-white shadow-[#1A2E35]/20 shadow-xl'
+                                : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-[#5A7A5C]'
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
               )}
@@ -909,6 +1058,112 @@ const ProductDetail = () => {
             </div>
           </section>
 
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto border-t border-[#F2EDE4]/30">
+            <div className="text-center mb-6 md:mb-8 lg:mb-10">
+              <SectionHeading
+                title="Delivery & Returns"
+                eyebrow="SHIPPING INFORMATION"
+                animate={false}
+              />
+            </div>
+
+            {deliveryReturnsRows.length > 0 ? (
+              <div className="max-w-4xl mx-auto grid gap-3">
+                {deliveryReturnsRows.map((row, idx) => (
+                  <div key={`${row}-${idx}`} className="p-4 md:p-5 rounded-2xl border border-[#F2EDE4] bg-white/70 flex items-start gap-3">
+                    <Package className="h-4 w-4 mt-0.5 text-[#5A7A5C] shrink-0" />
+                    <p className="text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed">{row}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="max-w-2xl mx-auto text-center p-6 rounded-2xl border border-dashed border-[#F2EDE4] bg-white/50">
+                <p className="text-sm text-[#1A2E35]/40 italic">Delivery and return information will be updated shortly.</p>
+              </div>
+            )}
+          </section>
+
+          <section className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto border-t border-[#F2EDE4]/30">
+            <div className="text-center mb-8 md:mb-10">
+              <SectionHeading
+                title="Related Products"
+                eyebrow="YOU MAY ALSO LIKE"
+                animate={false}
+              />
+            </div>
+
+            {isLoadingRelatedProducts ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="h-6 w-6 animate-spin text-[#5A7A5C]" />
+              </div>
+            ) : relatedProducts.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                {relatedProducts.map((rp: any) => {
+                  const variant = rp?.variants?.edges?.[0]?.node;
+                  const image = rp?.images?.edges?.[0]?.node;
+                  const rpPriceMeta = (rp?.metafields?.edges || []).find(
+                    (edge: any) =>
+                      edge?.node?.namespace === "custom" &&
+                      ["price", "mrp", "selling_price"].includes(String(edge?.node?.key || "").toLowerCase())
+                  )?.node?.value as string | undefined;
+                  const rpMetaFirstPrice = rpPriceMeta
+                    ? Number(
+                        (rpPriceMeta
+                          .split("/")
+                          .map((part: string) => part.trim())
+                          .find(Boolean) || "").replace(/[^\d.]/g, "")
+                      )
+                    : NaN;
+                  const rpDisplayPrice = Number.isFinite(rpMetaFirstPrice) && rpMetaFirstPrice > 0
+                    ? rpMetaFirstPrice
+                    : Number(variant?.price?.amount || 0);
+                  const rpDisplayCurrency = Number.isFinite(rpMetaFirstPrice) && rpMetaFirstPrice > 0
+                    ? "INR"
+                    : (variant?.price?.currencyCode || "INR");
+                  return (
+                    <Link
+                      key={rp.id}
+                      to={`/product/${rp.handle}`}
+                      className="group bg-white rounded-3xl border border-[#F2EDE4] overflow-hidden shadow-sm hover:shadow-lg hover:shadow-[#5A7A5C]/10 transition-all"
+                    >
+                      <div className="aspect-square bg-[#FDFBF7] overflow-hidden">
+                        {image?.url ? (
+                          <Image
+                            src={image.url}
+                            alt={image.altText || rp.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Leaf className="h-10 w-10 text-[#1A2E35]/15" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-5 space-y-2">
+                        <h3 className="text-lg font-display font-medium text-[#1A2E35] group-hover:text-[#5A7A5C] transition-colors line-clamp-1">
+                          {rp.title}
+                        </h3>
+                        {rpDisplayPrice > 0 && (
+                          <p className="text-sm font-bold text-[#C5A059]">
+                            {rpDisplayCurrency === "INR" ? "₹" : rpDisplayCurrency}{" "}
+                            {rpDisplayPrice.toFixed(2)}
+                          </p>
+                        )}
+                        <p className="text-xs text-[#1A2E35]/50 line-clamp-2 font-sans-clean">
+                          {rp.description || "Explore this formulation for your wellness goals."}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                <p className="text-sm text-[#1A2E35]/40 italic">Related products will appear here shortly.</p>
+              </div>
+            )}
+          </section>
+
           {hasPurchased && (
             <section id="reviews" className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto">
               <div className="bg-[#FDFBF7]/50 border border-[#F2EDE4] rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12">
@@ -1127,7 +1382,7 @@ const ProductDetail = () => {
                             </tr>
                             <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Net Quantity:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('netquantity') || (selectedVariant?.title !== "Default Title" ? selectedVariant?.title : null) || "-"}</td>
+                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{selectedMetafieldNetQty || getMetafieldValue('netquantity') || (selectedVariant?.title !== "Default Title" ? selectedVariant?.title : null) || "-"}</td>
                             </tr>
                             <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
                               <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Formulation Type:</th>

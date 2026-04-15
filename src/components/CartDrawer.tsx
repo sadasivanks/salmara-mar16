@@ -133,19 +133,14 @@ export const CartDrawer = () => {
                 </div>
                 <div className="flex-shrink-0 space-y-4 pt-4 border-t border-border">
                   <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-sm font-sans-clean text-muted-foreground">
-                      <span>Shipping</span>
-                      <span className="text-[#5A7A5C] font-bold">FREE</span>
-                    </div>
+
                     <div className="flex justify-between items-center">
                       <span className="font-display font-semibold">Total</span>
                       <span className="text-xl font-sans-clean font-bold">
                         {items[0]?.price.currencyCode === 'INR' ? '₹' : items[0]?.price.currencyCode} {totalPrice.toFixed(2)}
                       </span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground italic text-right font-sans-clean">
-                      *Shipping charges included in MRP
-                    </p>
+                 
                   </div>
                   <button
                     onClick={handleCheckout}

@@ -47,7 +47,14 @@ export const useCartStore = create<CartStore>()(
           set({
             items: items.map(i =>
               i.variantId === item.variantId
-                ? { ...i, quantity: i.quantity + item.quantity }
+                ? {
+                    ...i,
+                    quantity: i.quantity + item.quantity,
+                    // Keep cart display in sync with latest selected product pricing/options
+                    price: item.price,
+                    variantTitle: item.variantTitle,
+                    selectedOptions: item.selectedOptions || i.selectedOptions,
+                  }
                 : i
             )
           });
@@ -111,7 +118,12 @@ export const useCartStore = create<CartStore>()(
       const session = getStoredSession();
       const lineItems = items.map(item => ({
         variantId: item.variantId,
-        quantity: item.quantity
+        quantity: item.quantity,
+        unitPrice: Number(item.price?.amount || 0),
+        title:
+          item.variantTitle && item.variantTitle !== "Default Title"
+            ? `${item.product.node.title} - ${item.variantTitle}`
+            : item.product.node.title,
       }));
 
 

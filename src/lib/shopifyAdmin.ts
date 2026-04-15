@@ -290,6 +290,15 @@ const PRODUCTS_ADMIN_QUERY = `
               }
             }
           }
+          metafields(first: 20) {
+            edges {
+              node {
+                namespace
+                key
+                value
+              }
+            }
+          }
         }
       }
     }
@@ -362,6 +371,66 @@ const PRODUCT_BY_HANDLE_ADMIN_QUERY = `
             namespace
             key
             value
+          }
+        }
+      }
+    }
+  }
+`;
+
+const PRODUCTS_BY_IDS_ADMIN_QUERY = `
+  query GetProductsByIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on Product {
+        id
+        title
+        description
+        handle
+        productType
+        tags
+        collections(first: 5) {
+          edges {
+            node {
+              id
+              title
+              handle
+            }
+          }
+        }
+        images(first: 5) {
+          edges {
+            node {
+              url
+              altText
+            }
+          }
+        }
+        variants(first: 10) {
+          edges {
+            node {
+              id
+              title
+              price
+              compareAtPrice
+              inventoryQuantity
+              selectedOptions {
+                name
+                value
+              }
+            }
+          }
+        }
+        options {
+          name
+          values
+        }
+        metafields(first: 20) {
+          edges {
+            node {
+              namespace
+              key
+              value
+            }
           }
         }
       }
@@ -857,6 +926,60 @@ export async function fetchProductByHandleViaAdmin(handle: string): Promise<any 
 }
 
 /**
+ * Fetch multiple products by product IDs via the Admin API.
+ */
+export async function fetchProductsByIdsViaAdmin(productIds: string[]): Promise<any[]> {
+  if (!Array.isArray(productIds) || productIds.length === 0) return [];
+
+  const normalizedIds = Array.from(
+    new Set(
+      productIds
+        .map((id) => (typeof id === "string" ? id.trim() : ""))
+        .filter(Boolean)
+        .map((id) => (id.startsWith("gid://") ? id : `gid://shopify/Product/${id}`))
+    )
+  );
+
+  if (!normalizedIds.length) return [];
+
+  try {
+    const data = await adminApiRequest(PRODUCTS_BY_IDS_ADMIN_QUERY, { ids: normalizedIds });
+    const products = (data?.data?.nodes || []).filter(Boolean);
+
+    return products.map((product: any) => ({
+      ...product,
+      variants: {
+        edges: (product.variants?.edges || []).map((vEdge: any) => ({
+          node: {
+            ...vEdge.node,
+            price: {
+              amount: vEdge.node.price,
+              currencyCode: "INR",
+            },
+            compareAtPrice: vEdge.node.compareAtPrice
+              ? {
+                  amount: vEdge.node.compareAtPrice,
+                  currencyCode: "INR",
+                }
+              : undefined,
+            availableForSale: (vEdge.node.inventoryQuantity || 0) > 0,
+          },
+        })),
+      },
+      priceRange: {
+        minVariantPrice: {
+          amount: product.variants?.edges?.[0]?.node?.price || "0",
+          currencyCode: "INR",
+        },
+      },
+    }));
+  } catch (error) {
+    console.error("Error fetching products by IDs via Admin API:", error);
+    return [];
+  }
+}
+
+/**
  * Fetch all collections via the Admin API.
  */
 export async function fetchCollectionsViaAdmin(first = 50): Promise<ShopifyCollection[]> {
@@ -902,7 +1025,7 @@ export async function fetchReviewStatsViaAdmin(productId: string): Promise<{ rat
  * but bypasses Storefront API restrictions.
  */
 export async function createHybridCheckout(
-  lineItems: Array<{ variantId: string; quantity: number }>, 
+  lineItems: Array<{ variantId: string; quantity: number; unitPrice?: number; title?: string }>, 
   customerId?: string,
   customerEmail?: string,
   shippingAddress?: any
@@ -914,6 +1037,77 @@ export async function createHybridCheckout(
   };
   
   try {
+    const hasCustomUnitPrice = lineItems.some(
+      (item) => Number.isFinite(item.unitPrice) && Number(item.unitPrice) > 0
+    );
+
+    // When UI/cart uses metafield prices, create Draft Order so checkout reflects same amount.
+    if (hasCustomUnitPrice) {
+      const draftLineItems = lineItems
+        .filter((item) => item.quantity > 0 && item.variantId)
+        .map((item) => {
+          const numericUnitPrice = Number(item.unitPrice);
+          const lineItem: Record<string, any> = {
+            variantId: item.variantId,
+            quantity: item.quantity,
+          };
+
+          // Keep variant linkage (for shipping + image) while overriding checkout price.
+          if (Number.isFinite(numericUnitPrice) && numericUnitPrice > 0) {
+            lineItem.originalUnitPrice = numericUnitPrice.toFixed(2);
+          }
+
+          if (item.title) {
+            lineItem.customAttributes = [
+              { key: "custom_line_title", value: item.title },
+            ];
+          }
+
+          return lineItem;
+        });
+
+      if (!draftLineItems.length) {
+        throw new Error("No valid items to checkout.");
+      }
+
+      const draftInput: Record<string, any> = {
+        lineItems: draftLineItems,
+        useCustomerDefaultAddress: !shippingAddress,
+      };
+
+      if (customerEmail) {
+        draftInput.email = customerEmail;
+      }
+
+      if (shippingAddress) {
+        draftInput.shippingAddress = {
+          firstName: shippingAddress.firstName || "",
+          lastName: shippingAddress.lastName || "",
+          address1: shippingAddress.address1 || "",
+          address2: shippingAddress.address2 || "",
+          city: shippingAddress.city || "",
+          province: shippingAddress.province || "",
+          zip: shippingAddress.zip || "",
+          country: shippingAddress.country || "",
+          phone: shippingAddress.phone || "",
+        };
+      }
+
+      const draftResponse = await adminApiRequest(DRAFT_ORDER_CREATE_MUTATION, { input: draftInput });
+      const userErrors = draftResponse?.data?.draftOrderCreate?.userErrors || [];
+      const invoiceUrl = draftResponse?.data?.draftOrderCreate?.draftOrder?.invoiceUrl;
+
+      if (userErrors.length > 0) {
+        throw new Error(userErrors[0]?.message || "Failed to create draft checkout");
+      }
+
+      if (!invoiceUrl) {
+        throw new Error("Draft order invoice URL missing");
+      }
+
+      localStorage.setItem('shopify_checkout_pending', 'true');
+      return { success: true, checkoutUrl: invoiceUrl };
+    }
 
     const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || "salmara-5.myshopify.com";
     

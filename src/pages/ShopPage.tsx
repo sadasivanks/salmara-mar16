@@ -67,6 +67,35 @@ const sortByLabels: Record<string, string> = {
   "Newest First": "Newest First",
   "Doctor Recommended": "Doctor Recommended"
 };
+
+const getProductDisplayPrice = (product: ShopifyProduct) => {
+  const metafields = (product.node as any)?.metafields?.edges || [];
+  const priceMeta = metafields.find(
+    (edge: any) =>
+      edge?.node?.namespace === "custom" &&
+      ["price", "mrp", "selling_price"].includes(String(edge?.node?.key || "").toLowerCase())
+  )?.node?.value as string | undefined;
+
+  if (priceMeta) {
+    const firstPart = priceMeta
+      .split("/")
+      .map((part) => part.trim())
+      .find(Boolean);
+    const parsed = Number((firstPart || "").replace(/[^\d.]/g, ""));
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return { amount: parsed, currency: "INR", fromMetafield: true };
+    }
+  }
+
+  const variant = product.node.variants.edges[0]?.node;
+  const parsedVariant = Number(variant?.price?.amount || 0);
+  return {
+    amount: Number.isFinite(parsedVariant) ? parsedVariant : 0,
+    currency: variant?.price?.currencyCode || "INR",
+    fromMetafield: false,
+  };
+};
+
 const ShopPage = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,7 +181,7 @@ const ShopPage = () => {
       }
 
       // 3. Price Filter
-      const price = parseFloat(p.node.variants.edges[0]?.node?.price.amount || "0");
+      const price = getProductDisplayPrice(p).amount;
       if (selectedPriceRange !== "all") {
         const [min, max] = selectedPriceRange.split("-");
         if (max === "plus") {
@@ -182,8 +211,8 @@ const ShopPage = () => {
       return true;
     }).sort((a, b) => {
       // Sorting Logic
-      const priceA = parseFloat(a.node.variants.edges[0]?.node?.price.amount || "0");
-      const priceB = parseFloat(b.node.variants.edges[0]?.node?.price.amount || "0");
+      const priceA = getProductDisplayPrice(a).amount;
+      const priceB = getProductDisplayPrice(b).amount;
 
       if (sortBy === "Price: Low to High") return priceA - priceB;
       if (sortBy === "Price: High to Low") return priceB - priceA;
@@ -202,6 +231,7 @@ const ShopPage = () => {
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
     if (!variant) return;
+    const displayPrice = getProductDisplayPrice(product);
 
     setAddingId(product.node.id);
     try {
@@ -209,7 +239,10 @@ const ShopPage = () => {
         product,
         variantId: variant.id,
         variantTitle: variant.title,
-        price: variant.price,
+        price: {
+          amount: displayPrice.amount.toFixed(2),
+          currencyCode: displayPrice.currency,
+        },
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
@@ -230,7 +263,16 @@ const ShopPage = () => {
     const session = getStoredSession();
     if (!session?.user) {
       toast.info("Please sign in to proceed with direct checkout");
-      navigate(`/login?redirect=buy_now&variantId=${variant.id}&quantity=1`);
+      const displayPrice = getProductDisplayPrice(product);
+      const checkoutTitle =
+        variant.title && variant.title !== "Default Title"
+          ? `${product.node.title} - ${variant.title}`
+          : product.node.title;
+      navigate(
+        `/login?redirect=buy_now&variantId=${encodeURIComponent(variant.id)}&quantity=1&unitPrice=${encodeURIComponent(
+          displayPrice.amount.toString()
+        )}&title=${encodeURIComponent(checkoutTitle)}`
+      );
       return;
     }
 
@@ -248,7 +290,16 @@ const ShopPage = () => {
 
     try {
       const session = getStoredSession();
-      const lineItems = [{ variantId: variant.id, quantity: 1 }];
+      const displayPrice = getProductDisplayPrice(selectedProductForCheckout);
+      const lineItems = [{
+        variantId: variant.id,
+        quantity: 1,
+        unitPrice: displayPrice.amount,
+        title:
+          variant.title && variant.title !== "Default Title"
+            ? `${selectedProductForCheckout.node.title} - ${variant.title}`
+            : selectedProductForCheckout.node.title,
+      }];
       const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email, address);
 
       if (result.success && result.checkoutUrl) {
@@ -479,7 +530,7 @@ const ShopPage = () => {
                 {filteredProducts.map((product, i) => {
                   const variant = product.node.variants.edges[0]?.node;
                   const image = product.node.images.edges[0]?.node;
-                  const price = variant?.price;
+                  const displayPrice = getProductDisplayPrice(product);
                   
                   return (
                     <motion.div
@@ -568,12 +619,12 @@ const ShopPage = () => {
                           </Link>
                         </div>
 
-                        {price && (
+                        {displayPrice.amount > 0 && (
                           <div className="flex items-baseline gap-2 mb-4">
                             <span className="text-xl font-sans-clean font-bold text-foreground">
-                              {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+                              {displayPrice.currency === 'INR' ? '₹' : displayPrice.currency} {displayPrice.amount.toFixed(2)}
                             </span>
-                            {variant.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > parseFloat(price.amount) && (
+                            {!displayPrice.fromMetafield && variant.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > displayPrice.amount && (
                               <span className="text-sm text-muted-foreground/50 line-through">
                                 {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
                               </span>

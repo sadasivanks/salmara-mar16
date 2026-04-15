@@ -95,11 +95,17 @@ const LoginPage = () => {
     if (redirect === "buy_now") {
       const variantId = searchParams.get("variantId");
       const quantity = parseInt(searchParams.get("quantity") || "1");
+      const unitPrice = Number(searchParams.get("unitPrice") || "0");
+      const title = searchParams.get("title") || undefined;
       
       if (variantId) {
         toast.info("Preparing your direct checkout...");
         try {
-          const result = await createHybridCheckout([{ variantId, quantity }], user.id, user.email);
+          const result = await createHybridCheckout(
+            [{ variantId, quantity, unitPrice: Number.isFinite(unitPrice) && unitPrice > 0 ? unitPrice : undefined, title }],
+            user.id,
+            user.email
+          );
            if (result.success && result.checkoutUrl) {
 
             await logCheckoutToTerminal(result.checkoutUrl, `LoginPage (Post-Login Buy Now Resume: ${variantId})`);

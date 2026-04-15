@@ -24,6 +24,34 @@ const FeaturedProducts = () => {
   const { toggleItem, isInWishlist } = useWishlistStore();
   const [reviewsMap, setReviewsMap] = useState<Record<string, any[]>>({});
 
+  const getDisplayPrice = (product: ShopifyProduct) => {
+    const metafields = (product.node as any)?.metafields?.edges || [];
+    const priceMeta = metafields.find(
+      (edge: any) =>
+        edge?.node?.namespace === "custom" &&
+        ["price", "mrp", "selling_price"].includes(String(edge?.node?.key || "").toLowerCase())
+    )?.node?.value as string | undefined;
+
+    if (priceMeta) {
+      const firstPart = priceMeta
+        .split("/")
+        .map((part) => part.trim())
+        .find(Boolean);
+      const parsed = Number((firstPart || "").replace(/[^\d.]/g, ""));
+      if (Number.isFinite(parsed) && parsed > 0) {
+        return { amount: parsed, currency: "INR", fromMetafield: true };
+      }
+    }
+
+    const variant = product.node.variants.edges[0]?.node;
+    const parsedVariant = Number(variant?.price?.amount || 0);
+    return {
+      amount: Number.isFinite(parsedVariant) ? parsedVariant : 0,
+      currency: variant?.price?.currencyCode || "INR",
+      fromMetafield: false,
+    };
+  };
+
   useEffect(() => {
     fetchProductsViaAdmin(12)
       .then(async (fetchedProducts) => {
@@ -44,6 +72,7 @@ const FeaturedProducts = () => {
   const handleAddToCart = async (product: ShopifyProduct) => {
     const variant = product.node.variants.edges[0]?.node;
     if (!variant) return;
+    const displayPrice = getDisplayPrice(product);
     
     setAddingId(product.node.id);
     try {
@@ -51,7 +80,10 @@ const FeaturedProducts = () => {
         product,
         variantId: variant.id,
         variantTitle: variant.title,
-        price: variant.price,
+        price: {
+          amount: displayPrice.amount.toFixed(2),
+          currencyCode: displayPrice.currency,
+        },
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
@@ -71,7 +103,16 @@ const FeaturedProducts = () => {
     const session = getStoredSession();
     if (!session?.user) {
       toast.info("Please sign in to proceed with direct checkout");
-      navigate(`/login?redirect=buy_now&variantId=${variant.id}&quantity=1`);
+      const displayPrice = getDisplayPrice(product);
+      const checkoutTitle =
+        variant.title && variant.title !== "Default Title"
+          ? `${product.node.title} - ${variant.title}`
+          : product.node.title;
+      navigate(
+        `/login?redirect=buy_now&variantId=${encodeURIComponent(variant.id)}&quantity=1&unitPrice=${encodeURIComponent(
+          displayPrice.amount.toString()
+        )}&title=${encodeURIComponent(checkoutTitle)}`
+      );
       return;
     }
 
@@ -89,7 +130,16 @@ const FeaturedProducts = () => {
     
     try {
       const session = getStoredSession();
-      const lineItems = [{ variantId: variant.id, quantity: 1 }];
+      const displayPrice = getDisplayPrice(selectedProductForCheckout);
+      const lineItems = [{
+        variantId: variant.id,
+        quantity: 1,
+        unitPrice: displayPrice.amount,
+        title:
+          variant.title && variant.title !== "Default Title"
+            ? `${selectedProductForCheckout.node.title} - ${variant.title}`
+            : selectedProductForCheckout.node.title,
+      }];
       const result = await createHybridCheckout(lineItems, session?.user?.id, session?.user?.email, address);
       
       if (result.success && result.checkoutUrl) {
@@ -147,7 +197,7 @@ const FeaturedProducts = () => {
               {marqueeProducts.map((product, idx) => {
                 const variant = product.node.variants.edges[0]?.node;
                 const image = product.node.images.edges[0]?.node;
-                const price = variant?.price;
+                const displayPrice = getDisplayPrice(product);
 
                 return (
                   <motion.div
@@ -265,12 +315,12 @@ const FeaturedProducts = () => {
                           })()}
                         </div>
 
-                        {price && (
+                        {displayPrice.amount > 0 && (
                           <div className="flex items-baseline gap-1.5 whitespace-nowrap ml-2">
                             <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
-                              {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+                              {displayPrice.currency === 'INR' ? '₹' : displayPrice.currency} {displayPrice.amount.toFixed(2)}
                             </span>
-                            {variant?.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > parseFloat(price.amount) && (
+                            {!displayPrice.fromMetafield && variant?.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > displayPrice.amount && (
                               <span className="text-[10px] text-[#1A2E35]/30 line-through">
                                 {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
                               </span>
