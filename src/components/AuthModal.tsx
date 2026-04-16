@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, Eye, EyeOff } from "lucide-react";
 import { saveSession } from "@/lib/shopifyAdmin";
-import { createCustomerViaAdmin, loginViaProxy, verifyOtpViaProxy, updateCustomerCartId, requestPasswordReset, resetPassword } from "@/lib/shopifyAdmin";
+import { createCustomerViaAdmin, loginViaProxy, verifyOtpViaProxy, updateCustomerCartId, requestPasswordReset, resetPassword, sendRegistrationOtp } from "@/lib/shopifyAdmin";
 import { syncShopifyCustomerToDb } from "@/lib/dbSync";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
@@ -33,6 +33,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [verificationHash, setVerificationHash] = useState("");
+  const [verificationExpiry, setVerificationExpiry] = useState(0);
   const icon = siteConfig.logo
 
   // Timer logic for Resend OTP
@@ -238,12 +240,59 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
 
     setLoading(true);
     try {
-      const result = await verifyOtpViaProxy(email, otp);
-      if (!result.success) {
-        throw new Error(result.errors?.[0]?.message || "Verification failed");
+      let formattedPhone = phone.trim();
+      if (!formattedPhone.startsWith('+')) {
+        if (formattedPhone.length === 10) formattedPhone = `+91${formattedPhone}`;
+        else if (formattedPhone.length > 10) formattedPhone = `+${formattedPhone}`;
       }
-      toast.success("Account verified successfully!");
-      await completeLogin(result.user);
+
+      // 1. Verify OTP and create customer via our stateless backend
+      const shopifyResult = await createCustomerViaAdmin(
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+          phone: formattedPhone
+        },
+        {
+          hash: verificationHash,
+          expiry: verificationExpiry,
+          otp
+        }
+      );
+
+      if (!shopifyResult.success) {
+        throw new Error(shopifyResult.errors?.[0]?.message || "Verification failed");
+      }
+
+      const customer = shopifyResult.customer;
+
+      // 2. Sync to local database
+      if (customer) {
+        try {
+          await syncShopifyCustomerToDb({
+            id: customer.id,
+            email: customer.email,
+            firstName: customer.firstName,
+            lastName: customer.lastName,
+            phone: customer.phone,
+            password: password
+          });
+        } catch (syncErr) {
+          console.error("DB sync error:", syncErr);
+        }
+      }
+
+      toast.success("Account created successfully!");
+      
+      // Auto-login after registration
+      const loginResult = await loginViaProxy(email, password);
+      if (loginResult.success) {
+        await completeLogin(loginResult.user);
+      } else {
+        setView("login");
+      }
     } catch (error: any) {
       toast.error("Verification failed", { description: error.message });
     } finally {
@@ -255,53 +304,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     e.preventDefault();
     setLoading(true);
     try {
-      // Auto-format phone for Shopify (requires + and country code)
       let formattedPhone = phone.trim();
       if (!formattedPhone.startsWith('+')) {
-        if (formattedPhone.length === 10) {
-          formattedPhone = `+91${formattedPhone}`;
-        } else if (formattedPhone.length > 10) {
-          formattedPhone = `+${formattedPhone}`;
-        }
+        if (formattedPhone.length === 10) formattedPhone = `+91${formattedPhone}`;
+        else if (formattedPhone.length > 10) formattedPhone = `+${formattedPhone}`;
       }
 
-      // 1. Create Shopify customer via Admin API proxy
-      const shopifyResult = await createCustomerViaAdmin({
-        firstName,
-        lastName,
-        email,
-        password,
-        phone: formattedPhone,
-        isPending: true
-      });
-
-      if (!shopifyResult.success) {
-        const errorMsg = shopifyResult.errors?.[0]?.message || "Could not create account.";
-        throw new Error(errorMsg);
+      // DO NOT create user. Just send OTP statelessly.
+      const result = await sendRegistrationOtp(email, formattedPhone);
+      
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Could not send OTP.");
       }
 
-      const customer = shopifyResult.customer;
-
-      // 3. Sync to local database
-      if (customer) {
-        try {
-          await syncShopifyCustomerToDb({
-            id: customer.id,
-            email: customer.email,
-            firstName: customer.firstName,
-            lastName: customer.lastName,
-            phone: customer.phone,
-            password: password
-          });
-        } catch (syncErr: any) {
-          console.error("Unexpected error during DB sync call:", syncErr);
-        }
-      }
-
-      toast.success("Account created!", { 
+      setVerificationHash(result.hash!);
+      setVerificationExpiry(result.expiry!);
+      setPhoneHint(result.phoneHint || phone.replace(/.(?=.{4})/g, '*'));
+      
+      toast.success("Code sent!", { 
         description: "Please enter the verification code sent to your mobile." 
       });
-      setPhoneHint(phone.replace(/.(?=.{4})/g, '*'));
       setView("verify-registration-otp");
       
     } catch (error: any) {
@@ -316,17 +338,33 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
     
     setLoading(true);
     try {
-      // Re-use loginViaProxy to trigger a new OTP (works for both login and pending registration)
-      const result = await loginViaProxy(email, password);
-      if (!result.success && !result.requiresOtp && !result.requiresVerification) {
-        throw new Error(result.errors?.[0]?.message || "Failed to resend code");
+      if (view === "verify-registration-otp") {
+         let formattedPhone = phone.trim();
+         if (!formattedPhone.startsWith('+')) {
+           if (formattedPhone.length === 10) formattedPhone = `+91${formattedPhone}`;
+           else if (formattedPhone.length > 10) formattedPhone = `+${formattedPhone}`;
+         }
+         const result = await sendRegistrationOtp(email, formattedPhone);
+         if (!result.success) throw new Error(result.errors?.[0]?.message || "Failed to resend code");
+         
+         setVerificationHash(result.hash!);
+         setVerificationExpiry(result.expiry!);
+         toast.success("OTP Resent Successfully");
+         setResendTimer(120);
+         setOtp("");
+      } else {
+        // Re-use loginViaProxy to trigger a new OTP for login
+        const result = await loginViaProxy(email, password);
+        if (!result.success && !result.requiresOtp && !result.requiresVerification) {
+          throw new Error(result.errors?.[0]?.message || "Failed to resend code");
+        }
+        
+        toast.success("OTP Resent Successfully", {
+          description: `A new 6-digit code has been sent to ${result.phoneHint || email}.`
+        });
+        setResendTimer(120); // 2 minute cooldown
+        setOtp(""); // Clear previous OTP
       }
-      
-      toast.success("OTP Resent Successfully", {
-        description: `A new 6-digit code has been sent to ${result.phoneHint || email}.`
-      });
-      setResendTimer(120); // 2 minute cooldown
-      setOtp(""); // Clear previous OTP
     } catch (error: any) {
       toast.error("Resend failed", { description: error.message });
     } finally {
@@ -618,9 +656,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                   <span className="text-[10px] uppercase tracking-[0.2em] text-[#5A7A5C] font-bold">New Account Verification</span>
                 </div>
                 <h2 className="text-3xl font-display font-medium text-[#1A2E35] mb-2 text-center">Verify Account</h2>
-                <p className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">
+                <div className="text-sm text-[#1A2E35]/40 font-sans-clean mb-8 text-center max-w-[280px]">
                   Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span>
-                </p>
+                  <button type="button" onClick={() => setView('register')} className="ml-2 pl-2 border-l border-[#E5E7EB] text-[10px] font-bold text-[#5A7A5C] uppercase tracking-wider hover:underline">Edit</button>
+                </div>
                 
                 <form onSubmit={handleVerifyRegistrationOtp} className="w-full space-y-6">
                   <div className="flex justify-center">

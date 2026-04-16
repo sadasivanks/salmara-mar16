@@ -585,18 +585,44 @@ async function storefrontApiRequest(query: string, variables: Record<string, unk
 }
 
 /**
- * Sync storefront customer data into Supabase
- Admin API.
- * Included password for Shopify account creation.
+ * Send an OTP for registration without creating a database entry yet.
  */
-export async function createCustomerViaAdmin(input: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password?: string;
-  phone?: string;
-  isPending?: boolean;
-}): Promise<AdminApiResponse> {
+export async function sendRegistrationOtp(email: string, phone: string): Promise<{ success: boolean; hash?: string; expiry?: number; phoneHint?: string; errors?: any[] }> {
+  try {
+    const response = await fetch('/api/shopify-send-registration-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, phone }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false, errors: data.errors || [{ message: data.error || "Failed to send OTP" }] };
+    }
+    return data;
+  } catch (error: any) {
+    return { success: false, errors: [{ message: error.message }] };
+  }
+}
+
+/**
+ * Sync storefront customer data into Supabase/Shopify Admin API *AFTER* OTP verify.
+ */
+export async function createCustomerViaAdmin(
+  input: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password?: string;
+    phone?: string;
+    isPending?: boolean;
+  },
+  verification: {
+    hash: string;
+    expiry: number;
+    otp: string;
+  }
+): Promise<AdminApiResponse> {
   try {
     const response = await fetch('/api/shopify-register', {
       method: 'POST',
@@ -611,14 +637,14 @@ export async function createCustomerViaAdmin(input: {
             marketingState: "SUBSCRIBED",
             marketingOptInLevel: "SINGLE_OPT_IN",
           },
-          tags: input.isPending ? ["pending_verification"] : undefined,
           metafields: input.password ? [{
             namespace: "custom_auth",
             key: "password",
             value: input.password,
             type: "single_line_text_field"
           }] : undefined
-        }
+        },
+        verification
       }),
     });
 

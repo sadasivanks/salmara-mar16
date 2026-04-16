@@ -13,7 +13,8 @@ import {
   updateCustomerCartId,
   requestPasswordReset,
   resetPassword,
-  verifyOtpViaProxy
+  verifyOtpViaProxy,
+  sendRegistrationOtp
 } from "@/lib/shopifyAdmin";
 import { syncShopifyCustomerToDb } from "@/lib/dbSync";
 import { useCartStore } from "@/stores/cartStore";
@@ -46,6 +47,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [verificationHash, setVerificationHash] = useState("");
+  const [verificationExpiry, setVerificationExpiry] = useState(0);
 
   useEffect(() => {
     if (getStoredSession() && !redirect) {
@@ -318,29 +321,53 @@ const LoginPage = () => {
     }
     setLoading(true);
     try {
-      const result = await verifyOtpViaProxy(email, otp);
-      if (!result.success) {
-        throw new Error(result.errors?.[0]?.message || "Invalid or expired code.");
+      let formattedPhone = phone.trim();
+      if (!formattedPhone.startsWith('+')) {
+        if (formattedPhone.length === 10) formattedPhone = `+91${formattedPhone}`;
+        else if (formattedPhone.length > 10) formattedPhone = `+${formattedPhone}`;
+      }
+
+      const shopifyResult = await createCustomerViaAdmin(
+        {
+          firstName,
+          lastName,
+          email,
+          password,
+          phone: formattedPhone
+        },
+        {
+          hash: verificationHash,
+          expiry: verificationExpiry,
+          otp
+        }
+      );
+
+      if (!shopifyResult.success) {
+        throw new Error(shopifyResult.errors?.[0]?.message || "Verification failed");
       }
 
       toast.success("Account verified successfully!");
       
-      // Save session and log in
-      saveSession({
-        accessToken: "admin_proxy_mode",
-        user: result.user,
-        expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
-      });
+      const loginResult = await loginViaProxy(email, password);
+      if (loginResult.success) {
+        saveSession({
+          accessToken: "admin_proxy_mode",
+          user: loginResult.user,
+          expires: Date.now() + (30 * 24 * 60 * 60 * 1000)
+        });
 
-      const currentCartId = cartId;
-      if (result.user?.shopifyCartId) {
-        setCartId(result.user.shopifyCartId);
-        setTimeout(async () => {
-          await syncCart();
-        }, 500);
+        const currentCartId = cartId;
+        if (loginResult.user?.shopifyCartId) {
+          setCartId(loginResult.user.shopifyCartId);
+          setTimeout(async () => {
+            await syncCart();
+          }, 500);
+        }
+
+        await handleSuccessfulAuth(loginResult.user, currentCartId);
+      } else {
+        setView("login");
       }
-
-      await handleSuccessfulAuth(result.user, currentCartId);
     } catch (error: any) {
       toast.error("Verification failed", { description: error.message });
     } finally {
@@ -352,41 +379,25 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const shopifyResult = await createCustomerViaAdmin({
-        firstName,
-        lastName,
-        email,
-        password,
-        phone,
-        isPending: true
-      });
-
-      if (!shopifyResult.success) {
-        const errorMsg = shopifyResult.errors?.[0]?.message || "Could not create account.";
-        throw new Error(errorMsg);
+      let formattedPhone = phone.trim();
+      if (!formattedPhone.startsWith('+')) {
+        if (formattedPhone.length === 10) formattedPhone = `+91${formattedPhone}`;
+        else if (formattedPhone.length > 10) formattedPhone = `+${formattedPhone}`;
       }
 
-      const customer = shopifyResult.customer;
-
-      if (customer) {
-        try {
-          await syncShopifyCustomerToDb({
-            id: customer.id,
-            email: customer.email,
-            firstName: customer.firstName,
-            lastName: customer.lastName,
-            phone: customer.phone,
-            password: password
-          });
-        } catch (syncErr) {
-          console.error("DB sync failed:", syncErr);
-        }
+      const result = await sendRegistrationOtp(email, formattedPhone);
+      
+      if (!result.success) {
+        throw new Error(result.errors?.[0]?.message || "Could not send OTP.");
       }
 
-      toast.success("Account created!", { 
+      setVerificationHash(result.hash!);
+      setVerificationExpiry(result.expiry!);
+      setPhoneHint(result.phoneHint || phone.replace(/.(?=.{4})/g, '*'));
+
+      toast.success("Account code sent!", { 
         description: "Please enter the verification code sent to your mobile." 
       });
-      setPhoneHint(phone.replace(/.(?=.{4})/g, '*'));
       setView("verify-registration-otp");
     } catch (error: any) {
       toast.error("Registration failed", { description: error.message });
@@ -703,7 +714,7 @@ const LoginPage = () => {
                   <SectionHeading 
                     title="Verify Your Account"
                     eyebrow="New Account Verification"
-                    description={<>Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span></>}
+                    description={<>Enter the 6-digit code sent to <span className="text-[#1A2E35] font-medium">{phoneHint}</span> <button type="button" onClick={() => setView('register')} className="ml-2 pl-2 border-l border-[#E5E7EB] text-[10px] font-bold text-[#5A7A5C] uppercase tracking-wider hover:underline">Edit</button></>}
                     centered={false}
                     animate={false}
                     className="mb-10"
