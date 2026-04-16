@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Leaf, ChevronRight, UserCircle, X } from "lucide-react";
+import { Menu, Leaf, ChevronRight, UserCircle, X, Heart, Home } from "lucide-react";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -46,19 +46,47 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
               <div className="h-8 w-8 bg-[#5A7A5C]/10 rounded-xl flex items-center justify-center">
                 <Leaf className="h-4 w-4 text-[#5A7A5C]" />
               </div>
-              <SheetTitle className="font-display text-xl font-medium text-[#1A2E35]">Menu</SheetTitle>
+              <div>
+                <SheetTitle className="font-display text-xl font-medium text-[#1A2E35]">Salmara</SheetTitle>
+                <p className="text-[8px] uppercase tracking-widest text-[#5A7A5C] font-bold">Authentic Ayurveda</p>
+              </div>
             </div>
           </div>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto no-scrollbar">
           <nav className="p-6 space-y-1">
+            {/* Home Link */}
+            <m.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0 }}
+            >
+              <Link
+                to="/"
+                onClick={() => onOpenChange(false)}
+                className={`flex items-center justify-between px-4 py-3.5 text-base font-sans-clean rounded-2xl transition-all group ${
+                  locationPathname === "/"
+                    ? "text-[#5A7A5C] bg-white font-bold shadow-sm"
+                    : "text-[#1A2E35]/80 hover:text-[#5A7A5C] hover:bg-white"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Home className="h-4 w-4" />
+                  <span>Home</span>
+                </div>
+                <ChevronRight className={`h-4 w-4 transition-all ${
+                  locationPathname === "/" ? "opacity-100" : "opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
+                }`} />
+              </Link>
+            </m.div>
+
             {navItems.map((item, idx) => (
               <m.div
                 key={item.label}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
+                transition={{ delay: (idx + 1) * 0.05 }}
               >
                 {item.external ? (
                   <a
@@ -99,6 +127,8 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 )}
               </m.div>
             ))}
+
+            {/* Removed My Wishlist Link as it is now in the main header */}
           </nav>
           
           <div className="px-6 py-8 border-t border-[#F2EDE4]/50">

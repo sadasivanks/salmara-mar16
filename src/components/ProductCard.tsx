@@ -168,17 +168,6 @@ const ProductCard = ({
           )}
         </div>
         
-        <div className="min-h-[60px] mb-4">
-          <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed line-clamp-2 italic">
-            {benefitLine}
-          </p>
-          <Link 
-            to={`/product/${product.node.handle}`} 
-            className="text-[9px] font-bold uppercase tracking-widest text-[#5A7A5C] hover:underline mt-1 inline-block"
-          >
-            Read more +
-          </Link>
-        </div>
         {!variant?.availableForSale ? (
           <button
             disabled
@@ -191,7 +180,7 @@ const ProductCard = ({
             <button
               onClick={() => onAddToCart(product)}
               disabled={addingId === product.node.id}
-              className="flex-1 border border-[#1A2E35]/10 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] transition-all flex items-center justify-center gap-2 group/btn"
+              className="flex-1 border border-[#1A2E35]/25 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] hover:border-[#5A7A5C]/40 transition-all flex items-center justify-center gap-2 group/btn"
             >
               {addingId === product.node.id ? (
                 <Loader2 className="h-3 w-3 animate-spin text-[#5A7A5C]" />

@@ -291,12 +291,7 @@ const ShopPage = () => {
         {/* 3) Filter & Sort Bar */}
         <section 
           id="product-grid" 
-          className={cn(
-            "sticky top-[64px] lg:top-[80px] z-30 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2",
-            isScrolled 
-              ? "bg-white/60 backdrop-blur-xl opacity-60 hover:opacity-100 shadow-none border-[#F2EDE4]/30" 
-              : "bg-white/95 backdrop-blur-md shadow-sm opacity-100"
-          )}
+          className="relative z-30 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2 bg-white"
         >
           <div className="container px-4">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
@@ -560,16 +555,10 @@ const ShopPage = () => {
                             );
                           })()}
                         </div>
-                        <div className="min-h-[40px] mb-3">
+                        <div className="mb-3">
                           <p className="text-muted-foreground font-body text-sm line-clamp-2">
                             {product.node.description}
                           </p>
-                          <Link 
-                            to={`/product/${product.node.handle}`} 
-                            className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mt-1 inline-block"
-                          >
-                            Read more +
-                          </Link>
                         </div>
 
                         {price && (

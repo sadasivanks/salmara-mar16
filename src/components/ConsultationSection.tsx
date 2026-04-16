@@ -48,22 +48,23 @@ const ConsultationSection = () => {
             transition={{ duration: 0.8 }}
           >
             <SectionHeading 
-              title="Personalized Ayurvedic Guidance" 
+              title={<>Personalized Ayurvedic <br className="md:hidden" /> Consultation</>} 
               eyebrow="Expert Care" 
               centered={false} 
               animate={false}
-              className="mb-6"
+              className="mb-6 text-center md:text-left"
+              titleClassName="text-[26px] xs:text-3xl"
             />
-            <p className="text-[#1A2E35]/70 font-body text-lg leading-relaxed mb-8">
-              Unsure which remedy suits your needs? Speak directly with our certified 
-              Ayurvedic doctors — online or in person. Get personalized treatment plans 
-              rooted in your unique Prakriti.
+            <p className="text-[#1A2E35]/70 font-body text-base lg:text-lg leading-relaxed mb-8 text-justify">
+              Speak with an Ayurvedic doctor to better understand your concern and receive 
+              guidance suited to your needs. Consultations are available online and in 
+              person, with recommendations based on an individual focused approach.
             </p>
 
             <div className="grid grid-cols-3 gap-4 mb-8">
               {[
-                { icon: Video, label: "Online" },
-                { icon: MapPin, label: "In-Person" },
+                { icon: Video, label: "Online Consultation" },
+                { icon: MapPin, label: "In-Person Guidance" },
                 { icon: Calendar, label: "Flexible Slots" },
               ].map((item) => (
                 <div key={item.label} className="text-center">
@@ -81,7 +82,7 @@ const ConsultationSection = () => {
   rel="noopener noreferrer"
   className="inline-flex items-center gap-2 bg-[#C5A059] hover:bg-[#B48F48] text-white px-12 py-4 rounded-lg font-sans-clean font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:shadow-xl shadow-lg"
 >
-  Book Appointment
+  Book a Consultation
 </a>
           </m.div>
 
@@ -100,7 +101,7 @@ const ConsultationSection = () => {
               <div className="mt-8 grid grid-cols-2 gap-6">
                 <div>
                   <p className="text-2xl font-[Inter] font-semibold tracking-tight text-[#C5A059]">
-                    <AnimatedCounter target={50} suffix="+" />
+                    <AnimatedCounter target={30} suffix="+" />
                   </p>
                   <p className="text-[#1A2E35]/50 font-sans-clean text-xs">Doctors</p>
                 </div>

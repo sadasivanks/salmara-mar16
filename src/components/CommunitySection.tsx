@@ -54,7 +54,7 @@ const CommunitySection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <SectionHeading 
-          title="Grow with Us" 
+          title="Be Part of the Salmara Community" 
           eyebrow="SALMARA COMMUNITY" 
           animate={false}
         />
@@ -75,7 +75,7 @@ const CommunitySection = () => {
                 Join the Salmara Circle of Wellness
               </h3>
               <p className="text-[#1A2E35]/70 font-body text-base mb-8 leading-relaxed">
-                Receive Ayurvedic tips, offers, and early product updates.
+                Sign up to receive Ayurvedic insights, product updates, and occasional offers from Salmara.
               </p>
             </div>
 
@@ -98,7 +98,7 @@ const CommunitySection = () => {
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
                   <>
-                    Subscribe Now <ArrowRight className="h-4 w-4" />
+                    Subscribe <ArrowRight className="h-4 w-4" />
                   </>
                 )}
               </button>
@@ -120,17 +120,17 @@ const CommunitySection = () => {
                 <Users className="h-7 w-7 text-[#C5A059]" />
               </div>
               <h3 className="text-2xl font-display font-semibold mb-4 text-white">
-                Share Ayurveda and Earn
+                Join the Salmara Affiliate Program
               </h3>
               <p className="text-white/70 font-body text-base mb-8 leading-relaxed">
-                Join the Salmara Affiliate Program and grow with India's trusted Ayurvedic brand.
+                Partner with Salmara to share products with your audience and earn through referrals.
               </p>
               
               <ul className="space-y-3 mb-10">
                 {[
-                  "Generous Commissions",
-                  "Verified Support Team",
-                  "Early Access to Campaigns"
+                  "Commission on successful referrals",
+                  "Support for onboarding and campaign participation",
+                  "Access to selected promotions and campaign updates"
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3 text-sm text-white/80 font-sans-clean">
                     <div className="h-1.5 w-1.5 bg-[#C5A059] rounded-full" />
@@ -150,7 +150,7 @@ const CommunitySection = () => {
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-4 border border-[#C5A059]/30 rounded-xl font-sans-clean font-bold text-xs uppercase tracking-[0.2em] text-[#C5A059] text-center bg-[#C5A059]/5 transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-[#C5A059]/60"
               >
-                Become Affiliate
+                Become an Affiliate
                 <TrendingUp className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </m.div>
             </Link>

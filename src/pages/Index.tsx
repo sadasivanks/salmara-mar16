@@ -5,7 +5,6 @@ const AboutSection = lazy(() => import("@/components/AboutSection"));
 const WhyChooseUs = lazy(() => import("@/components/WhyChooseUs"));
 
 const FeaturedProducts = lazy(() => import("@/components/FeaturedProducts"));
-const IngredientHighlights = lazy(() => import("@/components/IngredientHighlights"));
 const ConsultationSection = lazy(() => import("@/components/ConsultationSection"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const DailyTipsSection = lazy(() => import("@/components/DailyTipsSection"));
@@ -48,7 +47,6 @@ const Index = () => (
         <AboutSection />
         <WhyChooseUs />
         <FeaturedProducts />
-        <IngredientHighlights />
         <TestimonialsSection />
         <DailyTipsSection />
         <ConsultationSection />

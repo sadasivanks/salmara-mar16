@@ -18,7 +18,7 @@ const navItems = [
   { label: "About Us", href: "/about" },
   { label: "Shop Now", href: "/shop" },
   { label: "Clinics", href: "/clinics" },
-  { label: "Book Appointment", href: `https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products.`, external: true },
+  { label: "Book a Consultation", href: `https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products.`, external: true },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -249,24 +249,23 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="flex items-center gap-1 sm:gap-3 px-1 sm:px-0">
-            {(searchOpen || searchQuery) && (
-              <Suspense fallback={<div className="h-9 w-9" />}>
-                <SearchBar 
-                  isOpen={searchOpen}
-                  onOpenChange={setSearchOpen}
-                  searchQuery={searchQuery}
-                  onSearchQueryChange={setSearchQuery}
-                  isSearching={isSearching}
-                  searchResults={searchResults}
-                  onResultClick={handleResultClick}
-                />
-              </Suspense>
-            )}
+            <Suspense fallback={<div className="h-9 w-9" />}>
+              <SearchBar 
+                isOpen={searchOpen}
+                onOpenChange={setSearchOpen}
+                searchQuery={searchQuery}
+                onSearchQueryChange={setSearchQuery}
+                isSearching={isSearching}
+                searchResults={searchResults}
+                onResultClick={handleResultClick}
+              />
+            </Suspense>
+            
 
             <Link 
               to="/wishlist" 
               onMouseEnter={() => prefetchRoute("/wishlist")}
-              className={`p-2 text-foreground/70 hover:text-red-500 transition-colors relative group ${searchOpen ? 'hidden sm:block' : ''}`}
+              className="p-2 text-foreground/70 hover:text-red-500 transition-colors relative group"
               aria-label={`Wishlist ${wishlistCount > 0 ? `(${wishlistCount} items)` : ''}`}
             >
               <Heart className="h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -315,25 +314,23 @@ const Header = () => {
               </button>
             )}
 
-            {mobileOpen && (
-              <Suspense fallback={<div className="h-9 w-9" />}>
-                <MobileMenu 
-                  isOpen={mobileOpen}
-                  onOpenChange={setMobileOpen}
-                  navItems={navItems}
-                  shopByConcern={shopByConcern}
-                  user={user}
-                  onLogout={handleLogout}
-                  onAuthClick={() => {
-                    setAuthView("login");
-                    setAuthOpen(true);
-                  }}
-                  locationPathname={location.pathname}
-                  scrollToSection={scrollToSection}
-                  searchOpen={searchOpen}
-                />
-              </Suspense>
-            )}
+            <Suspense fallback={<div className="h-9 w-9" />}>
+              <MobileMenu 
+                isOpen={mobileOpen}
+                onOpenChange={setMobileOpen}
+                navItems={navItems}
+                shopByConcern={shopByConcern}
+                user={user}
+                onLogout={handleLogout}
+                onAuthClick={() => {
+                  setAuthView("login");
+                  setAuthOpen(true);
+                }}
+                locationPathname={location.pathname}
+                scrollToSection={scrollToSection}
+                searchOpen={searchOpen}
+              />
+            </Suspense>
           </div>
         </div>
       </header>

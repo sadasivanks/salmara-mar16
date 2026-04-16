@@ -489,7 +489,7 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <div className="space-y-10">
+            <div className="space-y-10 lg:mt-6">
               <div className="space-y-4">
                 <m.div
                   initial={{ opacity: 0, x: -20 }}
@@ -500,11 +500,11 @@ const ProductDetail = () => {
                   <span className="text-[9px] uppercase tracking-[0.22em] text-[#5A7A5C] font-bold">{benefitLine}</span>
                 </m.div>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
                   {product.title}
                 </h1>
                 
-                <p className="text-lg text-[#1A2E35]/50 font-sans-clean leading-relaxed max-w-md">
+                <p className="text-lg text-[#1A2E35]/50 font-sans-clean leading-relaxed max-w-md text-justify">
                    {subtitle}
                 </p>
 
@@ -596,18 +596,18 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="space-y-2 md:space-y-4">
+              <div className="space-y-2 md:space-y-4 max-w-md">
                 {!selectedVariant?.availableForSale ? (
                   <button
                     disabled
-                    className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 min-h-[64px] rounded-xl font-bold uppercase tracking-widest text-sm cursor-not-allowed flex items-center justify-center shadow-inner"
+                    className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm cursor-not-allowed flex items-center justify-center shadow-inner"
                   >
                     Sold Out
                   </button>
                 ) : (
                   <>
                     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
-                      <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[56px] md:w-32 justify-between shrink-0">
+                      <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[50px] md:w-32 justify-between shrink-0">
                         <button 
                           onClick={() => setQuantity(Math.max(1, quantity - 1))} 
                           className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
@@ -629,7 +629,7 @@ const ProductDetail = () => {
                       <button
                         onClick={handleAddToCart}
                         disabled={isLoading}
-                        className="flex-1 border border-[#5A7A5C] text-[#5A7A5C] min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#5A7A5C] hover:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                        className="flex-1 border border-[#5A7A5C] text-[#5A7A5C] min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#5A7A5C] hover:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                       >
                         {isLoading ? (
                           <Loader2 className="h-5 w-5 animate-spin" />
@@ -642,7 +642,7 @@ const ProductDetail = () => {
                     <button 
                       onClick={handleBuyNow}
                       disabled={isBuyingNow}
-                      className="w-full bg-[#1A2E35] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
+                      className="w-full bg-[#1A2E35] text-white min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
                     >
                       {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : "Buy Now Direct"}
                     </button>
@@ -659,7 +659,7 @@ const ProductDetail = () => {
                 <label className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1 font-sans-clean">Detailed Description</label>
                 <div 
                   className="text-sm md:text-base text-[#1A2E35]/70 font-sans-clean leading-relaxed prose prose-stone max-w-none 
-                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35]"
+                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35] text-justify"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
                 />
               </div>

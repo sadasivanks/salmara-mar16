@@ -119,6 +119,7 @@ const FeaturedProducts = () => {
           title={<>Best Loved <span>Formulations</span></>} 
           eyebrow="Pure Potency" 
           animate={false}
+          titleClassName="text-[22px] xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl whitespace-nowrap"
         />
       </div>
 

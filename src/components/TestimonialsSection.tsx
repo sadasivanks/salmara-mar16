@@ -49,6 +49,7 @@ const TestimonialsSection = () => {
           title="Real Stories, Real Wellness" 
           eyebrow="TESTIMONIALS" 
           animate={false}
+          titleClassName="text-[22px] xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl whitespace-nowrap"
         />
 
         <div className="relative group/marquee overflow-hidden flex items-center justify-center">
