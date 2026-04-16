@@ -1,5 +1,8 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
@@ -76,33 +79,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const payload = `${email}:${formattedPhone}:${otp}:${expiry}`;
     const hash = crypto.createHmac('sha256', jwtSecret).update(payload).digest('hex');
 
-    console.log(`\n📦 [REGISTRATION PRE-VERIFY] Request for: ${email} | ${formattedPhone}`);
-    console.log(`🔑 [REGISTRATION PRE-VERIFY] Generated OTP: ${otp}\n`);
+    console.log(`\n📦 [REGISTRATION PRE-VERIFY] Generating OTP for: ${email} | ${formattedPhone}`);
+    // OTP deliberately NOT logged for security in production, but we ensure it matches DLT rules
+    // console.log(`🔑 [REGISTRATION PRE-VERIFY] Generated OTP: ${otp}\n`); 
 
     // 4. Send SMS via Edumarc
     const smsApiKey = process.env.EDUMARC_SMS_API_KEY;
     const senderId = process.env.EDUMARC_SENDER_ID || "SLMAYU";
     const templateId = process.env.EDUMARC_TEMPLATE_ID;
-    const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 5 minutes. Do not share this code. SLMAYU`;
+    // DLT Template rule: Must match EXACTLY including '2 minutes' or providers block it.
+    const smsMessage = `Your login OTP for Salmara Ayurveda is ${otp}. Valid for 2 minutes. Do not share this code. SLMAYU`;
     const cleanPhone = formattedPhone.replace(/^\+/, '');
 
-    if (smsApiKey && templateId) {
-      try {
-        await fetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': smsApiKey },
-          body: JSON.stringify({
-            message: smsMessage,
-            senderId: senderId,
-            number: [cleanPhone],
-            templateId: templateId
-          })
-        });
-      } catch (smsErr) {
-        console.error("[AUTH ERROR] SMS delivery failed:", smsErr);
+    if (!smsApiKey || !templateId) {
+      console.error("[AUTH ERROR] SMS configuration missing");
+      return res.status(500).json({ error: "SMS service not configured on server" });
+    }
+
+    try {
+      console.log(`[AUTH] Dispatching SMS via Edumarc to ${cleanPhone}...`);
+      const smsRes = await fetch('https://smsapi.edumarcsms.com/api/v1/sendsms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': smsApiKey },
+        body: JSON.stringify({
+          message: smsMessage,
+          senderId: senderId,
+          number: [cleanPhone],
+          templateId: templateId
+        })
+      });
+      
+      const smsData = await smsRes.json() as any;
+      console.log(`[AUTH] Edumarc Response Status: ${smsRes.status} | Data:`, JSON.stringify(smsData));
+
+      if (!smsRes.ok || smsData.status === 'error' || smsData.responseCode === 'error') {
+        throw new Error(smsData.message || smsData.response || "SMS provider rejected message");
       }
-    } else {
-      console.warn("SMS not configured. OTP not routed.");
+      
+      console.log(`[AUTH] Registration OTP sent successfully to ${cleanPhone}`);
+    } catch (smsErr: any) {
+      console.error("[AUTH ERROR] SMS delivery failed:", smsErr.message);
+      return res.status(500).json({ error: `Message delivery failed: ${smsErr.message}` });
     }
 
     const phoneHint = formattedPhone.replace(/.(?=.{4})/g, '*');
