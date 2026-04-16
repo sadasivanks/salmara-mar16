@@ -1,8 +1,8 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl || '', supabaseKey || '');
 
@@ -32,18 +32,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Email is required.' });
     }
 
-    // Insert or update subscription
-    const { data, error } = await supabase
+    const emailLower = email.toLowerCase();
+
+    // First check if the email already exists to avoid unique constraint issues with upsert
+    const { data: existingRecord, error: searchError } = await supabase
       .from('subscribes')
-      .upsert(
-        { 
-          email: email.toLowerCase(), 
-          user_id: userId || null,
-          is_subscribed: true 
-        }, 
-        { onConflict: 'email' }
-      )
-      .select();
+      .select('*')
+      .eq('email', emailLower)
+      .maybeSingle();
+
+    if (searchError) {
+      console.error('Supabase Search Error:', searchError);
+      return res.status(500).json({ error: searchError.message });
+    }
+
+    let data, error;
+
+    if (existingRecord) {
+      // Update the existing record
+      const updateResponse = await supabase
+        .from('subscribes')
+        .update({
+          user_id: userId || existingRecord.user_id || null,
+          is_subscribed: true
+        })
+        .eq('email', emailLower)
+        .select();
+        
+      data = updateResponse.data;
+      error = updateResponse.error;
+    } else {
+      // Insert completely new record
+      const insertResponse = await supabase
+        .from('subscribes')
+        .insert([
+          { 
+            email: emailLower, 
+            user_id: userId || null,
+            is_subscribed: true 
+          }
+        ])
+        .select();
+        
+      data = insertResponse.data;
+      error = insertResponse.error;
+    }
 
     if (error) {
       console.error('Supabase Error:', error);

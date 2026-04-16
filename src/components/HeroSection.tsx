@@ -30,6 +30,7 @@ const slides = [
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -47,25 +48,26 @@ const HeroSection = () => {
   return (
     <section className="relative h-[90vh] md:min-h-screen flex items-center overflow-hidden bg-[#1A2E35]">
       {/* Background Carousel */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-[#1A2E35]">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentSlide}
-            initial={{ opacity: 0, scale: 1.1 }}
+            initial={currentSlide === 0 ? false : { opacity: 0, scale: 1.1 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.5, ease: "easeOut" }}
-            className="absolute inset-0 w-full h-full"
+            className="absolute inset-0 w-full h-full bg-[#1A2E35]"
           >
             <img 
               src={slides[currentSlide].url} 
               alt="Salmara Hero" 
-              className="w-full h-full object-cover brightness-[0.7]"
+              onLoad={() => setLoadedImages(prev => ({ ...prev, [currentSlide]: true }))}
+              className={`w-full h-full object-cover brightness-[0.7] transition-opacity duration-500 ${loadedImages[currentSlide] ? 'opacity-100' : 'opacity-0'}`}
               width="1920"
               height="1080"
               loading={currentSlide === 0 ? "eager" : "lazy"}
               {...({ fetchpriority: currentSlide === 0 ? "high" : "auto" } as any)}
-              decoding="async"
+              decoding={currentSlide === 0 ? "sync" : "async"}
             />
             {/* Global Gradient Overlays */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#1A2E35]/90 via-[#1A2E35]/40 to-transparent" />
