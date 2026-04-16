@@ -30,8 +30,8 @@ const WhyChooseUs = () => {
     <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
         <SectionHeading 
-          title="Why Choose Us" 
-          eyebrow="WHY SALMARA" 
+          title="Why Choose Salmara?" 
+          eyebrow="The Difference" 
           animate={false}
         />
 

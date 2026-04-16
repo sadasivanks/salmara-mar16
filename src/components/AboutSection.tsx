@@ -69,14 +69,14 @@ const AboutSection = () => {
                 />
               </picture>
             </div>
-            {/* 27+ Years Badge */}
+            {/* 30+ Years Badge */}
             <m.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={isInView ? { scale: 1, opacity: 1 } : {}}
               transition={{ delay: 0.5, duration: 0.5 }}
               className="absolute bottom-4 right-4 bg-[#5A7A5C] text-white px-6 py-4 rounded-lg shadow-xl"
             >
-              <p className="text-base font-sans-clean font-bold tracking-wider">27+ Years</p>
+              <p className="text-base font-sans-clean font-bold tracking-wider">30+ Years</p>
             </m.div>
           </m.div>
 
@@ -114,7 +114,7 @@ const AboutSection = () => {
                 to="/about" 
                 className="inline-flex items-center gap-2 text-sm font-sans-clean font-bold text-[#5A7A5C] hover:text-[#4a654c] transition-colors group"
               >
-                Read More 
+                Explore 
                 <span className="p-1 rounded-full bg-[#5A7A5C]/10 group-hover:bg-[#5A7A5C] group-hover:text-white transition-all">
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 

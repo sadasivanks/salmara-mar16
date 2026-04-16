@@ -134,18 +134,10 @@ const FeaturedProducts = () => {
       ) : (
         <div className="relative">
           {/* Marquee Container */}
-          <div className="flex overflow-hidden group">
-            <m.div 
-              className="flex gap-6 md:gap-8 lg:gap-10 xl:gap-12"
-              animate={{ x: ["0%", "-33.33%"] }}
-              transition={{ 
-                duration: 40, 
-                repeat: Infinity, 
-                ease: "linear",
-                repeatType: "loop"
-              }}
+          <div className="flex overflow-hidden pause-on-hover">
+            <div 
+              className="flex gap-6 md:gap-8 lg:gap-10 xl:gap-12 animate-marquee"
               style={{ width: "fit-content" }}
-              whileHover={{ animationPlayState: "paused" }}
             >
               {marqueeProducts.map((product, idx) => (
                 <ProductCard
@@ -162,7 +154,7 @@ const FeaturedProducts = () => {
                 />
               ))}
 
-            </m.div>
+            </div>
           </div>
         </div>
       )}

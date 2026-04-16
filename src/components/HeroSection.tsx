@@ -10,7 +10,7 @@ const badges = [
   "GMP\nCERTIFIED",
   "DOCTOR\nFORMULATED",
   "100%\nHERBAL",
-  "27\nYEARS OF\nTRUST",
+  "30\nYEARS OF\nTRUST",
 ];
 
 const slides = [

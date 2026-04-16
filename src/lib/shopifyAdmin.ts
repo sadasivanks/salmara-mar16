@@ -290,6 +290,15 @@ const PRODUCTS_ADMIN_QUERY = `
               }
             }
           }
+          metafields(first: 20) {
+            edges {
+              node {
+                namespace
+                key
+                value
+              }
+            }
+          }
         }
       }
     }

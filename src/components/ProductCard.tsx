@@ -32,6 +32,12 @@ const ProductCard = ({
   const image = product.node.images.edges[0]?.node;
   const price = variant?.price;
 
+  // Extract benefitLine from metafields
+  const benefitMeta = product.node.metafields?.edges?.find(
+    (e) => e.node.key.toLowerCase() === 'benefits' || e.node.key.toLowerCase() === 'key_benefits'
+  )?.node.value;
+  const benefitLine = benefitMeta?.split(/[,\n]+/)[0]?.trim() || "Ayurvedic Pure Potency";
+
   return (
     <m.div
       key={`${product.node.id}-${idx}`}
@@ -42,13 +48,13 @@ const ProductCard = ({
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#F2EDE4]/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
       <Link to={`/product/${product.node.handle}`} className="block relative mb-6 rounded-2xl overflow-hidden bg-[#FDFBF7] aspect-square">
-        <div className="relative aspect-[4/5] overflow-hidden">
+        <div className="relative h-full w-full overflow-hidden">
           {image ? (
             <Image 
               src={image.url} 
               alt={image.altText || product.node.title} 
               fill={true}
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              className="object-contain transition-transform duration-700 group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -163,8 +169,8 @@ const ProductCard = ({
         </div>
         
         <div className="min-h-[60px] mb-4">
-          <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed line-clamp-2">
-            {product.node.description}
+          <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed line-clamp-2 italic">
+            {benefitLine}
           </p>
           <Link 
             to={`/product/${product.node.handle}`} 
