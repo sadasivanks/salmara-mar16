@@ -135,7 +135,7 @@ const CUSTOMER_QUERY = `
       firstName
       lastName
       phone
-      addresses {
+      addresses(first: 10) {
         id
         address1
         address2

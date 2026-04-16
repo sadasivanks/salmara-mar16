@@ -61,9 +61,11 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
     try {
       const customer = await fetchCustomerViaAdmin(customerId);
       if (customer?.addresses) {
-        setAddresses(customer.addresses);
-        if (customer.addresses.length > 0) {
-          setSelectedId(customer.addresses[0].id);
+        // Reverse to show most recently added addresses first and limit to 5
+        const recentAddresses = [...customer.addresses].reverse().slice(0, 5);
+        setAddresses(recentAddresses);
+        if (recentAddresses.length > 0) {
+          setSelectedId(recentAddresses[0].id);
         }
       }
     } catch (error) {
