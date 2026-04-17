@@ -8,7 +8,7 @@ interface MobileMenuProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   navItems: Array<{ label: string; href: string; external?: boolean }>;
-  shopByConcern: string[];
+  categories: string[];
   user: any;
   onLogout: () => void;
   onAuthClick: () => void;
@@ -21,7 +21,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   isOpen,
   onOpenChange,
   navItems,
-  shopByConcern,
+  categories,
   user,
   onLogout,
   onAuthClick,
@@ -133,17 +133,17 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           
           <div className="px-6 py-8 border-t border-[#F2EDE4]/50">
             <p className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-[0.2em] mb-5 px-1">
-              Shop by Concern
+              Shop by Category
             </p>
             <div className="grid grid-cols-2 gap-3">
-              {shopByConcern.map((concern) => (
+              {categories.map((category) => (
                 <Link
-                  key={concern}
-                  to="/shop"
+                  key={category}
+                  to={`/shop?category=${encodeURIComponent(category)}`}
                   onClick={() => onOpenChange(false)}
                   className="px-4 py-2.5 text-[11px] font-bold text-[#1A2E35] bg-white border border-[#F2EDE4] rounded-xl hover:bg-[#5A7A5C] hover:text-white hover:border-[#5A7A5C] transition-all text-center uppercase tracking-wider"
                 >
-                  {concern}
+                  {category}
                 </Link>
               ))}
             </div>

@@ -109,6 +109,7 @@ const ShopPage = () => {
   const [reviewsMap, setReviewsMap] = useState<Record<string, any[]>>({});
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Filter & Sort State
   const [availableCollections, setAvailableCollections] = useState<ShopifyCollection[]>([]);
@@ -150,13 +151,6 @@ const ShopPage = () => {
       .catch(console.error)
       .finally(() => setLoading(false));
 
-    // Handle search parameter from URL
-    const params = new URLSearchParams(window.location.search);
-    const searchParam = params.get('search');
-    if (searchParam) {
-      setSearchQuery(searchParam);
-    }
-
     // Scroll listener for sticky header 'dull' effect
     const handleScroll = throttle(() => {
       setIsScrolled(window.scrollY > 120);
@@ -166,6 +160,14 @@ const ShopPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+
+  // Sync filters with URL parameters
+  useEffect(() => {
+    const search = searchParams.get('search');
+    const category = searchParams.get('category');
+    if (search !== null) setSearchQuery(search);
+    if (category !== null) setSelectedCategory(category);
+  }, [searchParams]);
 
   // Derived Categories from Shopify Collections
   const categories = useMemo(() => {
@@ -177,9 +179,9 @@ const ShopPage = () => {
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       // 1. Category Filter (Check if product belongs to the selected Shopify Collection)
-      if (selectedCategory !== "All Categories") {
+      if (selectedCategory && selectedCategory !== "All Categories") {
         const belongsToCollection = p.node.collections?.edges.some(
-          edge => edge.node.title === selectedCategory
+          edge => edge.node.title.toLowerCase() === selectedCategory.toLowerCase()
         );
         if (!belongsToCollection) return false;
       }
