@@ -1083,12 +1083,6 @@ export async function createHybridCheckout(
             lineItem.originalUnitPrice = numericUnitPrice.toFixed(2);
           }
 
-          if (item.title) {
-            lineItem.customAttributes = [
-              { key: "custom_line_title", value: item.title },
-            ];
-          }
-
           return lineItem;
         });
 
