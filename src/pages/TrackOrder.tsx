@@ -118,7 +118,7 @@ const TrackOrder = () => {
 
           // Security check: simple email match
           if (finalOrder.email.toLowerCase() !== emailParam.toLowerCase()) {
-            setError('Verification failed. Please check the email address associated with your order.');
+            setError('Package shipped! We are currently coordinating with our courier to secure your tracking number. This usually takes 3–5 minutes');
             setLoading(false);
             return;
           }

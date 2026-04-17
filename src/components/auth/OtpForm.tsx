@@ -58,6 +58,7 @@ export const OtpForm: React.FC<OtpFormProps> = ({
             className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
             placeholder="000000"
             autoFocus
+            autoComplete="one-time-code"
           />
         </div>
         

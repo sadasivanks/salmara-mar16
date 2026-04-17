@@ -84,6 +84,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
       if (result.requiresOtp || result.requiresVerification) {
         setPhoneHint(result.phoneHint || "");
         if (result.requiresVerification) {
+          setOtp(""); // Clear any stale OTP
           toast.info("Verification Required", {
             description: "Please verify your mobile number to complete registration."
           });
@@ -93,6 +94,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
             description: `We've sent a 6-digit code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.`
           });
           setView("otp");
+          setOtp(""); // Clear any stale OTP
         }
         return;
       }
@@ -157,7 +159,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
       setCartId(currentCartId);
     }
 
-    toast.success(`Registration successful!`);
+    toast.success(`Login successful!`);
     onClose();
   };
 
@@ -480,6 +482,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                       placeholder="000000"
                       autoFocus
+                      autoComplete="one-time-code"
                     />
                   </div>
 
@@ -569,6 +572,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                       className="w-full bg-white border border-[#E5E7EB] rounded-2xl px-5 py-3 text-xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                       placeholder="000000"
+                      autoComplete="one-time-code"
                     />
                   </div>
                   <button disabled={loading} className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold tracking-widest uppercase text-xs flex items-center justify-center gap-2 hover:bg-[#5A7A5C] transition-all duration-300 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50">
@@ -670,6 +674,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                       className="w-full max-w-[240px] bg-white border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-sans-clean text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                       placeholder="000000"
+                      autoComplete="one-time-code"
                     />
                   </div>
 

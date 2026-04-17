@@ -142,6 +142,7 @@ const LoginPage = () => {
 
       if (result.requiresOtp || result.requiresVerification) {
         setPhoneHint(result.phoneHint || "");
+        setOtp(""); // Clear any stale OTP
         if (result.requiresVerification) {
           toast.info("Verification Required", { 
             description: "Please verify your mobile number to complete registration." 
@@ -152,6 +153,7 @@ const LoginPage = () => {
             description: "A verification code has been sent to your mobile." 
           });
           setView("otp");
+          setOtp(""); // Clear any stale OTP
         }
         return;
       }
@@ -211,6 +213,7 @@ const LoginPage = () => {
         throw new Error(result.errors?.[0]?.message || "Account not found or recovery unavailable.");
       }
       setPhoneHint(result.phoneHint || "");
+      setOtp(""); // Clear any stale OTP
       toast.info("Verification Required", { 
         description: `We've sent a recovery code to your registered mobile number ${result.phoneHint ? '(' + result.phoneHint + ')' : ''}.` 
       });
@@ -399,6 +402,7 @@ const LoginPage = () => {
         description: "Please enter the verification code sent to your mobile." 
       });
       setView("verify-registration-otp");
+      setOtp(""); // Clear any stale OTP
     } catch (error: any) {
       toast.error("Registration failed", { description: error.message });
     } finally {
@@ -770,6 +774,7 @@ const LoginPage = () => {
                         required
                         value={otp}
                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                        autoComplete="one-time-code"
                         className="w-full bg-[#FDFBF7] border border-[#E5E7EB] rounded-2xl px-5 py-4 text-2xl font-mono text-center tracking-[0.5em] font-bold outline-none focus:border-[#5A7A5C] transition-all shadow-sm focus:shadow-md"
                         placeholder="000000"
                         autoFocus
