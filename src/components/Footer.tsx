@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube, Linkedin, Lock, Wallet, BadgeCheck } from "lucide-react";
+import { Facebook, Instagram, Youtube, Linkedin, Lock, Award, BadgeCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { siteConfig } from "@/config/site.config";
 import { memo } from "react";
@@ -125,8 +125,8 @@ const Footer = () => (
             <span className="text-xs sm:text-sm uppercase tracking-widest font-bold">Secure Payments</span>
           </div>
           <div className="flex items-center gap-2 text-white/80">
-            <Wallet className="h-5 w-5 text-[#C5A059]" />
-            <span className="text-xs sm:text-sm uppercase tracking-widest font-bold">COD Available</span>
+            <Award className="h-5 w-5 text-[#C5A059]" />
+            <span className="text-xs sm:text-sm uppercase tracking-widest font-bold">AYUSH Approved</span>
           </div>
           <div className="flex items-center gap-2 text-white/80">
             <BadgeCheck className="h-5 w-5 text-[#C5A059]" />

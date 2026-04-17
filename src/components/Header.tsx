@@ -23,13 +23,11 @@ const navItems = [
 ];
 
 
-const shopByConcern = [
-  "Pain Relief",
-  "Liver Detox",
-  "Women's Wellness",
-  "Immunity",
-  "Skin Care",
-  "Digestion",
+const shopByCategories = [
+  "All Categories",
+  "Ortho & Joint Support",
+  "Liver care",
+  "Piles Care",
 ];
 
 
@@ -319,7 +317,7 @@ const Header = () => {
                 isOpen={mobileOpen}
                 onOpenChange={setMobileOpen}
                 navItems={navItems}
-                shopByConcern={shopByConcern}
+                categories={shopByCategories}
                 user={user}
                 onLogout={handleLogout}
                 onAuthClick={() => {
