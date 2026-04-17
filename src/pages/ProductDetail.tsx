@@ -41,12 +41,13 @@ import {
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { useReviewStore } from "@/stores/reviewStore";
 import { useQuestionStore } from "@/stores/questionStore";
 import { Image } from "@/components/ui/Image";
-import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { lazy, Suspense } from "react";
+const AddressSelectionModal = lazy(() => import("@/components/AddressSelectionModal"));
 import SEO from "@/components/SEO";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
@@ -562,7 +563,7 @@ const ProductDetail = () => {
           <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <div className="space-y-6">
               <div className="sticky top-32">
-                <motion.div 
+                <m.div 
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   onMouseMove={handleMouseMove}
@@ -596,7 +597,7 @@ const ProductDetail = () => {
                   >
                     <Heart className={`h-5 w-5 ${selectedVariant && isInWishlist(selectedVariant.id) ? 'fill-white' : ''}`} />
                   </button>
-                </motion.div>
+                </m.div>
                 
                 {images.length > 1 && (
                   <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
@@ -614,22 +615,22 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <div className="space-y-10">
+            <div className="space-y-10 lg:mt-6">
               <div className="space-y-4">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="inline-flex items-center gap-2 px-3 py-1 bg-[#5A7A5C]/5 rounded-full border border-[#5A7A5C]/10"
                 >
                   <div className="h-1.5 w-1.5 rounded-full bg-[#5A7A5C]" />
                   <span className="text-[9px] uppercase tracking-[0.22em] text-[#5A7A5C] font-bold">{benefitLine}</span>
-                </motion.div>
+                </m.div>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
                   {product.title}
                 </h1>
                 
-                <p className="text-lg text-[#1A2E35]/50 font-sans-clean leading-relaxed max-w-md">
+                <p className="text-lg text-[#1A2E35]/50 font-sans-clean leading-relaxed max-w-md text-justify">
                    {subtitle}
                 </p>
 
@@ -744,18 +745,18 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="space-y-2 md:space-y-4">
+              <div className="space-y-2 md:space-y-4 max-w-md">
                 {!selectedVariant?.availableForSale ? (
                   <button
                     disabled
-                    className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 min-h-[64px] rounded-xl font-bold uppercase tracking-widest text-sm cursor-not-allowed flex items-center justify-center shadow-inner"
+                    className="w-full bg-[#F2EDE4] text-[#1A2E35]/40 min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm cursor-not-allowed flex items-center justify-center shadow-inner"
                   >
                     Sold Out
                   </button>
                 ) : (
                   <>
                     <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
-                      <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[56px] md:w-32 justify-between shrink-0">
+                      <div className="flex items-center bg-white border border-[#F2EDE4] rounded-xl px-2 min-h-[50px] md:w-32 justify-between shrink-0">
                         <button 
                           onClick={() => setQuantity(Math.max(1, quantity - 1))} 
                           className="p-3 text-[#1A2E35]/30 hover:text-[#1A2E35] transition-colors"
@@ -777,7 +778,7 @@ const ProductDetail = () => {
                       <button
                         onClick={handleAddToCart}
                         disabled={isLoading}
-                        className="flex-1 border border-[#5A7A5C] text-[#5A7A5C] min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#5A7A5C] hover:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                        className="flex-1 border border-[#5A7A5C] text-[#5A7A5C] min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#5A7A5C] hover:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                       >
                         {isLoading ? (
                           <Loader2 className="h-5 w-5 animate-spin" />
@@ -790,7 +791,7 @@ const ProductDetail = () => {
                     <button 
                       onClick={handleBuyNow}
                       disabled={isBuyingNow}
-                      className="w-full bg-[#1A2E35] text-white min-h-[56px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
+                      className="w-full bg-[#1A2E35] text-white min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
                     >
                       {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : "Buy Now Direct"}
                     </button>
@@ -807,13 +808,13 @@ const ProductDetail = () => {
                 <label className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1 font-sans-clean">Detailed Description</label>
                 <div 
                   className="text-sm md:text-base text-[#1A2E35]/70 font-sans-clean leading-relaxed prose prose-stone max-w-none 
-                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35]"
+                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35] text-justify"
                   dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
                 />
               </div>
 
               {/* Combined Clinical Guidance & Doctor's Insight */}
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -857,7 +858,7 @@ const ProductDetail = () => {
                     </a>
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </div>
 
@@ -888,7 +889,7 @@ const ProductDetail = () => {
                       const description = descParts.join(' — ');
 
                       return (
-                        <motion.div 
+                        <m.div 
                           key={i} 
                           initial={{ opacity: 0, y: 20 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -913,7 +914,7 @@ const ProductDetail = () => {
 
                             {description ? (
                               <>
-                                <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-display">
+                                <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-sans-clean uppercase tracking-tight">
                                   {title}
                                 </h3>
                                 <p className="text-[11px] md:text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed italic flex-1">
@@ -921,12 +922,14 @@ const ProductDetail = () => {
                                 </p>
                               </>
                             ) : (
-                              <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed italic flex-1 uppercase font-bold tracking-tight">
+                              <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed flex-1 uppercase font-bold tracking-tight">
                                 {title}
                               </p>
                             )}
+
+
                           </div>
-                        </motion.div>
+                        </m.div>
                       );
                     })}
                 </div>
@@ -962,7 +965,7 @@ const ProductDetail = () => {
                       const description = descParts.join(' — ');
                       
                       return (
-                        <motion.div 
+                        <m.div 
                           key={i}
                           initial={{ opacity: 0, scale: 0.95 }}
                           whileInView={{ opacity: 1, scale: 1 }}
@@ -984,7 +987,7 @@ const ProductDetail = () => {
                               </p>
                             )}
                           </div>
-                        </motion.div>
+                        </m.div>
                       );
                     })}
                 </div>
@@ -1025,7 +1028,7 @@ const ProductDetail = () => {
             </div>
             
             <div className="grid md:grid-cols-2 gap-6 lg:gap-10 max-w-6xl mx-auto">
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1038,9 +1041,9 @@ const ProductDetail = () => {
                     {getMetafieldValue('dosage') ? `"${getMetafieldValue('dosage')}"` : "Consult your practitioner for personalized dosage details."}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
 
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -1054,7 +1057,7 @@ const ProductDetail = () => {
                     {getMetafieldValue('usage') ? `"${getMetafieldValue('usage')}"` : "Instructions updated per individual therapeutic recommendations."}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             </div>
           </section>
 
@@ -1209,7 +1212,7 @@ const ProductDetail = () => {
                 <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
                   <AnimatePresence mode="popLayout">
                     {safeReviews.map((review, idx) => (
-                      <motion.div
+                      <m.div
                         key={review.id}
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1243,7 +1246,7 @@ const ProductDetail = () => {
                             <Star className="h-3 w-3 text-[#C5A059]" />
                           </div>
                         </div>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </AnimatePresence>
 
@@ -1263,14 +1266,14 @@ const ProductDetail = () => {
           <AnimatePresence>
             {reviewModalOpen && (
               <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                <motion.div
+                <m.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setReviewModalOpen(false)}
                   className="absolute inset-0 bg-[#1A2E35]/40 backdrop-blur-sm"
                 />
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -1339,7 +1342,7 @@ const ProductDetail = () => {
                       {isSubmittingReview ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Submit Review <Send className="h-4 w-4" /></>}
                     </button>
                   </form>
-                </motion.div>
+                </m.div>
               </div>
             )}
           </AnimatePresence>
@@ -1361,7 +1364,7 @@ const ProductDetail = () => {
                 </button>
                 <AnimatePresence>
                   {isProductInfoOpen && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -1415,7 +1418,7 @@ const ProductDetail = () => {
                           </tbody>
                         </table>
                       </div>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </div>
@@ -1432,7 +1435,7 @@ const ProductDetail = () => {
                   </button>
                   <AnimatePresence>
                     {activeFaq === i && (
-                      <motion.div
+                      <m.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -1441,7 +1444,7 @@ const ProductDetail = () => {
                         <p className="text-[11px] md:text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean pt-2 border-t border-[#F2EDE4]">
                           {faq.a}
                         </p>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
@@ -1538,13 +1541,15 @@ const ProductDetail = () => {
       </main>
       <Footer />
       {getStoredSession()?.user?.id && (
-        <AddressSelectionModal 
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          customerId={getStoredSession()?.user?.id}
-          onSelect={onAddressSelect}
-          isProcessing={isBuyingNow}
-        />
+        <Suspense fallback={null}>
+          <AddressSelectionModal 
+            isOpen={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            customerId={getStoredSession()?.user?.id}
+            onSelect={onAddressSelect}
+            isProcessing={isBuyingNow}
+          />
+        </Suspense>
       )}
     </div>
   );

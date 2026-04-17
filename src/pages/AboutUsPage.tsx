@@ -3,7 +3,7 @@ import { Image } from "@/components/ui/Image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, CheckCircle2, Award, ShieldCheck, Microscope, 
   FlaskConical, MapPin, ArrowRight, ChevronRight,
@@ -68,17 +68,17 @@ const AboutUsPage = () => {
           </div>
           
           <div className="container relative z-10 px-4 text-center">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               className="max-w-4xl mx-auto"
             >
               <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-medium text-white mb-4 leading-tight">
-                Where Tradition <br className="hidden sm:block" /> Meets Science.
+                The Brand Behind the Care.
               </h1>
               <p className="text-xs sm:text-sm md:text-lg text-white/80 max-w-xl mx-auto mb-8 font-sans-clean leading-relaxed px-4">
-                We didn’t reinvent Ayurveda — we refined it through proof, purity, and precision.
+                Salmara was built to bring Ayurveda into daily life through products, guidance and care spaces.
               </p>
               
               <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 mb-10 px-4">
@@ -95,13 +95,13 @@ const AboutUsPage = () => {
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 sm:px-0">
                 <Link to="/shop" className="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-herbal-dark transition-all shadow-xl shadow-black/20">
-                  Explore Products
+                  Explore Our Products
                 </Link>
                 <Link to="/clinics" className="w-full sm:w-auto px-10 py-4 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold tracking-widest uppercase text-[10px] sm:text-xs hover:bg-white/20 transition-all">
-                  Discover Our Clinics
+                  Explore Our Clinics
                 </Link>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -130,13 +130,13 @@ const AboutUsPage = () => {
               
               <div className="text-[#1A2E35]/70 font-sans-clean leading-relaxed text-base md:text-lg">
                 <p>
-                When we began Salmara, it was never only about herbal formulations. It was about restoring the credibility of Ayurveda. We wanted people to experience something that feels traditional while also being proven and reliable. Every bottle reflects our promise. It is carefully tested, verified, and created with deep respect for the science that nature has already perfected.
+                When Salmara began, it came from a desire to carry Ayurvedic knowledge forward in a way people could continue to rely on in daily life. What started with a few trusted formulations slowly grew into a wider journey of products, clinics, and consultations.
                 </p>
               </div>
 
               <div>
                 <p className="font-display italic text-xl text-primary">Shamsuddin Salmara</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1A2E35]/40">— Founder, Salmara Ayurveda</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#1A2E35]/40">Founder, Salmara Ayurveda</p>
               </div>
             </div>
           </div>
@@ -154,37 +154,13 @@ const AboutUsPage = () => {
             <div className="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-20 items-start">
               {/* Narrative Story */}
               <div className="space-y-4 md:space-y-6 lg:space-y-8 text-[#1A2E35]/80 font-sans-clean leading-relaxed text-base md:text-lg text-left">
-                <div className="relative">
-                  <span className="text-6xl md:text-7xl font-display text-primary float-left mr-3 mt-1 leading-[0.8]">I</span>
-                  <p>
-                    n 1996, our founder inherited not just Ayurvedic formulations, but a responsibility to continue a legacy of natural healing.
-                  </p>
-                </div>
-
                 <p>
-                  What began with traditional remedies for hair care and kidney health evolved into a mission to make authentic Ayurveda accessible to every home.
+                  Salmara began in 1996 with inherited Ayurvedic knowledge and a small set of trusted formulations. In the years that followed, the work expanded through free medical camps and the opening of the first clinic in Murudinjira.
                 </p>
 
                 <p>
-                  Since 2004, we have conducted over 100 free medical camps, bringing healthcare to underserved communities across villages and cities.
+                  What started as a local practice gradually grew into a wider care network across multiple cities. Today, the journey reflects 26+ products, years of community outreach, and continued recognition for contributions to traditional medicine. Our founder also serves as Jilla Adhyaksha (District President) of Karnataka Parampaarika Vaidya Sangha, reflecting Salmara’s continued connection to traditional Ayurvedic practice and community leadership.
                 </p>
-
-                <p>
-                  In 2005, we opened our first clinic in Murudjinjira, offering holistic care rooted in ancient wisdom and compassion.
-                </p>
-
-                <p>
-                  In 2006, we became an official AYUSH partner, marking our commitment to authentic Ayurvedic practice.
-                </p>
-
-                <p>
-                  Over time, we developed 26+ formulations based on real patient experiences and generations of herbal knowledge.
-                </p>
-
-                  <p>
-                    Our non-surgical piles treatment, recognized as Karnataka’s No.1, earned the National Health Award in 2024 for innovation in traditional medicine.
-                  </p>
-  
               </div>
 
               {/* Milestones Timeline */}
@@ -196,17 +172,14 @@ const AboutUsPage = () => {
                   <div className="absolute left-[11px] top-2 bottom-2 w-[1px] bg-[#F2EDE4] md:left-[15px]" />
                   
                   {[
-                    { year: "1996", label: "Founded with ancestral knowledge" },
-                    { year: "2004", label: "Launched free medical camps initiative" },
-                    { year: "2005", label: "Established first clinic in Murudjinjira" },
-                    { year: "2006", label: "Official AYUSH Partner recognition" },
-                    { year: "2009", label: "Received Noble Man Award" },
-                    { year: "2017", label: "Honored with two major state awards" },
-                    { year: "2019", label: "Nava Rathna Award for excellence" },
-                    { year: "2024", label: "National Health Award for Innovation" },
-                    { year: "2025", label: "Three prestigious honors in healing" },
+                    { year: "1996", label: "Began the journey with ancestral Ayurvedic knowledge" },
+                    { year: "2004", label: "Began free medical camps" },
+                    { year: "2005", label: "Opened the first clinic in Murudinjira" },
+                    { year: "2006", label: "Received official AYUSH partner recognition" },
+                    { year: "2024", label: "National Health Award" },
+                    { year: "2025", label: "Major state recognitions" },
                   ].map((milestone, idx) => (
-                    <motion.div 
+                    <m.div 
                       key={idx}
                       initial={{ opacity: 0, x: -10 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -221,7 +194,7 @@ const AboutUsPage = () => {
                         <span className="text-sm font-bold text-primary tracking-widest">{milestone.year}</span>
                         <span className="text-[#1A2E35]/80 font-sans-clean leading-snug">{milestone.label}</span>
                       </div>
-                    </motion.div>
+                    </m.div>
                   ))}
                 </div>
               </div>
@@ -239,17 +212,14 @@ const AboutUsPage = () => {
     Our Impact
   </h3>
       <p className="text-white/60 font-sans-clean italic">
-        "Our journey from one clinic to eight cities. From local practice to a national movement."
-      </p>
-      <p className="text-[10px] uppercase tracking-widest text-white/40 pt-4 leading-relaxed">
-        Our founder also serves as Jilla Adhyaksha (District President) of Karnataka Paramparika Vaidya Sangha.
+        "What began as a local practice has grown into wider reach across products, camps, and cities."
       </p>
     </div>
     
     <div className="lg:col-span-2 grid grid-cols-2 gap-8 md:gap-12">
       {[
         { val: "26+", label: "Ancestral Products" },
-        { val: "8", label: "Cities Presence" },
+        { val: "12+", label: "Cities Presence" },
         { val: "100+", label: "Medical Camps" },
         { val: "100k+", label: "Lives Healed" },
       ].map((stat, idx) => (
@@ -284,7 +254,7 @@ const AboutUsPage = () => {
             <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12">
               <SectionHeading 
                 title="Achievements and Awards" 
-                description="Validation of our authentic practice and dedication."
+                description="Key recognitions received over the years."
                 animate={false}
               />
 
@@ -295,7 +265,7 @@ const AboutUsPage = () => {
                   { year: "2017", title: "Vaidya Seva Ratna Award (Shimoga)" },
                   { year: "2017", title: "Gadi Nadu Award" },
                   { year: "2019", title: "Nava Rathna Award (Rudraksha Foundation)" },
-                  { year: "2024", title: "National Health Award (Non‑surgical piles medicine)" },
+                  { year: "2025", title: "National Health Award (Non‑surgical piles medicine)" },
                   { year: "2025", title: "Vaidya Seva Ratna Award" },
                   { year: "2025", title: "Taluku Kannada Rajyotsava Award" },
                   { year: "2025", title: "Karunada Ratna Award (Samaj Seva category)" },
@@ -311,14 +281,14 @@ const AboutUsPage = () => {
               {/* Featured Awards (with images) */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {awards.map((award, idx) => (
-                  <motion.div 
+                  <m.div 
                     key={idx}
                     whileHover={{ y: -5 }}
                     onClick={() => setSelectedAwardIndex(idx)}
                     className="bg-white rounded-3xl overflow-hidden border border-[#F2EDE4] shadow-sm group cursor-pointer"
                   >
                     <div className="aspect-[4/5] bg-gray-100 relative">
-                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 transition-all duration-500" />
+                      <Image src={award.img} alt={award.title} className="w-full h-full object-cover grayscale-[35%] group-hover:grayscale-0 transition-all duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" loading={idx < 3 ? "eager" : "lazy"} />
                       
                       {/* Hover Overlay */}
                       <div className="absolute inset-0 bg-[#1A2E35]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -333,64 +303,20 @@ const AboutUsPage = () => {
                         <div className="text-base md:text-xl font-display leading-tight drop-shadow-lg">{award.title}</div>
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </div>
 
-            {/* Ending Narrative & CTA */}
+            {/* Ending Narrative */}
             <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12 text-center max-w-2xl mx-auto">
               <p className="text-[#1A2E35]/60 mb-8 italic">
-                From one clinic to eight cities. From two ancestral formulations to 26+ trusted products. From local practice to a national movement.
+                Salmara grew from a local Ayurvedic practice into a wider care journey built through products, clinics, and community reach.
               </p>
-              <Link to="/shop" className="inline-flex items-center gap-3 px-12 py-5 bg-primary text-white rounded-xl font-bold tracking-[0.2em] uppercase text-xs hover:bg-herbal-dark transition-all shadow-xl shadow-primary/20 group">
-                Explore Our Products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
             </div>
           </div>
         </section>
 
-        {/* 3) Philosophy */}
-        <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary">
-          <div className="container px-4">
-            <SectionHeading 
-              title="Purity. Precision. Proof."
-              description="The three pillars that define the Salmara standard."
-              animate={false}
-            />            
-            <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-              <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
-                <div className="h-14 w-14 bg-primary/5 rounded-2xl flex items-center justify-center text-primary">
-                  <Leaf className="h-7 w-7" />
-                </div>
-                <h3 className="text-2xl font-display font-medium text-[#1A2E35]">Purity</h3>
-                <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
-                  Ethically sourced from the richest soil, every ingredient is verified and tested for absolute authenticity before it enters our lab.
-                </p>
-              </motion.div>
-              
-              <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
-                <div className="h-14 w-14 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center text-[#5A7A5C]">
-                  <Microscope className="h-7 w-7" />
-                </div>
-                <h3 className="text-2xl font-display font-medium text-[#1A2E35]">Precision</h3>
-                <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
-                  Our GMP-certified manufacturing processes combine traditional extraction techniques with advanced modern quality controls for consistency.
-                </p>
-              </motion.div>
-              
-              <motion.div whileHover={{ y: -5 }} className="bg-white p-10 rounded-3xl shadow-sm border border-[#F2EDE4] space-y-6">
-                <div className="h-14 w-14 bg-[#5A7A5C]/5 rounded-2xl flex items-center justify-center text-[#5A7A5C]">
-                  <ShieldCheck className="h-7 w-7" />
-                </div>
-                <h3 className="text-2xl font-display font-medium text-[#1A2E35]">Proof</h3>
-                <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
-                  Guided by clinical evidence and validated processes, every batch is tested and trusted by thousands for its predictable efficiency.
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </section>
 
         {/* 4) Certification Gallery */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 container px-4">
@@ -401,7 +327,7 @@ const AboutUsPage = () => {
           />
           <div className="max-w-3xl mx-auto text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
             <p className="text-[#1A2E35]/60 font-sans-clean leading-relaxed">
-              Integrity is not just a word; it’s a certification. Our facility and products undergo rigorous external audits to ensure they meet the highest standards.
+              Our manufacturing and care processes are supported by relevant certifications and regulatory approvals.
             </p>
           </div>
           
@@ -409,19 +335,19 @@ const AboutUsPage = () => {
             <div className="p-2 md:p-4 lg:p-8 border border-[#F2EDE4] rounded-2xl text-center">
               <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">GMP Certified</h3>
               <p className="text-[10px] uppercase tracking-widest text-accent mb-4">Quality Council of India</p>
-              <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Ensuring our manufacturing products are consistently produced and controlled according to quality standards.</p>
+              <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Manufacturing follows quality-controlled production standards.</p>
             </div>
             
             <div className="p-2 md:p-4 lg:p-8 border border-[#F2EDE4] rounded-2xl text-center">
               <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">ISO 9001:2015</h3>
               <p className="text-[10px] uppercase tracking-widest text-accent mb-4">International Standards Organization</p>
-              <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Recognized standard for Quality Management Systems, focused on customer satisfaction and quality delivery PAN India.</p>
+              <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Quality management systems support consistency and documentation across processes.</p>
             </div>
             
             <div className="p-2 md:p-4 lg:p-8 border border-[#F2EDE4] rounded-2xl text-center">
               <h3 className="text-lg font-display font-bold text-[#1A2E35] mb-1">AYUSH License</h3>
               <p className="text-[10px] uppercase tracking-widest text-accent mb-4">Ministry of AYUSH, Govt. of India</p>
-              <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Full regulatory compliance for traditional Ayurvedic formulations and clinical procedures.</p>
+              <p className="text-sm text-[#1A2E35]/60 font-sans-clean">Licensed compliance supports Ayurvedic formulations and related care practices.</p>
             </div>
             
           </div>
@@ -454,22 +380,17 @@ const AboutUsPage = () => {
                   title={<>Science Behind <br /> Every Drop</>} 
                   centered={false} 
                   animate={false}
-                  description="Behind-the-scenes view of Salmara's labs and processes — transparent, factual, and elegant."
+                  description="A closer look at the formulation and testing practices behind Salmara products."
                   descriptionClassName="text-lg mb-8"
                   className="mb-4"
                 />
                 
                 <div className="relative pl-8 border-l-2 border-accent/30 py-4">
                   <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed text-lg">
-                    "Every Salmara product follows a path of precision — from sourcing verified herbs to controlled formulation and purity testing. Every batch is standardized, GMP-audited, and produced under the supervision of experts."
+                    "From formulation to final batch, each stage is handled through a defined and controlled process."
                   </p>
                 </div>
 
-                <div className="pt-4">
-                  <Link to="/shop" className="inline-flex items-center gap-3 px-10 py-4 bg-primary text-white rounded-lg font-bold tracking-widest uppercase text-xs hover:bg-herbal-dark transition-all shadow-lg shadow-primary/20 group">
-                    Explore Our Products <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
               </div>
             </div>
 
@@ -479,25 +400,25 @@ const AboutUsPage = () => {
                 {[
                   { 
                     title: "Raw Material Verification", 
-                    desc: "Herbs sourced from trusted Ayurvedic farms, authenticated by lab reports.",
+                    desc: "Herbs are sourced through identified partners and checked before entering production.",
                     icon: <Leaf className="h-6 w-6" />,
                     step: "01"
                   },
                   { 
-                    title: "Quality Testing & Formulation", 
-                    desc: "Active ingredients measured under strict GMP protocols.",
+                    title: "Formulation and Quality Testing", 
+                    desc: "Ingredients are measured, processed, and tested under controlled manufacturing conditions.",
                     icon: <Microscope className="h-6 w-6" />,
                     step: "02"
                   },
                   { 
-                    title: "Packaging & Labelling", 
-                    desc: "Hygienic bottling, compliant with ISO & AYUSH standards.",
+                    title: "Packaging and Labelling", 
+                    desc: "Each batch is filled, labelled, and packed through compliant packaging processes.",
                     icon: <FlaskConical className="h-6 w-6" />,
                     step: "03"
                   },
                   { 
-                    title: "Distribution & Feedback", 
-                    desc: "Each batch traceable by QR code, ensuring transparency from production to customer.",
+                    title: "Distribution and Traceability", 
+                    desc: "Products remain linked to batch records and dispatch tracking for better traceability.",
                     icon: <ShieldCheck className="h-6 w-6" />,
                     step: "04"
                   }
@@ -523,14 +444,6 @@ const AboutUsPage = () => {
                       </div>
                     </div>
                     
-                    {/* Horizontal Arrow (Desktop Only) */}
-                    {i < arr.length - 1 && (
-                      <div className="absolute top-1/2 -right-4 -translate-y-1/2 z-20 hidden lg:block">
-                        <div className="h-8 w-8 bg-white border border-[#F2EDE4] rounded-full flex items-center justify-center text-accent shadow-sm">
-                          <ChevronRight className="h-4 w-4" />
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -543,42 +456,6 @@ const AboutUsPage = () => {
           `}} />
         </section>
 
-        {/* Testimonials */}
-        <section className="py-6 md:py-8 lg:py-10 xl:py-12 container px-4 overflow-hidden">
-          <SectionHeading 
-            title="Trust in Every Word" 
-            animate={false}
-          />
-          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-            <div className="bg-secondary p-10 rounded-3xl border border-black relative">
-              <div className="absolute top-8 right-8 text-primary/10 text-6xl font-display self-end">“</div>
-              <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed mb-6">
-                "Having used various brands, the transparency Salmara offers through their testing certificates changed how I perceive Ayurveda. It’s effective and reliable."
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs">RK</div>
-                <div>
-                  <p className="font-bold text-[#1A2E35] text-sm">Rakesh K.</p>
-                  <p className="text-[10px] uppercase text-[#1A2E35]/40 tracking-widest">Verified Customer</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-secondary p-10 rounded-3xl border border-black relative">
-              <div className="absolute top-8 right-8 text-primary/10 text-6xl font-display self-end">“</div>
-              <p className="text-[#1A2E35]/80 font-sans-clean italic leading-relaxed mb-6">
-                "Finally, an Ayurvedic brand that prioritizes quality standards over marketing. Their products have become a staple in my wellness routine."
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-xs">SP</div>
-                <div>
-                  <p className="font-bold text-[#1A2E35] text-sm">Sunita P.</p>
-                  <p className="text-[10px] uppercase text-[#1A2E35]/40 tracking-widest">Wellness Enthusiast</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* 8) Closing Section */}
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary border-t border-[#F2EDE4]">
@@ -607,14 +484,14 @@ const AboutUsPage = () => {
       {/* Lightbox for Award Images */}
       <AnimatePresence>
         {selectedAwardIndex !== null && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedAwardIndex(null)}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 md:p-12 cursor-zoom-out"
           >
-            <motion.div
+            <m.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -649,7 +526,7 @@ const AboutUsPage = () => {
               
               <div className="w-full h-full flex flex-col items-center justify-center p-4">
                 <div className="relative w-full h-[70vh] flex items-center justify-center">
-                  <motion.img 
+                  <m.img 
                     key={awards[selectedAwardIndex].img}
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -668,8 +545,8 @@ const AboutUsPage = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

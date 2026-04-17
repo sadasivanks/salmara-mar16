@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { MessageCircle, Phone, Users, ChevronUp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
+import { throttle } from "@/lib/utils";
 
 const buttons = [
   { icon: MessageCircle, label: "WhatsApp", color: "bg-green-600 hover:bg-green-700", href: "https://wa.me/919353436373?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products." },
@@ -12,17 +13,18 @@ const FloatingButtons = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
+    const toggleVisibility = throttle(() => {
       if (window.pageYOffset > 300) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
       }
-    };
+    }, 100);
 
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
+
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -35,7 +37,7 @@ const FloatingButtons = () => {
     <div className="fixed right-4 bottom-6 z-40 flex flex-col gap-3">
       <AnimatePresence>
         {isVisible && (
-          <motion.button
+          <m.button
             initial={{ opacity: 0, scale: 0.5, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
@@ -48,7 +50,7 @@ const FloatingButtons = () => {
             <span className="absolute right-14 top-1/2 -translate-y-1/2 bg-white text-[#1A2E35] text-xs font-bold px-3 py-1.5 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap pointer-events-none border border-[#F2EDE4] transform translate-x-2 group-hover:translate-x-0">
               Back to Top
             </span>
-          </motion.button>
+          </m.button>
         )}
       </AnimatePresence>
 

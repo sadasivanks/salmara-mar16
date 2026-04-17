@@ -14,7 +14,7 @@ import {
   HelpCircle,
   Star
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { getStoredSession, logoutAdmin } from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
 
@@ -48,7 +48,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }: AdminSidebarProps) => {
       {/* Mobile Overlay */}
       <AnimatePresence>
         {isMobileOpen && (
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

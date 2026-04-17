@@ -27,12 +27,6 @@ const SEO = ({
 
   return (
     <Helmet>
-      {/* Performance Optimization: Preconnect to Font Servers */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-      <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
       {/* Standard Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />

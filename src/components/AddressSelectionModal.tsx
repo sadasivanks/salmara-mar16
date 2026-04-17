@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { X, MapPin, Plus, Loader2, Check, ChevronRight } from "lucide-react";
 import { fetchCustomerViaAdmin, type Address } from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
@@ -90,7 +90,7 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
       {isOpen && (
         <div className="fixed inset-0 z-[999] flex flex-col justify-end sm:justify-center sm:items-center overflow-hidden touch-none">
           {/* Backdrop */}
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
@@ -99,7 +99,7 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
           />
           
           {/* Modal Container */}
-          <motion.div 
+          <m.div 
             initial={{ y: "100%" }} 
             animate={{ y: 0 }} 
             exit={{ y: "100%" }} 
@@ -130,7 +130,7 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
           {/* Processing Overlay */}
           <AnimatePresence>
             {isProcessing && (
-              <motion.div 
+              <m.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -146,7 +146,7 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
                   <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#5A7A5C] animate-pulse">Please wait...</p>
                   <p className="text-xs text-[#1A2E35]/40 font-sans-clean">Preparing your secure checkout</p>
                 </div>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
 
@@ -198,9 +198,9 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
                       selectedId === address.id ? 'border-[#5A7A5C] bg-[#5A7A5C]' : 'border-[#F2EDE4] group-hover:border-[#5A7A5C]/40'
                     }`}>
                       {selectedId === address.id && (
-                         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                         <m.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
                            <Check className="h-3.5 w-3.5 text-white stroke-[3px]" />
-                         </motion.div>
+                         </m.div>
                       )}
                     </div>
 
@@ -255,7 +255,7 @@ const AddressSelectionModal: React.FC<AddressSelectionModalProps> = ({
               Proceed to Payment <ChevronRight className="h-4 w-4" />
             </button>
           </div>
-        </motion.div>
+        </m.div>
         </div>
       )}
     </AnimatePresence>

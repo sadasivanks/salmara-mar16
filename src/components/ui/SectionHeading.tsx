@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface SectionHeadingProps {
@@ -64,13 +64,13 @@ export const SectionHeading = ({
   if (!animate) return content;
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6 }}
     >
       {content}
-    </motion.div>
+    </m.div>
   );
 };

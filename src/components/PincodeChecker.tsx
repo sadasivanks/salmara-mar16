@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Truck, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 const PincodeChecker = () => {
   const [pincode, setPincode] = useState('');
@@ -106,18 +106,18 @@ const PincodeChecker = () => {
 
       <AnimatePresence mode="wait">
         {error && (
-          <motion.div 
+          <m.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className="flex items-center gap-3 text-red-500 text-[10px] md:text-sm font-bold bg-red-50/50 p-4 rounded-2xl border border-red-100"
           >
             <AlertCircle className="h-4 w-4 shrink-0" /> {error}
-          </motion.div>
+          </m.div>
         )}
 
         {result && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, height: 0, y: 10 }}
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: 10 }}
@@ -151,7 +151,7 @@ const PincodeChecker = () => {
                 </div>
               </div>
             )}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

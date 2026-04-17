@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
-import bcrypt from "bcryptjs";
+// bcryptjs is lazily loaded inside the sync function to reduce bundle size
+
 
 interface ShopifyCustomer {
   id: string; // GID format: gid://shopify/Customer/123456789
@@ -83,9 +84,12 @@ export const syncShopifyCustomerToDb = async (customer: ShopifyCustomer) => {
     // Hash password if provided
     let hashedPassword = null;
     if (customer.password) {
+      // Dynamic import to keep bcryptjs out of the main bundle
+      const bcrypt = await import("bcryptjs");
       const salt = bcrypt.genSaltSync(10);
       hashedPassword = bcrypt.hashSync(customer.password, salt);
     }
+
 
     const userData = {
       role_id: roleId,

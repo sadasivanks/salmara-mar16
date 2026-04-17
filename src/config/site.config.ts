@@ -4,7 +4,7 @@ export const siteConfig = {
   logo: "/images/brand/salamara_icon.webp",
   contact: {
     phone: "+91-9353436373",
-    email: "office@salmaraayurveda.com",
+    email: "support@salmaraayurveda.com",
     whatsapp: "919353436373",
   },
   social: {

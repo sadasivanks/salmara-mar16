@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { 
   Mail, 
   MessageSquare, 
@@ -134,18 +134,18 @@ const ContactPage = () => {
           </div>
           
           <div className="container mx-auto px-6 md:px-4 text-center relative z-10">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
               <h1 className="text-[26px] sm:text-4xl md:text-6xl font-display font-medium text-[#1A2E35] mb-4 tracking-tight leading-tight px-2">
-                Connect With <span className="italic font-normal">Salmara Ayurveda</span>
+                Get in Touch with Salmara
               </h1>
               <p className="text-xs sm:text-base md:text-lg text-[#1A2E35]/60 font-sans-clean max-w-xl mx-auto leading-relaxed px-4">
-                Have a question, feedback, or collaboration idea? We'd love to hear from you.
+                Reach out for product queries, appointments, partnerships, or general support.
               </p>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -153,7 +153,7 @@ const ContactPage = () => {
         <section className="py-6 md:py-8 lg:py-10 xl:py-12 container mx-auto px-6 md:px-4">
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto items-stretch">
             {/* General Enquiries Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -164,13 +164,13 @@ const ContactPage = () => {
               </div>
 
               
-              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">General Enquiries</h2>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Email Support</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
-                For questions about products, orders, or website support.
+                For product questions, order support, website help, or general assistance.
               </p>
               
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
-                <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Primary Email</p>
+                <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">Email Support</p>
                 <a 
                   href={`mailto:${siteConfig.contact.email}`} 
                   className="bg-primary text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-herbal-dark transition-all shadow-lg shadow-primary/10 break-all sm:break-normal"
@@ -178,10 +178,10 @@ const ContactPage = () => {
                   {siteConfig.contact.email}
                 </a>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Clinic & Consultations Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -192,14 +192,14 @@ const ContactPage = () => {
               </div>
               
 
-              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Clinic & Consultations</h2>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Appointment Support</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
-                For appointments, doctor availability, or treatment info.
+                For clinic appointments, doctor availability, consultation requests, or treatment-related queries.
               </p>
               
               <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
               <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">
-                Secure Booking
+                Appointment Support
               </p>
 
               <a 
@@ -211,10 +211,10 @@ const ContactPage = () => {
                 Book Appointment <ArrowRight className="h-3 w-3" />
               </a>
             </div>
-            </motion.div>
+            </m.div>
 
             {/* Affiliate & Partnerships Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -225,24 +225,24 @@ const ContactPage = () => {
               </div>
   
 
-              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Affiliate & Partnerships</h2>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Brand and Affiliate</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
-                For collaborations, commissions, or marketing tie-ups.
+                For affiliate enquiries, brand collaborations, partnership discussions, or campaign opportunities.
               </p>
               
              <div className="mt-auto pt-8 border-t border-[#F2EDE4] space-y-4">
               <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-[0.2em]">
-                Join Network
+                Partner With Us
               </p>
 
               <Link 
                 to="/affiliate"
                 className="bg-primary text-white py-4 px-2 sm:px-4 rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-wider sm:tracking-[0.2em] flex items-center justify-center gap-1 sm:gap-2 hover:bg-herbal-dark transition-all shadow-lg shadow-primary/10 break-all sm:break-normal"
               >
-                Join the Program <ArrowRight className="h-3 w-3" />
+                Join the Affiliate Program <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
-            </motion.div>
+            </m.div>
           </div>
         </section>
 
@@ -254,8 +254,8 @@ const ContactPage = () => {
               {/* DETAILS SIDE */}
               <div className="space-y-12">
                 <SectionHeading 
-                  title="Our Communication Hub"
-                  description="For us, Ayurveda is a dialogue. We've dedicated teams for each touchpoint to ensure your inquiry reaches the right hands instantly."
+                  title="Talk to the Right Team"
+                  description="Share your query and our team will route it to the right point of contact for support, appointments, or partnerships."
                   centered={false}
                   animate={false}
                 />
@@ -266,8 +266,8 @@ const ContactPage = () => {
                       <Mail className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-primary mb-1.5">Doctor's Insight</h3>
-                      <p className="text-[#1A2E35] font-sans-clean font-medium">{siteConfig.contact.email}</p>
+                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1.5">Email Support</h3>
+                      <p className="text-[#1A2E35] font-sans-clean font-medium">info@salmaraayurveda.com</p>
                     </div>
                   </div>
                   
@@ -276,7 +276,7 @@ const ContactPage = () => {
                       <Phone className="h-5 w-5 text-accent" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Clinic Concierge</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Phone Support</p>
                       <p className="text-[#1A2E35] font-sans-clean font-medium">{siteConfig.contact.phone}</p>
                     </div>
                   </div>
@@ -287,7 +287,7 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 mb-1">Response Time</p>
-                      <p className="text-[#1A2E35] font-sans-clean font-medium">Within 24 Business Hours</p>
+                      <p className="text-[#1A2E35] font-sans-clean font-medium">Within 24 - 48 working hours</p>
                     </div>
                   </div>
                 </div>
@@ -297,8 +297,8 @@ const ContactPage = () => {
                     <div className="absolute top-0 right-0 p-4 opacity-5">
                       <Send className="h-20 w-20 rotate-12" />
                     </div>
-                    <h3 className="font-display font-medium text-[#1A2E35] mb-2">Need a faster response?</h3>
-                    <p className="text-xs text-[#1A2E35]/50 leading-relaxed mb-6 font-sans-clean">Chat with our experts on WhatsApp for immediate product guidance.</p>
+                    <h3 className="font-display font-medium text-[#1A2E35] mb-2">Need a quicker response?</h3>
+                    <p className="text-xs text-[#1A2E35]/50 leading-relaxed mb-6 font-sans-clean">Chat with us on WhatsApp for faster assistance with general product and order queries.</p>
                     <a 
                       href={`https://wa.me/${siteConfig.contact.whatsapp}?text=Hello%20Salmara%20Team,%20I%20would%20like%20to%20know%20more%20about%20your%20Ayurvedic%20wellness%20products.`}
                       target="_blank"
@@ -315,7 +315,7 @@ const ContactPage = () => {
               <div className="bg-white p-10 md:p-14 rounded-[3.5rem] border border-[#F2EDE4] shadow-2xl shadow-[#1A2E35]/5 relative">
                 <AnimatePresence mode="wait">
                   {formState === 'success' ? (
-                    <motion.div 
+                    <m.div 
                       key="success"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -332,9 +332,9 @@ const ContactPage = () => {
                       >
                         Send another message
                       </button>
-                    </motion.div>
+                    </m.div>
                   ) : (
-                    <motion.form 
+                    <m.form 
                       key="form"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -435,7 +435,7 @@ const ContactPage = () => {
                           <>Send Message <Send className="h-3 w-3" /></>
                         )}
                       </button>
-                    </motion.form>
+                    </m.form>
                   )}
                 </AnimatePresence>
               </div>
@@ -485,7 +485,7 @@ const ContactPage = () => {
                             </button>
                             <AnimatePresence>
                               {openFaq === i && (
-                                <motion.div
+                                <m.div
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: "auto", opacity: 1 }}
                                   exit={{ height: 0, opacity: 0 }}
@@ -494,7 +494,7 @@ const ContactPage = () => {
                                   <div className="px-6 pb-3 text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed border-t border-[#F2EDE4]/50 bg-secondary">
                                     {faq.a}
                                   </div>
-                                </motion.div>
+                                </m.div>
                               )}
                             </AnimatePresence>
                           </div>

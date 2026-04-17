@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Image } from "@/components/ui/Image";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
@@ -6,7 +6,7 @@ import { getStoredSession, logCheckoutToTerminal } from "@/lib/shopifyAdmin";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import AddressSelectionModal from "./AddressSelectionModal";
+const AddressSelectionModal = lazy(() => import("@/components/AddressSelectionModal"));
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -157,13 +157,15 @@ export const CartDrawer = () => {
       </Sheet>
 
       {getStoredSession()?.user?.id && (
-        <AddressSelectionModal 
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          customerId={getStoredSession()?.user?.id}
-          onSelect={onAddressSelect}
-          isProcessing={isCheckingOut}
-        />
+        <Suspense fallback={null}>
+          <AddressSelectionModal 
+            isOpen={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            customerId={getStoredSession()?.user?.id}
+            onSelect={onAddressSelect}
+            isProcessing={isCheckingOut}
+          />
+        </Suspense>
       )}
     </>
   );

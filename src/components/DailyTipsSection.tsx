@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { Image } from "@/components/ui/Image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef } from "react";
@@ -9,18 +9,18 @@ const skincareImg = "/images/lifestyle/skincare-wellness.webp";
 
 const tips = [
   {
-    title: "The Power of Neem",
-    snippet: "Discover the natural detoxifying properties of Neem for glowing, healthy skin and natural immunity.",
+    title: "Caring for the Scalp Naturally",
+    snippet: "In Ayurveda, hair health often begins with scalp care. Regular oiling, gentle cleansing, and attention to dryness or heat can help maintain better scalp comfort and stronger looking hair over time. Consistency matters more than doing too much at once.",
     image: neemImg,
   },
   {
-    title: "Mindful Meditation",
-    snippet: "Learn how daily meditation balances Vata, Pitta, and Kapha for lasting mental clarity and peace.",
+    title: "Why Digestion Matters in Ayurveda",
+    snippet: "Ayurveda gives great importance to digestion because it is seen as central to overall balance. Eating at regular times, choosing suitable foods, and avoiding excess heaviness can support a more comfortable and steady daily rhythm.",
     image: meditationImg,
   },
   {
-    title: "Morning Wellness Rituals",
-    snippet: "Easy-to-follow Ayurvedic rituals to kickstart your digestion and energy every single morning.",
+    title: "Daily Care for Body Comfort",
+    snippet: "Body discomfort is often made worse by strain, routine imbalance, or lack of proper care. In Ayurveda, supportive practices, regular attention, and suitable formulations are often used to help the body feel more at ease over time.",
     image: skincareImg,
   },
 ];
@@ -33,14 +33,15 @@ const DailyTipsSection = () => {
     <section id="tips" className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
         <SectionHeading 
-          title="Ayurvedic Tips for Vibrant Living" 
+          title="Daily Ayurvedic Insights" 
           eyebrow="DAILY WISDOM" 
           animate={false}
+          titleClassName="text-[22px] xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl whitespace-nowrap"
         />
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
           {tips.map((tip, i) => (
-            <motion.article
+            <m.article
               key={tip.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -58,7 +59,7 @@ const DailyTipsSection = () => {
                 <h3 className="font-display font-bold text-[#1A2E35] text-xl mb-4 leading-tight group-hover:text-[#5A7A5C] transition-colors">
                   {tip.title}
                 </h3>
-                <p className="text-[#4A5568] font-body text-sm leading-relaxed mb-6 line-clamp-2">
+                <p className="text-[#4A5568] font-body text-[13px] md:text-sm leading-relaxed mb-6 text-justify">
                   {tip.snippet}
                 </p>
                 {/* <div className="flex items-center gap-1.5 text-[#5A7A5C] font-sans-clean text-xs font-bold uppercase tracking-wider group/link">
@@ -66,7 +67,7 @@ const DailyTipsSection = () => {
                   <ArrowRight className="h-4 w-4 group-hover/link:translate-x-1 transition-transform" />
                 </div> */}
               </div>
-            </motion.article>
+            </m.article>
           ))}
         </div>
       </div>

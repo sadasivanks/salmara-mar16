@@ -33,7 +33,7 @@ import {
   cancelOrderViaAdmin 
 } from "@/lib/shopifyAdmin";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
 import { Image } from "@/components/ui/Image";
@@ -344,7 +344,7 @@ const Dashboard = () => {
         <div className="max-w-5xl mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === "profile" && (
-              <motion.div
+              <m.div
                 key="profile"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -460,11 +460,11 @@ const Dashboard = () => {
                     </button>
                   </div>
                 </form>
-              </motion.div>
+              </m.div>
             )}
 
             {activeTab === "orders" && (
-              <motion.div
+              <m.div
                 key="orders"
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -489,7 +489,7 @@ const Dashboard = () => {
                 ) : (orders.length > 0 ) ? (
                   <div className="grid gap-6">
                    {orders.map((order) => (
-                      <motion.div 
+                      <m.div 
                         key={order.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -622,7 +622,7 @@ const Dashboard = () => {
                             </div>
                           ))}
                         </div>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </div>
                 ) : (
@@ -635,7 +635,7 @@ const Dashboard = () => {
                     <Link to="/shop" className="mt-10 px-8 py-4 bg-[#5A7A5C] text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#4a654c] transition-colors">Shop Products</Link>
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             )}
             
             {activeTab === "cart" && (
@@ -659,14 +659,14 @@ const Dashboard = () => {
       <AnimatePresence>
         {showCancelPrompt && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <motion.div 
+            <m.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowCancelPrompt(false)}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
-            <motion.div 
+            <m.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -698,7 +698,7 @@ const Dashboard = () => {
                   Confirm
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
@@ -750,14 +750,14 @@ const TrackingModal = ({ order, onClose }: { order: any; onClose: () => void }) 
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div 
+      <m.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
         className="absolute inset-0 bg-[#1A2E35]/60 backdrop-blur-sm"
       />
-      <motion.div 
+      <m.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         className="relative w-full max-w-xl bg-white rounded-[32px] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
@@ -827,7 +827,7 @@ const TrackingModal = ({ order, onClose }: { order: any; onClose: () => void }) 
 
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 };
@@ -846,7 +846,7 @@ const DashboardCart = ({
 
   if (items.length === 0) {
     return (
-      <motion.div
+      <m.div
         key="cart-empty"
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -859,12 +859,12 @@ const DashboardCart = ({
         <h2 className="text-2xl font-display font-medium text-[#1A2E35]">Your cart is empty</h2>
         <p className="text-sm text-[#1A2E35]/60 mt-2 max-w-sm">Looks like you haven't added any Ayurvedic treasures yet.</p>
         <Link to="/shop" className="mt-10 px-8 py-4 bg-[#5A7A5C] text-white rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-[#4a654c] transition-colors">Explore Collection</Link>
-      </motion.div>
+      </m.div>
     );
   }
 
   return (
-    <motion.div
+    <m.div
       key="cart-content"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -964,7 +964,7 @@ const DashboardCart = ({
           </button>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

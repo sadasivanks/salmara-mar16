@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { m, AnimatePresence, useInView } from "framer-motion";
 import { 
   Search, 
   Filter, 
@@ -29,10 +29,13 @@ import {
   fetchBulkReviews,
   type ShopifyCollection
 } from "@/lib/shopifyAdmin";
+import { throttle } from "@/lib/utils";
 import { useCartStore } from "@/stores/cartStore";
+
 import { useWishlistStore } from "@/stores/wishlistStore";
 import { toast } from "sonner";
-import AddressSelectionModal from "@/components/AddressSelectionModal";
+import { lazy, Suspense } from "react";
+const AddressSelectionModal = lazy(() => import("@/components/AddressSelectionModal"));
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Image } from "@/components/ui/Image";
 import SEO from "@/components/SEO";
@@ -155,13 +158,14 @@ const ShopPage = () => {
     }
 
     // Scroll listener for sticky header 'dull' effect
-    const handleScroll = () => {
+    const handleScroll = throttle(() => {
       setIsScrolled(window.scrollY > 120);
-    };
+    }, 50);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
 
   // Derived Categories from Shopify Collections
   const categories = useMemo(() => {
@@ -338,12 +342,7 @@ const ShopPage = () => {
         {/* 3) Filter & Sort Bar */}
         <section 
           id="product-grid" 
-          className={cn(
-            "sticky top-[64px] lg:top-[80px] z-30 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2",
-            isScrolled 
-              ? "bg-white/60 backdrop-blur-xl opacity-60 hover:opacity-100 shadow-none border-[#F2EDE4]/30" 
-              : "bg-white/95 backdrop-blur-md shadow-sm opacity-100"
-          )}
+          className="relative z-30 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2 bg-white"
         >
           <div className="container px-4">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
@@ -379,7 +378,7 @@ const ShopPage = () => {
               {/* Selective Filters Content */}
               <AnimatePresence>
                 {(showMobileFilters || (typeof window !== 'undefined' && window.innerWidth >= 1024)) && (
-                  <motion.div
+                  <m.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -476,7 +475,7 @@ const ShopPage = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
             </div>
@@ -533,7 +532,7 @@ const ShopPage = () => {
                   const displayPrice = getProductDisplayPrice(product);
                   
                   return (
-                    <motion.div
+                    <m.div
                       key={product.node.id}
                       initial={{ opacity: 0, y: 30 }}
                       animate={isGridInView ? { opacity: 1, y: 0 } : {}}
@@ -607,16 +606,10 @@ const ShopPage = () => {
                             );
                           })()}
                         </div>
-                        <div className="min-h-[40px] mb-3">
+                        <div className="mb-3">
                           <p className="text-muted-foreground font-body text-sm line-clamp-2">
                             {product.node.description}
                           </p>
-                          <Link 
-                            to={`/product/${product.node.handle}`} 
-                            className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition-colors mt-1 inline-block"
-                          >
-                            Read more +
-                          </Link>
                         </div>
 
                         {displayPrice.amount > 0 && (
@@ -675,7 +668,7 @@ const ShopPage = () => {
                           </div>
                         )}
                       </div>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>
@@ -728,13 +721,15 @@ const ShopPage = () => {
 
       {/* Address Selection Modal */}
       {selectedProductForCheckout && (
-        <AddressSelectionModal
-          isOpen={isAddressModalOpen}
-          onClose={() => setIsAddressModalOpen(false)}
-          customerId={getStoredSession()?.user?.id || ""}
-          onSelect={onAddressSelect}
-          isProcessing={!!buyingId}
-        />
+        <Suspense fallback={null}>
+          <AddressSelectionModal
+            isOpen={isAddressModalOpen}
+            onClose={() => setIsAddressModalOpen(false)}
+            customerId={getStoredSession()?.user?.id || ""}
+            onSelect={onAddressSelect}
+            isProcessing={!!buyingId}
+          />
+        </Suspense>
       )}
     </div>
   );

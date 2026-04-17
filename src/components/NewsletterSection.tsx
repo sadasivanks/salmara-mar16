@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Mail, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -49,7 +49,7 @@ const NewsletterSection = () => {
   return (
     <section className="py-6 md:py-8 lg:py-10 xl:py-12 bg-secondary" ref={ref}>
       <div className="container mx-auto px-4">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -86,7 +86,7 @@ const NewsletterSection = () => {
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "SUBSCRIBE"}
             </button>
           </form>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

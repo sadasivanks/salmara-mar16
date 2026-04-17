@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { useRef, useEffect, useState } from "react";
 import { Leaf, Loader2, Star, Trophy, ShieldCheck, Sparkles, ArrowRight, Heart, ShoppingCart } from "lucide-react";
@@ -88,7 +88,7 @@ const ProductList = () => {
             className="mb-0"
           />
           
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -100,7 +100,7 @@ const ProductList = () => {
               <span className="text-xs font-bold uppercase tracking-widest">Explore All</span>
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </motion.div>
+          </m.div>
         </div>
 
         {loading ? (
@@ -120,7 +120,7 @@ const ProductList = () => {
               const displayPrice = getDisplayPrice(product);
 
               return (
-                <motion.div
+                <m.div
                   key={product.node.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -252,7 +252,7 @@ const ProductList = () => {
                       </button>
                     )}
                   </div>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>

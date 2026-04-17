@@ -19,7 +19,18 @@ export function useCartSync() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') syncCart();
     };
+
+    const handleRestore = () => {
+      syncCart();
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('app-restored-from-cache', handleRestore);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('app-restored-from-cache', handleRestore);
+    };
   }, [syncCart, clearCart]);
 }
+

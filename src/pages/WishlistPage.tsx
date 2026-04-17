@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Heart, ShoppingBag, Trash2, ArrowRight, Loader2, Star, Leaf } from "lucide-react";
@@ -76,7 +76,7 @@ const WishlistPage = () => {
         quantity: 1,
         selectedOptions: variant.selectedOptions || [],
       });
-      toast.success("Added to cart", { description: item.product.node.title });
+      toast.success("Added to cart", { description: productNode.title });
     } catch (error) {
       toast.error("Failed to add to cart");
     }
@@ -93,7 +93,7 @@ const WishlistPage = () => {
       <main className="container mx-auto px-4 py-6 md:py-8 lg:py-10 xl:py-12">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-6">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
@@ -106,17 +106,17 @@ const WishlistPage = () => {
               className="mb-0"
               animate={false}
             />
-            </motion.div>
+            </m.div>
 
             {items.length > 0 && (
-              <motion.button
+              <m.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 onClick={() => clearWishlist()}
                 className="text-[10px] font-bold uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors border-b border-transparent hover:border-red-500 pb-1"
               >
                 Clear All
-              </motion.button>
+              </m.button>
             )}
           </div>
 
@@ -127,7 +127,8 @@ const WishlistPage = () => {
                 <p className="text-[#1A2E35]/40 font-body animate-pulse">Retrieving your favorites...</p>
               </div>
             ) : items.length === 0 ? (
-              <motion.div
+              <m.div
+                key="empty-wishlist"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -147,7 +148,7 @@ const WishlistPage = () => {
                 >
                   Start Exploring <ArrowRight className="h-4 w-4" />
                 </Link>
-              </motion.div>
+              </m.div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {items.map((item, idx) => {
@@ -158,7 +159,7 @@ const WishlistPage = () => {
                   const variant = productNode.variants?.edges?.[0]?.node;
 
                   return (
-                    <motion.div
+                    <m.div
                       key={item.variantId}
                       layout
                       initial={{ opacity: 0, y: 20 }}
@@ -198,10 +199,10 @@ const WishlistPage = () => {
                             </p>
                           </div>
                         {variant && (
-  <span className="text-lg font-medium text-[#1A2E35] font-[Inter]">
-    ₹{parseInt(variant.price.amount)}
-  </span>
-)}
+                          <span className="text-lg font-medium text-[#1A2E35] font-[Inter]">
+                            ₹{parseInt(variant.price.amount)}
+                          </span>
+                        )}
                         </div>
 
                         <div className="flex items-center gap-2 mb-8">
@@ -249,7 +250,7 @@ const WishlistPage = () => {
                             </button>
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
                   );
                 })}
               </div>

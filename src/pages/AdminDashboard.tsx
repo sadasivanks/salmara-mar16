@@ -9,7 +9,7 @@ import {
   HelpCircle,
   ArrowRight
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 
@@ -54,7 +54,7 @@ const AdminDashboard = () => {
   }, []);
 
   const StatCard = ({ icon: Icon, label, value, path, color }: any) => (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white p-8 rounded-[2.5rem] border border-[#F2EDE4] shadow-sm hover:shadow-xl transition-all group relative overflow-hidden"
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
       <h3 className="text-4xl font-[Inter] font-semibold text-[#1A2E35] tracking-tight">
         {loading ? "..." : value}
       </h3>
-    </motion.div>
+    </m.div>
   );
 
   return (
@@ -80,21 +80,21 @@ const AdminDashboard = () => {
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
-          <motion.p 
+          <m.p 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             className="text-[#C5A059] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em]"
           >
             Overview
-          </motion.p>
-          <motion.h1 
+          </m.p>
+          <m.h1 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-display font-medium text-[#1A2E35]"
           >
             Dashboard
-          </motion.h1>
+          </m.h1>
         </div>
         <div className="flex items-center gap-3 bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 shadow-sm">
           <Clock className="h-4 w-4 text-[#1A2E35]/30" />
@@ -136,7 +136,7 @@ const AdminDashboard = () => {
 
       {/* Management Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <motion.div 
+        <m.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
@@ -156,9 +156,9 @@ const AdminDashboard = () => {
           <Link to="/admin-salmara/testimonials" className="mt-8 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#1A2E35] group-hover:text-[#C5A059] transition-colors">
              Manage Proof <ArrowRight className="h-3 w-3" />
           </Link>
-        </motion.div>
+        </m.div>
 
-        <motion.div 
+        <m.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
@@ -175,7 +175,7 @@ const AdminDashboard = () => {
           <Link to="/admin-salmara/subscribers" className="mt-8 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-[#C5A059] group-hover:text-white transition-colors relative z-10">
              Export Audience <ArrowRight className="h-3 w-3" />
           </Link>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

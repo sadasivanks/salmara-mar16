@@ -6,6 +6,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fill?: boolean;
   quality?: number;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
+  displayWidth?: number; // Hint: actual rendered width in pixels
 }
 
 const optimizeShopifyUrl = (url: string, width?: number | string, quality: number = 80) => {
@@ -33,6 +34,8 @@ const Image = ({
   loading = "lazy",
   onLoad,
   objectFit = "cover",
+  displayWidth,
+  sizes: sizesProp,
   ...props 
 }: ImageProps) => {
   const [loaded, setLoaded] = useState(false);
@@ -46,6 +49,11 @@ const Image = ({
         .join(', ')
     : undefined;
 
+  // Build sizes attribute: use explicit prop, or derive from displayWidth hint, or fallback
+  const sizes = sizesProp 
+    || (displayWidth ? `${displayWidth}px` : undefined)
+    || (fill ? "100vw" : undefined);
+
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
     setLoaded(true);
     if (onLoad) (onLoad as any)(event);
@@ -57,7 +65,7 @@ const Image = ({
       <img
         src={optimizedSrc}
         srcSet={srcSet}
-        sizes={props.sizes || (fill ? "100vw" : undefined)}
+        sizes={sizes}
         alt={alt}
         width={width}
         height={height}
