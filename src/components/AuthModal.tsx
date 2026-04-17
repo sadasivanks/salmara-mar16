@@ -287,7 +287,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialVi
       }
 
       toast.success("Account created successfully!");
-
+      setOtp(""); // Clear reg OTP state
+      
       // Auto-login after registration
       const loginResult = await loginViaProxy(email, password);
       if (loginResult.success) {

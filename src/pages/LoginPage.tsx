@@ -350,6 +350,7 @@ const LoginPage = () => {
       }
 
       toast.success("Account verified successfully!");
+      setOtp(""); // Clear reg OTP state
       
       const loginResult = await loginViaProxy(email, password);
       if (loginResult.success) {
