@@ -1020,12 +1020,27 @@ const ProductDetail = () => {
                         </div>
                         <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">Based on {safeReviews.length} verified reviews</p>
                       </div>
-                      <button 
-                        onClick={() => setReviewModalOpen(true)}
-                        className="bg-[#1A2E35] text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-all shadow-lg active:scale-95"
-                      >
-                        Write a Review
-                      </button>
+                      <div className="flex flex-col items-center md:items-end gap-3">
+                        <button 
+                          onClick={() => setReviewModalOpen(true)}
+                          disabled={!hasPurchased || isCheckingEligibility}
+                          className={`px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95 flex items-center gap-2 ${
+                            (!hasPurchased || isCheckingEligibility)
+                              ? 'bg-[#1A2E35]/10 text-[#1A2E35]/40 cursor-not-allowed shadow-none'
+                              : 'bg-[#1A2E35] text-white hover:bg-primary'
+                          }`}
+                        >
+                          {isCheckingEligibility ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : null}
+                          {isCheckingEligibility ? 'Checking eligibility...' : 'Write a Review'}
+                        </button>
+                        {!hasPurchased && !isCheckingEligibility && (
+                          <p className="text-[9px] font-bold text-[#C5A059] uppercase tracking-wider italic">
+                            Only verified buyers can leave a review
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-8">
