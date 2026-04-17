@@ -887,12 +887,12 @@ const ProductDetail = () => {
                             const [name, ...descParts] = line.trim().split(/\s*[—–-]\s*/);
                             return (
                               <div key={i} className="flex gap-4 items-start group">
-                                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors">
-                                  <Leaf className="h-3 w-3 text-primary" />
+                                <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors">
+                                  <Leaf className="h-4 w-4 text-primary" />
                                 </div>
                                 <div>
-                                  <p className="text-[11px] font-bold text-[#1A2E35] uppercase tracking-widest mb-1">{name}</p>
-                                  {descParts.length > 0 && <p className="text-[11px] text-[#1A2E35]/50 italic font-sans-clean leading-relaxed">{descParts.join(' — ')}</p>}
+                                  <p className="text-base font-bold text-[#1A2E35] uppercase tracking-wider mb-2">{name}</p>
+                                  {descParts.length > 0 && <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed">{descParts.join(' — ')}</p>}
                                 </div>
                               </div>
                             );
