@@ -77,8 +77,7 @@ const ProductDetail = () => {
   const { addItem, isLoading } = useCartStore();
   const { toggleItem, isInWishlist } = useWishlistStore();
   const { addReview, getReviews, getAverageRating } = useReviewStore();
-  const { addQuestion } = useQuestionStore();
-
+  const [activeTab, setActiveTab] = useState<'description' | 'additional' | 'shipping' | 'faq' | 'reviews'>('description');
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
@@ -615,7 +614,7 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            <div className="space-y-10 lg:mt-6">
+            <div className="space-y-6 lg:mt-2">
               <div className="space-y-4">
                 <m.div
                   initial={{ opacity: 0, x: -20 }}
@@ -629,54 +628,11 @@ const ProductDetail = () => {
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-medium text-[#1A2E35] leading-tight tracking-tight">
                   {product.title}
                 </h1>
-                
-                <p className="text-lg text-[#1A2E35]/50 font-sans-clean leading-relaxed max-w-md text-justify">
-                   {subtitle}
-                </p>
 
-                <div className="flex flex-wrap items-center gap-6 pt-2">
-                  {(keyHighlights.length > 0 ? keyHighlights : []).map((item, idx) => {
-                    const t = item.toLowerCase();
-                    // const icon = t.includes("herbal")
-                    //   ? <Leaf className="h-4 w-4 text-[#C5A059]" />
-                    //   : t.includes("clinical")
-                    //   ? <CheckCircle2 className="h-4 w-4 text-[#5A7A5C]" />
-                    //   : <ShieldCheck className="h-4 w-4 text-[#5A7A5C]" />;
-                    return (
-                      <div key={`${item}-${idx}`} className="flex items-center gap-2 text-xs font-bold text-[#1A2E35]/60 uppercase tracking-widest">
-                         {item}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-4xl font-sans-clean font-bold text-[#1A2E35]">
-                      {hasValidMetafieldPrice ? '₹' : (selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode)}{' '}
-                      {hasValidMetafieldPrice ? selectedMetafieldPrice.toFixed(2) : parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
-                    </span>
-                  </div>
-                  
-                  {selectedVariant?.compareAtPrice && parseFloat(selectedVariant.compareAtPrice.amount) > parseFloat(selectedVariant.price.amount) && (
-                    <div className="flex flex-col justify-center">
-                      <span className="text-sm text-[#1A2E35]/30 line-through">
-                        {selectedVariant.compareAtPrice.currencyCode === 'INR' ? '₹' : selectedVariant.compareAtPrice.currencyCode}{' '}
-                        {parseFloat(selectedVariant.compareAtPrice.amount).toFixed(2)}
-                      </span>
-                      <span className="text-[#5A7A5C] text-[10px] font-bold uppercase tracking-wider">
-                        Save {Math.round(((parseFloat(selectedVariant.compareAtPrice.amount) - parseFloat(selectedVariant.price.amount)) / parseFloat(selectedVariant.compareAtPrice.amount)) * 100)}% Today
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 mb-6 whitespace-nowrap">
+                <div className="flex items-center gap-4 whitespace-nowrap">
                   {safeReviews.length > 0 ? (
-                    <>
-                      <div className="flex gap-1 shrink-0">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-0.5 shrink-0">
                         {[1, 2, 3, 4, 5].map((s) => (
                           <Star 
                             key={s} 
@@ -684,40 +640,60 @@ const ProductDetail = () => {
                           />
                         ))}
                       </div>
-                      <span className="text-xs font-bold text-[#1A2E35] shrink-0">
-                        {averageRating}
+                      <span className="text-xs font-bold text-[#1A2E35] shrink-0 font-sans-clean">
+                        {averageRating} <span className="text-[#1A2E35]/30">({safeReviews.length} Reviews)</span>
                       </span>
-                    </>
-                  ) : (
-                    <div className="flex items-center gap-1">
-                      <div className="flex gap-1 shrink-0">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <Star key={s} className="h-4 w-4 text-[#F2EDE4]" />
-                        ))}
-                      </div>
-                      <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tight uppercase">New Launch / No reviews yet</span>
                     </div>
+                  ) : (
+                    <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tight uppercase italic">No reviews yet</span>
                   )}
-                  <a href="#reviews" className="text-xs text-[#1A2E35]/40 shrink-0 hover:text-[#5A7A5C] underline underline-offset-4">
-                    ({safeReviews.length} reviews)
-                  </a>
+
+                  {selectedVariant?.availableForSale && (
+                    <>
+                      <div className="h-3 w-px bg-[#F2EDE4] mx-1" />
+                      <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#5A7A5C]/10 text-[#5A7A5C] rounded-full">
+                        <div className="h-1 w-1 rounded-full bg-[#5A7A5C] animate-pulse" />
+                        <span className="text-[9px] font-bold uppercase tracking-widest">In Stock</span>
+                      </div>
+                    </>
+                  )}
                 </div>
+                
+                <div className="flex items-baseline gap-3 pt-2">
+                  <span className="text-3xl font-sans-clean font-bold text-[#C5A059]">
+                    {hasValidMetafieldPrice ? '₹' : (selectedVariant?.price.currencyCode === 'INR' ? '₹' : selectedVariant?.price.currencyCode)}{' '}
+                    {hasValidMetafieldPrice ? selectedMetafieldPrice.toFixed(2) : parseFloat(selectedVariant?.price.amount || "0").toFixed(2)}
+                  </span>
+                  
+                  {selectedVariant?.compareAtPrice && parseFloat(selectedVariant.compareAtPrice.amount) > parseFloat(selectedVariant.price.amount) && (
+                    <span className="text-lg text-[#1A2E35]/30 line-through">
+                      {selectedVariant.compareAtPrice.currencyCode === 'INR' ? '₹' : selectedVariant.compareAtPrice.currencyCode}{' '}
+                      {parseFloat(selectedVariant.compareAtPrice.amount).toFixed(2)}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-base text-[#1A2E35]/60 font-sans-clean leading-relaxed max-w-lg">
+                   {subtitle}
+                </p>
               </div>
 
+
+
               {(hasMultipleVariants || usesMetafieldVariantOptions) && (
-                <div className="space-y-4">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1">Select Format</label>
-                  <div className="flex flex-wrap gap-3">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1">Size/Volume</label>
+                  <div className="flex flex-wrap gap-2">
                     {hasMultipleVariants ? (
                       variants.map((v: any, i: number) => (
                         <button
                           key={v.node.id}
                           onClick={() => { setSelectedVariantIdx(i); setSelectedImage(0); }}
                           disabled={!v.node.availableForSale}
-                          className={`px-8 py-4 rounded-2xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
+                          className={`px-5 py-2.5 rounded-xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
                             i === selectedVariantIdx
-                              ? 'bg-[#1A2E35] border-[#1A2E35] text-white shadow-[#1A2E35]/20 shadow-xl'
-                              : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-[#5A7A5C]'
+                              ? 'bg-primary border-primary text-white shadow-lg'
+                              : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-primary/30'
                           } ${!v.node.availableForSale ? 'opacity-40 cursor-not-allowed' : ''}`}
                         >
                           {v.node.title}
@@ -730,10 +706,10 @@ const ProductDetail = () => {
                           <button
                             key={`meta-option-${i}`}
                             onClick={() => setSelectedMetafieldOptionIdx(i)}
-                            className={`px-8 py-4 rounded-2xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
+                            className={`px-5 py-2.5 rounded-xl text-[10px] font-bold transition-all border uppercase tracking-widest ${
                               i === selectedMetafieldOptionIdx
-                                ? 'bg-[#1A2E35] border-[#1A2E35] text-white shadow-[#1A2E35]/20 shadow-xl'
-                                : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-[#5A7A5C]'
+                                ? 'bg-primary border-primary text-white shadow-lg'
+                                : 'bg-white border-[#F2EDE4] text-[#1A2E35] hover:border-primary/30'
                             }`}
                           >
                             {label}
@@ -801,300 +777,292 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* Detailed Description Section */}
-          <div className="pt-2 md:pt-4 lg:pt-6 border-t border-[#F2EDE4]">
-            <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 lg:space-y-10 xl:space-y-12">
-              <div className="space-y-2">
-                <label className="text-[10px] md:text-sm font-bold uppercase tracking-widest text-[#1A2E35]/40 px-1 font-sans-clean">Detailed Description</label>
-                <div 
-                  className="text-sm md:text-base text-[#1A2E35]/70 font-sans-clean leading-relaxed prose prose-stone max-w-none 
-                             prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35] text-justify"
-                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
-                />
-              </div>
-
-              {/* Combined Clinical Guidance & Doctor's Insight */}
-              <m.div 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-[2rem] md:rounded-[3.5rem] p-6 md:p-12 relative overflow-hidden"
-              >
-                <div className="absolute top-0 right-0 w-48 md:w-64 h-48 md:h-64 bg-[#5A7A5C]/10 rounded-full blur-2xl md:blur-3xl -mr-24 md:-mr-32 -mt-24 md:-mt-32" />
-                
-                <div className="relative z-10 grid lg:grid-cols-12 gap-8 md:gap-10 lg:gap-16 items-center">
-                  <div className="lg:col-span-7 space-y-4 md:space-y-6">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-white p-2.5 md:p-3 rounded-xl md:rounded-2xl shadow-sm">
-                        <Leaf className="h-4 w-4 md:h-5 md:w-5 text-[#5A7A5C]" />
-                      </div>
-                      <h2 className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-[#5A7A5C] font-sans-clean">Doctor's Clinical Insight</h2>
-                    </div>
-                    
-                    {getMetafieldValue('doctorsinsight') ? (
-                      <blockquote className="text-base md:text-lg lg:text-xl text-[#1A2E35]/80 font-sans-clean leading-relaxed italic border-l-4 border-[#5A7A5C]/20 pl-4 md:pl-6">
-                        "{getMetafieldValue('doctorsinsight')}"
-                      </blockquote>
-                    ) : (
-                      <p className="text-sm text-[#1A2E35]/40 italic px-1 font-sans-clean">Expert clinical analysis for this formulation is being finalized.</p>
+          {/* Tabs Section */}
+          <div className="mt-16 md:mt-24">
+            <div className="flex items-center justify-center border-b border-[#F2EDE4] mb-12">
+              <div className="flex gap-6 md:gap-12 flex-wrap justify-center">
+                {(['description', 'additional', 'shipping', 'faq', 'reviews'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`pb-4 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] transition-all relative whitespace-nowrap ${
+                      activeTab === tab ? 'text-primary' : 'text-[#1A2E35]/30 hover:text-[#1A2E35]'
+                    }`}
+                  >
+                    {tab === 'shipping' ? 'Shipping & Returns' : tab === 'faq' ? 'FAQ' : tab}
+                    {activeTab === tab && (
+                      <m.div 
+                        layoutId="activeTab"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" 
+                      />
                     )}
-                  </div>
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                  <div className="lg:col-span-5 bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-[#5A7A5C]/10 shadow-xl shadow-[#5A7A5C]/5 space-y-5 md:space-y-6">
-                    <div>
-                      <h3 className="text-[11px] md:text-xs font-bold text-[#1A2E35] uppercase tracking-widest mb-1 md:mb-2 font-sans-clean">Need Guidance?</h3>
-                      <p className="text-[11px] md:text-xs text-[#1A2E35]/50 leading-relaxed font-sans-clean">
-                        Connect with our Ayurvedic practitioners for personalized advice on how to integrate this formulation into your regimen.
-                      </p>
+            <div className="min-h-[400px]">
+              <AnimatePresence mode="wait">
+                {activeTab === 'description' && (
+                  <m.div
+                    key="description"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-12"
+                  >
+                    <div 
+                      className="text-sm md:text-base text-[#1A2E35]/70 font-sans-clean leading-relaxed prose prose-stone max-w-none 
+                                 prose-p:mb-5 prose-p:leading-loose prose-strong:text-[#1A2E35] prose-strong:font-bold prose-headings:font-display prose-headings:text-[#1A2E35]"
+                      dangerouslySetInnerHTML={{ __html: product.descriptionHtml || product.description }}
+                    />
+
+                    {/* Clinical Insight */}
+                    <div className="bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-3xl p-8 md:p-12">
+                      <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        <div className="space-y-6">
+                          <div className="flex items-center gap-3">
+                            <Stethoscope className="h-5 w-5 text-[#5A7A5C]" />
+                            <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#5A7A5C]">Doctor's Insight</h2>
+                          </div>
+                          {getMetafieldValue('doctorsinsight') ? (
+                            <p className="text-lg text-[#1A2E35]/80 font-sans-clean italic leading-relaxed">
+                              "{getMetafieldValue('doctorsinsight')}"
+                            </p>
+                          ) : (
+                            <p className="text-sm text-[#1A2E35]/40 italic">Expert clinical analysis for this formulation is being finalized.</p>
+                          )}
+                        </div>
+                        <div className="bg-white rounded-2xl p-6 border border-[#5A7A5C]/10 shadow-sm">
+                          <h3 className="text-xs font-bold text-[#1A2E35] uppercase tracking-widest mb-2">Need Personalized Advice?</h3>
+                          <p className="text-xs text-[#1A2E35]/50 mb-6 font-sans-clean">Connect with our Ayurvedic practitioners for guidance on this formulation.</p>
+                          <a 
+                            href={`https://wa.me/919353436373?text=${encodeURIComponent(`Hello Salmara Team, I would like to consult a doctor regarding ${product.title}.`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest border-b border-primary pb-1 hover:gap-3 transition-all"
+                          >
+                            Consult via WhatsApp <ArrowRight className="h-3 w-3" />
+                          </a>
+                        </div>
+                      </div>
                     </div>
-                    <a 
-                      href={`https://wa.me/919353436373?text=${encodeURIComponent(`Hello Salmara Team, I would like to consult a doctor regarding ${product.title}.`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full bg-[#5A7A5C] text-white h-14 md:h-16 rounded-xl md:rounded-2xl font-bold uppercase tracking-widest text-[9px] md:text-[10px] hover:bg-[#4A634B] transition-all shadow-lg shadow-[#5A7A5C]/20 flex items-center justify-center gap-3 group"
-                    >
-                      <MessageCircle className="h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:scale-110" />
-                      Consult via WhatsApp
-                    </a>
-                  </div>
-                </div>
-              </m.div>
+                  </m.div>
+                )}
+
+                {activeTab === 'additional' && (
+                  <m.div
+                    key="additional"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-16"
+                  >
+                    {/* Benefits Section */}
+                    {getMetafieldValue('benefits') && (
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {getMetafieldValue('benefits').split(/[,\n]+/).map((benefit: string, i: number) => {
+                          const [title, ...descParts] = benefit.split(/\s*[—–-]\s*/);
+                          return (
+                            <div key={i} className="space-y-3">
+                              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-5">
+                                {getBenefitIcon(title)}
+                              </div>
+                              <h4 className="font-display font-bold text-base text-[#1A2E35] tracking-tight mb-2">{title}</h4>
+                              {descParts.length > 0 && (
+                                <p className="text-xs text-[#1A2E35]/60 font-sans-clean leading-loose italic">{descParts.join(' — ')}</p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Ingredients Section */}
+                    {getMetafieldValue('ingredients') && (
+                      <div className="pt-12 border-t border-[#F2EDE4]">
+                        <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#1A2E35]/30 mb-8">Key Ingredients</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
+                          {getMetafieldValue('ingredients').split(/\n+/).map((line: string, i: number) => {
+                            const [name, ...descParts] = line.trim().split(/\s*[—–-]\s*/);
+                            return (
+                              <div key={i} className="flex gap-4 items-start group">
+                                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors">
+                                  <Leaf className="h-3 w-3 text-primary" />
+                                </div>
+                                <div>
+                                  <p className="text-[11px] font-bold text-[#1A2E35] uppercase tracking-widest mb-1">{name}</p>
+                                  {descParts.length > 0 && <p className="text-[11px] text-[#1A2E35]/50 italic font-sans-clean leading-relaxed">{descParts.join(' — ')}</p>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Technical Specs Table */}
+                    <div className="pt-12 border-t border-[#F2EDE4]">
+                      <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#1A2E35]/30 mb-8">Product Specifications</h3>
+                      <div className="overflow-hidden rounded-2xl border border-[#F2EDE4]">
+                        <table className="w-full text-left bg-white">
+                          <tbody>
+                            {[
+                              { label: "Shelf Life", value: getMetafieldValue('shelf') },
+                              { label: "Net Quantity", value: selectedMetafieldNetQty || getMetafieldValue('netquantity') },
+                              { label: "Formulation Type", value: getMetafieldValue('formulationtype') || product.productType },
+                              { label: "Manufactured By", value: getMetafieldValue('manufacturedby') || product.vendor },
+                            ].map((row, i) => (
+                              <tr key={i} className={`border-b border-[#F2EDE4] last:border-none ${i % 2 === 0 ? 'bg-secondary/10' : ''}`}>
+                                <th className="py-5 px-8 text-[10px] font-bold text-[#1A2E35] uppercase tracking-[0.2em] w-1/3 font-sans-clean">
+                                  {row.label}
+                                </th>
+                                <td className="py-5 px-8 text-sm text-[#1A2E35]/70 font-sans-clean italic">
+                                  {row.value || "-"}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </m.div>
+                )}
+
+                {activeTab === 'shipping' && (
+                  <m.div
+                    key="shipping"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-8 max-w-3xl mx-auto"
+                  >
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-3">
+                        <Package className="h-5 w-5 text-primary" />
+                        <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#1A2E35]">Delivery Information</h3>
+                      </div>
+                      
+                      {deliveryReturnsRows.length > 0 ? (
+                        <div className="grid gap-4">
+                          {deliveryReturnsRows.map((row, idx) => (
+                            <div key={idx} className="flex gap-4 p-5 bg-white border border-[#F2EDE4] rounded-2xl items-start group hover:border-primary/30 transition-colors">
+                              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                              <p className="text-sm text-[#1A2E35]/60 font-sans-clean leading-relaxed">{row}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-8 text-center bg-secondary/20 rounded-2xl border border-dashed border-[#F2EDE4]">
+                          <p className="text-xs text-[#1A2E35]/40 italic uppercase tracking-widest font-sans-clean">Shipping details for this formulation are being updated.</p>
+                        </div>
+                      )}
+                    </div>
+
+                  </m.div>
+                )}
+
+                {activeTab === 'faq' && (
+                  <m.div
+                    key="faq"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-8 max-w-3xl mx-auto"
+                  >
+                    <div className="text-center mb-8">
+                      <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#1A2E35]/30 mb-2">Common Inquiries</h3>
+                      <h2 className="text-2xl font-display font-medium text-[#1A2E35]">Frequently Asked Questions</h2>
+                    </div>
+                    <div className="space-y-4">
+                      {faqs.map((faq, i) => (
+                        <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden bg-white shadow-sm hover:border-primary/20 transition-all">
+                          <button 
+                            onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                            className="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-[#FDFBF7] transition-all group"
+                          >
+                            <span className="text-xs md:text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">{faq.q}</span>
+                            <ChevronDown className={`h-4 w-4 text-[#1A2E35]/30 transition-transform ${activeFaq === i ? 'rotate-180' : ''}`} />
+                          </button>
+                          <AnimatePresence>
+                            {activeFaq === i && (
+                              <m.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="px-6 pb-6"
+                              >
+                                <p className="text-[11px] md:text-sm text-[#1A2E35]/60 leading-relaxed font-sans-clean pt-4 border-t border-[#F2EDE4]">
+                                  {faq.a}
+                                </p>
+                              </m.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
+                    </div>
+                  </m.div>
+                )}
+
+                {activeTab === 'reviews' && (
+                  <m.div
+                    key="reviews"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-12"
+                  >
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-8">
+                      <div className="text-center md:text-left">
+                        <p className="text-4xl font-display font-bold text-[#1A2E35] mb-2">{averageRating}</p>
+                        <div className="flex gap-1 text-[#C5A059] mb-2">
+                          {[1,2,3,4,5].map(s => <Star key={s} className={`h-4 w-4 ${s <= Math.round(averageRating) ? 'fill-current' : 'text-[#F2EDE4]'}`} />)}
+                        </div>
+                        <p className="text-[10px] font-bold text-[#1A2E35]/40 uppercase tracking-widest">Based on {safeReviews.length} verified reviews</p>
+                      </div>
+                      <button 
+                        onClick={() => setReviewModalOpen(true)}
+                        className="bg-[#1A2E35] text-white px-8 py-4 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-all shadow-lg active:scale-95"
+                      >
+                        Write a Review
+                      </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                      {safeReviews.map((review, i) => (
+                        <div key={review.id} className="p-8 bg-white rounded-3xl border border-[#F2EDE4] space-y-4">
+                          <div className="flex justify-between">
+                            <div className="flex gap-1 text-[#C5A059]">
+                              {[1,2,3,4,5].map(s => <Star key={s} className={`h-3 w-3 ${s <= review.rating ? 'fill-current' : 'text-[#F2EDE4]'}`} />)}
+                            </div>
+                            <span className="text-[8px] font-bold text-[#5A7A5C] uppercase tracking-widest">Verified Buyer</span>
+                          </div>
+                          <p className="text-sm text-[#1A2E35]/70 italic leading-relaxed font-sans-clean">"{review.review_text}"</p>
+                          <div className="pt-4 border-t border-[#F2EDE4]/50 flex items-center justify-between">
+                            <span className="text-xs font-bold text-[#1A2E35] uppercase">{review.customer_name || "Verified Customer"}</span>
+                            <span className="text-[9px] text-[#1A2E35]/30">{new Date(review.created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      ))}
+                      {safeReviews.length === 0 && (
+                        <div className="col-span-full text-center py-20 bg-secondary/20 rounded-3xl border border-dashed border-[#F2EDE4]">
+                          <p className="text-xs text-[#1A2E35]/40 uppercase tracking-[0.2em] italic">No reviews yet. Be the first to share your journey.</p>
+                        </div>
+                      )}
+                    </div>
+                  </m.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
-          {getMetafieldValue('benefits') && (
-            <section className="py-6 md:py-8 lg:py-10 xl:py-12 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-white via-[#FDFBF7]/50 to-white -z-10" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#5A7A5C]/3 rounded-full blur-[100px] -z-10" />
-              
-              <div className="container px-4 mx-auto">
-                <div className="max-w-2xl mx-auto text-center mb-10 md:mb-12">
-                  <SectionHeading 
-                    title="How it Supports Your Wellness"
-                    eyebrow="THE SALMARA EXPERIENCE"
-                    animate={false}
-                    className="mb-4"
-                  />
-                  <p className="text-sm text-[#1A2E35]/40 font-params-body max-w-lg mx-auto leading-relaxed">
-                    Authentic clinical standards localized in every batch for holistic care.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                  {getMetafieldValue('benefits')
-                    .split(/[,\n]+/)
-                    .map((benefit: string, i: number) => {
-                      // Split by common dash separators: — (em), – (en), - (hyphen)
-                      const [title, ...descParts] = benefit.split(/\s*[—–-]\s*/);
-                      const description = descParts.join(' — ');
-
-                      return (
-                        <m.div 
-                          key={i} 
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.5, delay: i * 0.05 }}
-                          className="group relative h-full"
-                        >
-                          <div className="h-full p-6 md:p-8 bg-white/60 backdrop-blur-sm rounded-[2.5rem] md:rounded-[3rem] border border-[#F2EDE4] transition-all duration-500 overflow-hidden shadow-sm flex flex-col hover:border-[#5A7A5C]/30 hover:shadow-lg hover:shadow-[#5A7A5C]/5">
-                            
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#5A7A5C]/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700" />
-                            
-                            <div className="h-10 w-10 md:h-12 md:w-12 rounded-2xl flex items-center justify-center mb-5 md:mb-6 shrink-0 bg-[#5A7A5C]/10 text-[#5A7A5C] transition-colors group-hover:bg-[#5A7A5C] group-hover:text-white">
-                              {getBenefitIcon(title)}
-                            </div>
-                            
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="h-px w-3 md:w-5 bg-[#5A7A5C]/30"/>
-                              <h4 className="text-[8px] md:text-[9px] font-sans-clean font-bold uppercase tracking-[0.2em] text-[#5A7A5C]/60 truncate">
-                                Support {i + 1}
-                              </h4>
-                            </div>
-
-                            {description ? (
-                              <>
-                                <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-sans-clean uppercase tracking-tight">
-                                  {title}
-                                </h3>
-                                <p className="text-[11px] md:text-sm font-sans-clean text-[#1A2E35]/70 leading-relaxed italic flex-1">
-                                  {description}
-                                </p>
-                              </>
-                            ) : (
-                              <p className="text-[11px] md:text-base font-sans-clean text-[#1A2E35] leading-relaxed flex-1 uppercase font-bold tracking-tight">
-                                {title}
-                              </p>
-                            )}
-
-
-                          </div>
-                        </m.div>
-                      );
-                    })}
-                </div>
-              </div>
-            </section>
-          )}
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-white via-[#FDFBF7]/30 to-white -z-10" />
-            
-            <div className="container mx-auto px-4 max-w-7xl">
-              <div className="max-w-2xl mx-auto text-center mb-10 md:mb-12">
-                <SectionHeading 
-                  title="Core Herbs & Extracts"
-                  eyebrow="Ingredient Insights"
-                  animate={false}
-                  className="mb-4"
-                />
-                <p className="text-sm text-[#1A2E35]/50 font-sans-clean max-w-lg mx-auto leading-relaxed italic">
-                  "Transparency is the root of trust. Every milligram is ethically sourced and standardized."
-                </p>
-              </div>
-              
-              {getMetafieldValue('ingredients') ? (
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-                  {getMetafieldValue('ingredients')
-                    .split(/\n+/)
-                    .map((line: string) => line.trim())
-                    .filter(Boolean)
-                    .map((item: string, i: number) => {
-                      // Split by common dash separators: — (em), – (en), - (hyphen)
-                      const [name, ...descParts] = item.split(/\s*[—–-]\s*/);
-                      const description = descParts.join(' — ');
-                      
-                      return (
-                        <m.div 
-                          key={i}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.4, delay: i * 0.03 }}
-                          className="group flex flex-col h-full p-6 md:p-8 bg-white/60 hover:bg-white/90 backdrop-blur-sm rounded-[2.5rem] md:rounded-[3rem] border border-[#F2EDE4] hover:border-[#5A7A5C]/30 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-[#5A7A5C]/5"
-                        >
-                          <div className="w-10 h-10 md:w-12 md:h-12 bg-[#5A7A5C]/10 rounded-2xl flex items-center justify-center text-[#5A7A5C] mb-5 md:mb-6 shrink-0 transition-colors group-hover:bg-[#5A7A5C] group-hover:text-white">
-                            <Leaf className="h-5 w-5" />
-                          </div>
-                          
-                          <div className="flex flex-col flex-1">
-                            <h3 className="text-sm md:text-base font-bold text-[#1A2E35] mb-2 font-display transition-colors group-hover:text-[#5A7A5C]">
-                              {name}
-                            </h3>
-                            {description && (
-                              <p className="text-[11px] md:text-sm text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
-                                {description}
-                              </p>
-                            )}
-                          </div>
-                        </m.div>
-                      );
-                    })}
-                </div>
-              ) : (
-                <div className="p-8 rounded-2xl border border-[#F2EDE4] text-center bg-white/50 max-w-xs mx-auto">
-                  <p className="text-xs text-[#1A2E35]/40 font-sans-clean italic">Details updating soon.</p>
-                </div>
-              )}
-
-              <div className="mt-6 md:mt-8 lg:mt-10 xl:mt-12 p-6 md:p-10 bg-white/40 backdrop-blur-md rounded-[2rem] md:rounded-[3rem] text-center max-w-4xl mx-auto border border-[#5A7A5C]/10 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-2 h-full bg-[#5A7A5C] transition-colors duration-500" />
-                <div className="flex flex-col md:flex-row items-center gap-8 md:text-left">
-                  <div className="h-20 w-20 bg-[#5A7A5C]/5 rounded-full flex items-center justify-center shrink-0">
-                    <ShieldCheck className="h-10 w-10 text-[#5A7A5C] stroke-[1]" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2 justify-center md:justify-start">
-                      <CheckCircle2 className="h-3 w-3 text-[#5A7A5C]" />
-                      <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#1A2E35]">Quality Assurance</h3>
-                    </div>
-                    <h4 className="text-base md:text-lg font-display font-medium text-[#1A2E35] mb-3">Standardization Protocol</h4>
-                    <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean">
-                      This formulation aligns with GMP (Good Manufacturing Practices) and rigorous hygiene standards. Every batch is ethically sourced, free from synthetic additives, and standardized for maximum therapeutic efficacy.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto border-t border-[#F2EDE4]/30">
-            <div className="text-center mb-6 md:mb-8 lg:mb-10 xl:mb-12">
-              <SectionHeading 
-                title="Suggested Use"
-                eyebrow="DOSAGE & GUIDELINES"
-                animate={false}
-              />
+          {/* Related Products Section */}
+          <section className="mt-24 pt-24 border-t border-[#F2EDE4]">
+            <div className="text-center mb-12">
+              <p className="text-primary font-bold text-[10px] uppercase tracking-[0.3em] mb-3">You May Also Like</p>
+              <h2 className="text-3xl md:text-4xl font-display font-medium text-[#1A2E35]">Explore Related Products</h2>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-6 lg:gap-10 max-w-6xl mx-auto">
-              <m.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="p-8 bg-white/60 backdrop-blur-sm rounded-[2.5rem] border border-[#F2EDE4] shadow-sm flex gap-6 items-start"
-              >
-                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0 shadow-lg shadow-[#1A2E35]/10">01</div>
-                <div>
-                  <h3 className="text-[10px] font-bold text-[#1A2E35] uppercase tracking-[0.2em] mb-3">Recommended Dosage</h3>
-                  <p className="text-[15px] text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
-                    {getMetafieldValue('dosage') ? `"${getMetafieldValue('dosage')}"` : "Consult your practitioner for personalized dosage details."}
-                  </p>
-                </div>
-              </m.div>
-
-              <m.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="p-8 bg-white/60 backdrop-blur-sm rounded-[2.5rem] border border-[#F2EDE4] shadow-sm flex gap-6 items-start"
-              >
-                <div className="h-12 w-12 bg-[#1A2E35] text-white rounded-2xl flex items-center justify-center font-display font-medium shrink-0 shadow-lg shadow-[#1A2E35]/10">02</div>
-                <div>
-                  <h3 className="text-[10px] font-bold text-[#1A2E35] uppercase tracking-[0.2em] mb-3">Timing & Usage</h3>
-                  <p className="text-[15px] text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
-                    {getMetafieldValue('usage') ? `"${getMetafieldValue('usage')}"` : "Instructions updated per individual therapeutic recommendations."}
-                  </p>
-                </div>
-              </m.div>
-            </div>
-          </section>
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto border-t border-[#F2EDE4]/30">
-            <div className="text-center mb-6 md:mb-8 lg:mb-10">
-              <SectionHeading
-                title="Delivery & Returns"
-                eyebrow="SHIPPING INFORMATION"
-                animate={false}
-              />
-            </div>
-
-            {deliveryReturnsRows.length > 0 ? (
-              <div className="max-w-4xl mx-auto grid gap-3">
-                {deliveryReturnsRows.map((row, idx) => (
-                  <div key={`${row}-${idx}`} className="p-4 md:p-5 rounded-2xl border border-[#F2EDE4] bg-white/70 flex items-start gap-3">
-                    <Package className="h-4 w-4 mt-0.5 text-[#5A7A5C] shrink-0" />
-                    <p className="text-sm text-[#1A2E35]/70 font-sans-clean leading-relaxed">{row}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="max-w-2xl mx-auto text-center p-6 rounded-2xl border border-dashed border-[#F2EDE4] bg-white/50">
-                <p className="text-sm text-[#1A2E35]/40 italic">Delivery and return information will be updated shortly.</p>
-              </div>
-            )}
-          </section>
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto border-t border-[#F2EDE4]/30">
-            <div className="text-center mb-8 md:mb-10">
-              <SectionHeading
-                title="Related Products"
-                eyebrow="YOU MAY ALSO LIKE"
-                animate={false}
-              />
-            </div>
-
             {isLoadingRelatedProducts ? (
               <div className="flex justify-center py-10">
                 <Loader2 className="h-6 w-6 animate-spin text-[#5A7A5C]" />
@@ -1167,293 +1135,7 @@ const ProductDetail = () => {
             )}
           </section>
 
-          {hasPurchased && (
-            <section id="reviews" className="py-6 md:py-8 lg:py-10 xl:py-12 px-4 max-w-7xl mx-auto">
-              <div className="bg-[#FDFBF7]/50 border border-[#F2EDE4] rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-12">
-                <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-16 mb-12">
-                  <div className="flex-1 space-y-4">
-                    <SectionHeading 
-                      title="Customer Experience"
-                      eyebrow="VERIFIED FEEDBACK"
-                      centered={false}
-                      animate={false}
-                      className="mb-0"
-                    />
-                    <div className="flex flex-wrap items-center gap-5">
-                      <div className="flex items-center gap-1.5 text-[#C5A059]">
-                        {[1, 2, 3, 4, 5].map(s => (
-                          <Star 
-                            key={s} 
-                            className={`h-5 w-5 ${s <= Math.round(averageRating) ? 'fill-current' : 'text-[#F2EDE4]'}`} 
-                          />
-                        ))}
-                      </div>
-                      <div className="h-4 w-px bg-[#F2EDE4]" />
-                      <span className="text-[11px] font-bold text-[#1A2E35] uppercase tracking-widest">
-                        {averageRating} / 5.0
-                      </span>
-                      <span className="text-[10px] font-bold text-[#1A2E35]/30 uppercase tracking-widest">
-                        ({safeReviews.length} Verified Ratings)
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="shrink-0 flex items-center">
-                    <button 
-                      onClick={() => setReviewModalOpen(true)}
-                      className="w-full sm:w-auto bg-[#1A2E35] text-white px-10 py-5 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#5A7A5C] transition-all shadow-xl shadow-[#1A2E35]/10 flex items-center justify-center gap-3 active:scale-[0.98]"
-                      disabled={isCheckingEligibility}
-                    >
-                      {isCheckingEligibility ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4" /> Write a Review</>}
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-                  <AnimatePresence mode="popLayout">
-                    {safeReviews.map((review, idx) => (
-                      <m.div
-                        key={review.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="bg-white/70 backdrop-blur-sm p-6 md:p-8 rounded-3xl border border-[#F2EDE4] shadow-sm flex flex-col justify-between"
-                      >
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-start">
-                            <div className="flex gap-1 text-[#C5A059]">
-                              {[1, 2, 3, 4, 5].map(s => (
-                                <Star key={s} className={`h-3.5 w-3.5 ${s <= review.rating ? 'fill-current' : 'text-[#F2EDE4]'}`} />
-                              ))}
-                            </div>
-                            <div className="flex items-center gap-1.5 px-2 py-1 bg-[#5A7A5C]/5 border border-[#5A7A5C]/10 rounded-full">
-                              <CheckCircle2 className="h-3 w-3 text-[#5A7A5C]" />
-                              <span className="text-[8px] font-bold text-[#5A7A5C] uppercase tracking-wider">Verified Buyer</span>
-                            </div>
-                          </div>
-                          <p className="text-sm md:text-base text-[#1A2E35]/70 leading-relaxed font-sans-clean italic">
-                            "{review.review_text}"
-                          </p>
-                        </div>
-                        
-                        <div className="mt-6 pt-6 border-t border-[#F2EDE4]/50 flex justify-between items-center">
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-[#1A2E35] uppercase tracking-wide">{review.customer_name || "Verified Customer"}</span>
-                            <span className="text-[9px] text-[#1A2E35]/40 font-bold uppercase tracking-widest">{new Date(review.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                          </div>
-                          <div className="h-8 w-8 bg-[#FDFBF7] rounded-full flex items-center justify-center border border-[#F2EDE4]">
-                            <Star className="h-3 w-3 text-[#C5A059]" />
-                          </div>
-                        </div>
-                      </m.div>
-                    ))}
-                  </AnimatePresence>
-
-                  {safeReviews.length === 0 && (
-                    <div className="col-span-full text-center py-20 bg-white/40 border border-dashed border-[#F2EDE4] rounded-3xl">
-                      <div className="h-12 w-12 bg-[#F2EDE4]/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Star className="h-6 w-6 text-[#1A2E35]/10" />
-                      </div>
-                      <p className="text-xs text-[#1A2E35]/40 italic font-body uppercase tracking-[0.2em]">"No reviews yet. Be the first to share your journey."</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </section>
-          )}
-
-          <AnimatePresence>
-            {reviewModalOpen && (
-              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                <m.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setReviewModalOpen(false)}
-                  className="absolute inset-0 bg-[#1A2E35]/40 backdrop-blur-sm"
-                />
-                <m.div
-                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                  className="relative w-full max-w-lg bg-[#FDFBF7] rounded-[2.5rem] p-6 md:p-10 shadow-2xl border border-[#F2EDE4]"
-                >
-                  <button 
-                    onClick={() => setReviewModalOpen(false)}
-                    className="absolute top-8 right-8 p-2 text-[#1A2E35]/20 hover:text-[#1A2E35] transition-colors"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-
-                  <div className="text-center mb-6">
-                    <p className="text-[#5A7A5C] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-3">Share your experience</p>
-                    <h3 className="text-3xl font-display font-medium text-[#1A2E35]">Product Review</h3>
-                  </div>
-
-                  <form onSubmit={handleReviewSubmit} className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Rating</label>
-                      <div className="flex gap-2 justify-center py-2 bg-white rounded-2xl border border-[#F2EDE4]">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setReviewRating(star)}
-                            className="p-1 transition-transform hover:scale-125 focus:outline-none"
-                          >
-                            <Star 
-                              className={`h-7 w-7 transition-colors ${star <= reviewRating ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Name</label>
-                      <input
-                        type="text"
-                        value={reviewName}
-                        onChange={(e) => setReviewName(e.target.value)}
-                        placeholder="John Doe"
-                        className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Feedback</label>
-                      <textarea
-                        value={reviewComment}
-                        onChange={(e) => setReviewComment(e.target.value)}
-                        placeholder="How has this formulation supported you?"
-                        rows={3}
-                        className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors resize-none"
-                        required
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={isSubmittingReview}
-                      className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
-                    >
-                      {isSubmittingReview ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Submit Review <Send className="h-4 w-4" /></>}
-                    </button>
-                  </form>
-                </m.div>
-              </div>
-            )}
-          </AnimatePresence>
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 max-w-3xl mx-auto">
-            <SectionHeading 
-              title="Product Information & FAQ"
-              animate={false}
-            />
-            <div className="space-y-8">
-              
-              <div className="border border-[#F2EDE4] rounded-2xl overflow-hidden">
-                <button 
-                  onClick={() => setIsProductInfoOpen(!isProductInfoOpen)}
-                  className="w-full text-left px-6 py-4 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group bg-[#FDFBF7]"
-                >
-                  <span className="text-xs md:text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">Know Your Product</span>
-                  <ChevronDown className={`h-4 w-4 text-[#1A2E35]/30 transition-transform ${isProductInfoOpen ? 'rotate-180' : ''}`} />
-                </button>
-                <AnimatePresence>
-                  {isProductInfoOpen && (
-                    <m.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 bg-[#FDFBF7]"
-                    >
-                      <div className="pt-4 border-t border-[#F2EDE4] overflow-x-auto">
-                        <table className="w-full text-left bg-white border border-[#F2EDE4] rounded-2xl overflow-hidden shadow-sm">
-                          <thead>
-                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]">
-                              <th className="py-5 px-6 text-sm font-bold text-[#1A2E35] w-1/3">Field</th>
-                              <th className="py-5 px-6 text-sm font-bold text-[#1A2E35]">Example</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Shelf Life:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('shelf') || "-"}</td>
-                            </tr>
-                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Net Quantity:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{selectedMetafieldNetQty || getMetafieldValue('netquantity') || (selectedVariant?.title !== "Default Title" ? selectedVariant?.title : null) || "-"}</td>
-                            </tr>
-                            <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Formulation Type:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('formulationtype') || product.productType || "-"}</td>
-                            </tr>
-                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Manufactured By:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('manufacturedby') || product.vendor || "-"}</td>
-                            </tr>
-                            <tr className="border-b border-[#F2EDE4] hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Batch No.:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">
-                                {getMetafieldValue('batchno') ? (
-                                  <span className="px-2 py-1 rounded text-xs font-bold bg-[#5A7A5C] text-white tracking-widest">{getMetafieldValue('batchno')}</span>
-                                ) : "-"}
-                              </td>
-                            </tr>
-                            <tr className="border-b border-[#F2EDE4] bg-[#FDFBF7]/50 hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">License No.:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">
-                                {getMetafieldValue('licenseno') ? (
-                                  <span className="px-2 py-1 rounded text-xs font-bold bg-[#5A7A5C] text-white tracking-widest">{getMetafieldValue('licenseno')}</span>
-                                ) : "-"}
-                              </td>
-                            </tr>
-                            <tr className="hover:bg-[#F2EDE4]/20 transition-colors">
-                              <th className="py-4 px-6 text-sm font-bold text-[#1A2E35]/70">Country of Origin:</th>
-                              <td className="py-4 px-6 text-sm text-[#1A2E35]/60 font-sans-clean">{getMetafieldValue('shelflife') || "India"}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </m.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div className="space-y-4 pt-4">
-              {faqs.map((faq, i) => (
-                <div key={i} className="border border-[#F2EDE4] rounded-2xl overflow-hidden">
-                  <button 
-                    onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                    className="w-full text-left px-6 py-4 flex items-center justify-between hover:bg-[#F2EDE4]/20 transition-all group"
-                  >
-                    <span className="text-xs md:text-sm font-bold text-[#1A2E35] uppercase tracking-widest leading-relaxed pr-8">{faq.q}</span>
-                    <ChevronDown className={`h-4 w-4 text-[#1A2E35]/30 transition-transform ${activeFaq === i ? 'rotate-180' : ''}`} />
-                  </button>
-                  <AnimatePresence>
-                    {activeFaq === i && (
-                      <m.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="px-6 pb-6"
-                      >
-                        <p className="text-[11px] md:text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean pt-2 border-t border-[#F2EDE4]">
-                          {faq.a}
-                        </p>
-                      </m.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="py-6 md:py-8 lg:py-10 xl:py-12 border-t border-[#F2EDE4]">
+          <section className="py-12 border-t border-[#F2EDE4]">
             <div className="max-w-4xl mx-auto">
               <div className="bg-[#1A2E35] rounded-[3rem] p-8 md:p-16 relative overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
@@ -1538,7 +1220,37 @@ const ProductDetail = () => {
             </div>
           </section>
         </div>
+
+        {/* Benefits Summary Footer */}
+        <section className="bg-secondary/30 border-y border-[#F2EDE4] py-12 mt-24">
+          <div className="container px-4 mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <div className="space-y-3">
+                <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm border border-[#F2EDE4]">
+                  <Package className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">Free Shipping</h4>
+                <p className="text-[11px] text-[#1A2E35]/40 uppercase tracking-widest">On orders above ₹999</p>
+              </div>
+              <div className="space-y-3">
+                <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm border border-[#F2EDE4]">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">Secure Payments</h4>
+                <p className="text-[11px] text-[#1A2E35]/40 uppercase tracking-widest">100% Secure Gateway</p>
+              </div>
+              <div className="space-y-3">
+                <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm border border-[#F2EDE4]">
+                  <MessageCircle className="h-6 w-6 text-primary" />
+                </div>
+                <h4 className="text-sm font-bold text-[#1A2E35] uppercase tracking-widest">Expert Guidance</h4>
+                <p className="text-[11px] text-[#1A2E35]/40 uppercase tracking-widest">Consult via WhatsApp</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
       <Footer />
       {getStoredSession()?.user?.id && (
         <Suspense fallback={null}>
@@ -1551,6 +1263,90 @@ const ProductDetail = () => {
           />
         </Suspense>
       )}
+
+      <AnimatePresence>
+        {reviewModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <m.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setReviewModalOpen(false)}
+              className="absolute inset-0 bg-[#1A2E35]/40 backdrop-blur-sm"
+            />
+            <m.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-[#FDFBF7] rounded-[2.5rem] p-6 md:p-10 shadow-2xl border border-[#F2EDE4]"
+            >
+              <button 
+                onClick={() => setReviewModalOpen(false)}
+                className="absolute top-8 right-8 p-2 text-[#1A2E35]/20 hover:text-[#1A2E35] transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="text-center mb-6">
+                <p className="text-[#5A7A5C] font-sans-clean text-[10px] font-bold uppercase tracking-[0.3em] mb-3">Share your experience</p>
+                <h3 className="text-3xl font-display font-medium text-[#1A2E35]">Product Review</h3>
+              </div>
+
+              <form onSubmit={handleReviewSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Rating</label>
+                  <div className="flex gap-2 justify-center py-2 bg-white rounded-2xl border border-[#F2EDE4]">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewRating(star)}
+                        className="p-1 transition-transform hover:scale-125 focus:outline-none"
+                      >
+                        <Star 
+                          className={`h-7 w-7 transition-colors ${star <= reviewRating ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Name</label>
+                  <input
+                    type="text"
+                    value={reviewName}
+                    onChange={(e) => setReviewName(e.target.value)}
+                    placeholder="John Doe"
+                    className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-[#1A2E35]/40">Your Feedback</label>
+                  <textarea
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    placeholder="How has this formulation supported you?"
+                    rows={3}
+                    className="w-full bg-white border border-[#F2EDE4] rounded-2xl px-6 py-3 text-sm font-sans-clean outline-none focus:border-[#5A7A5C] transition-colors resize-none"
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="w-full bg-[#1A2E35] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs hover:bg-[#5A7A5C] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#1A2E35]/10 disabled:opacity-50"
+                >
+                  {isSubmittingReview ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Submit Review <Send className="h-4 w-4" /></>}
+                </button>
+              </form>
+            </m.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
