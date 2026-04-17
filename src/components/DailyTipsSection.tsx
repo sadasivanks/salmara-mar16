@@ -39,7 +39,7 @@ const DailyTipsSection = () => {
           titleClassName="text-[22px] xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl whitespace-nowrap"
         />
 
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8 lg:gap-10 xl:gap-12 max-w-7xl mx-auto">
           {tips.map((tip, i) => (
             <m.article
               key={tip.title}
@@ -55,8 +55,8 @@ const DailyTipsSection = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              <div className="p-8">
-                <h3 className="font-display font-bold text-[#1A2E35] text-xl mb-4 leading-tight group-hover:text-[#5A7A5C] transition-colors">
+              <div className="pt-8 px-8 pb-2 flex flex-col items-center text-center">
+                <h3 className="font-display font-bold text-[#1A2E35] text-lg lg:text-xl mb-4 leading-tight group-hover:text-[#5A7A5C] transition-colors whitespace-nowrap">
                   {tip.title}
                 </h3>
                 <p className="text-[#4A5568] font-body text-[13px] md:text-sm leading-relaxed mb-6 text-justify">

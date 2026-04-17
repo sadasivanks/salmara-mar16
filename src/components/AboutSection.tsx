@@ -123,17 +123,13 @@ const AboutSection = () => {
               </p>
             </div>
 
-            <m.div
-              whileHover={{ x: 5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="flex justify-center lg:justify-start"
-            >
+            <div className="flex justify-center lg:justify-start">
               <Link 
                 to="/about" 
-                className="inline-flex items-center gap-2 text-sm font-sans-clean font-bold text-[#5A7A5C] hover:text-[#4a654c] transition-colors group"
+                className="inline-flex items-center gap-4 px-8 py-3 rounded-full bg-[#5A7A5C] text-sm font-sans-clean font-bold text-white hover:bg-[#C5A059] transition-colors duration-300 group shadow-md"
               >
                 Discover Our Journey 
-                <span className="p-1 rounded-full bg-[#5A7A5C]/10 group-hover:bg-[#5A7A5C] group-hover:text-white transition-all">
+                <span className="p-1.5 rounded-full bg-white text-[#5A7A5C] group-hover:text-[#C5A059] transition-colors">
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     width="14" 
@@ -150,7 +146,7 @@ const AboutSection = () => {
                   </svg>
                 </span>
               </Link>
-            </m.div>
+            </div>
           </m.div>
         </div>
 

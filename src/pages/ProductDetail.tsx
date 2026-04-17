@@ -793,7 +793,7 @@ const ProductDetail = () => {
                       disabled={isBuyingNow}
                       className="w-full bg-[#1A2E35] text-white min-h-[50px] rounded-xl font-bold uppercase tracking-widest text-sm hover:bg-[#1A2E35]/90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl shadow-[#1A2E35]/20 flex items-center justify-center gap-2"
                     >
-                      {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : "Buy Now Direct"}
+                      {isBuyingNow ? <Loader2 className="h-5 w-5 animate-spin" /> : "Buy now directly"}
                     </button>
                   </>
                 )}

@@ -196,39 +196,38 @@ const ProductList = () => {
                   </Link>
 
                   <div className="px-2">
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-1">
                       <Link to={`/product/${product.node.handle}`}>
                         <h3 className="font-display font-medium text-[#1A2E35] text-lg hover:text-[#5A7A5C] transition-colors line-clamp-1">
                           {product.node.title}
                         </h3>
                       </Link>
-                      {/* Rating Display */}
-                      <div className="flex items-center gap-1.5 mt-1 mb-2">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              className={`h-3 w-3 ${i < (product.node.handle === 'triphala-churna' ? 5 : 4) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
-                            />
-                          ))}
-                        </div>
-                        <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
-                          {product.node.handle === 'triphala-churna' ? '4.9 (248 reviews)' : 
-                           product.node.handle === 'brahmi-hair-oil' ? '4.8 (186 reviews)' : 
-                           product.node.handle === 'triphala-tablets' ? '4.7 (92 reviews)' : 
-                           '4.5 (124 reviews)'}
-                        </span>
-                      </div>
                       {displayPrice.amount > 0 && (
-                        <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
+                        <span className="text-[#C5A059] font-sans-clean font-bold text-sm ml-2 whitespace-nowrap">
                           {displayPrice.currency === 'INR' ? '₹' : displayPrice.currency} {displayPrice.amount.toFixed(2)}
                         </span>
                       )}
                     </div>
+
+                    {/* Rating Display */}
+                    <div className="flex items-center gap-1.5 mb-6">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-3 w-3 ${i < (product.node.handle === 'triphala-churna' ? 5 : 4) ? 'fill-[#C5A059] text-[#C5A059]' : 'text-[#F2EDE4]'}`} 
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
+                        {product.node.handle === 'triphala-churna' ? '4.9 (248 reviews)' : 
+                         product.node.handle === 'brahmi-hair-oil' ? '4.8 (186 reviews)' : 
+                         product.node.handle === 'triphala-tablets' ? '4.7 (92 reviews)' : 
+                         '4.5 (124 reviews)'}
+                      </span>
+                    </div>
                     
-                    <p className="text-[#1A2E35]/60 font-sans-clean text-xs leading-relaxed mb-6 line-clamp-2 h-10">
-                      {product.node.description}
-                    </p>
+
 
                     {!variant?.availableForSale ? (
                       <button
@@ -241,7 +240,7 @@ const ProductList = () => {
                       <button
                         onClick={() => handleAddToCart(product)}
                         disabled={addingId === product.node.id}
-                        className="w-full border border-[#1A2E35]/10 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] transition-all flex items-center justify-center gap-2 group/btn"
+                        className="w-full border border-[#1A2E35]/30 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] transition-all flex items-center justify-center gap-2 group/btn"
                       >
                         {addingId === product.node.id ? (
                           <Loader2 className="h-3 w-3 animate-spin text-[#5A7A5C]" />

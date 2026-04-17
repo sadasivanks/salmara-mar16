@@ -11,7 +11,7 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10 xl:gap-12">
         {/* Brand Column */}
         <div className="max-w-xs">
-          <h2 className="font-display font-bold text-3xl mb-4 text-white">Salmara</h2>
+          <h2 className="font-display font-bold text-3xl mb-4 text-white">Salmara Ayurveda</h2>
           <p className="text-white/90 font-body text-base leading-relaxed">
             Rediscover Wellness Through Authentic Ayurveda. Rooted in Karnataka, trusted PAN India.
           </p>

@@ -344,7 +344,7 @@ const ShopPage = () => {
         {/* 3) Filter & Sort Bar */}
         <section 
           id="product-grid" 
-          className="relative z-30 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2 bg-white"
+          className="sticky top-16 lg:top-20 z-40 transition-all duration-500 border-y border-[#F2EDE4] py-1.5 md:py-2 bg-white shadow-sm"
         >
           <div className="container px-4">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
@@ -574,58 +574,57 @@ const ShopPage = () => {
                       </button>
 
                       <div className="p-5">
-                        <Link to={`/product/${product.node.handle}`}>
-                          <h3 className="font-display font-semibold text-foreground text-lg mb-1 hover:text-primary transition-colors">
-                            {product.node.title}
-                          </h3>
-                        </Link>
-                        
-                        {/* Rating Display */}
-                        <div className="flex items-center gap-1.5 mb-3">
-                          {(() => {
-                            const productReviews = reviewsMap[product.node.id] || [];
-                            const hasReviews = productReviews.length > 0;
-                            
-                            const avgRating = hasReviews 
-                              ? Number((productReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / productReviews.length).toFixed(1))
-                              : 0;
-                            const count = hasReviews ? productReviews.length : 0;
-
-                            return (
-                              <>
-                                <div className="flex">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star 
-                                      key={i} 
-                                      className={`h-3 w-3 ${i < Math.round(avgRating) ? 'fill-accent text-accent' : 'text-[#F2EDE4]'}`} 
-                                    />
-                                  ))}
-                                </div>
-                                <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
-                                  {count > 0 ? `${avgRating} (${count} reviews)` : 'No reviews yet'}
-                                </span>
-                              </>
-                            );
-                          })()}
-                        </div>
-                        <div className="mb-3">
-                          <p className="text-muted-foreground font-body text-sm line-clamp-2">
-                            {product.node.description}
-                          </p>
-                        </div>
-
-                        {displayPrice.amount > 0 && (
-                          <div className="flex items-baseline gap-2 mb-4">
-                            <span className="text-xl font-sans-clean font-bold text-foreground">
-                              {displayPrice.currency === 'INR' ? '₹' : displayPrice.currency} {displayPrice.amount.toFixed(2)}
-                            </span>
-                            {!displayPrice.fromMetafield && variant.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > displayPrice.amount && (
-                              <span className="text-sm text-muted-foreground/50 line-through">
-                                {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
+                        <div className="flex justify-between items-start mb-1">
+                          <Link to={`/product/${product.node.handle}`}>
+                            <h3 className="font-display font-semibold text-foreground text-lg hover:text-primary transition-colors line-clamp-1">
+                              {product.node.title}
+                            </h3>
+                          </Link>
+                          {displayPrice.amount > 0 && (
+                            <div className="flex items-baseline gap-2 whitespace-nowrap ml-2">
+                              <span className="text-xl font-sans-clean font-bold text-foreground">
+                                {displayPrice.currency === 'INR' ? '₹' : displayPrice.currency} {displayPrice.amount.toFixed(2)}
                               </span>
-                            )}
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex justify-between items-center mb-4">
+                          {/* Rating Display */}
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            {(() => {
+                              const productReviews = reviewsMap[product.node.id] || [];
+                              const hasReviews = productReviews.length > 0;
+                              
+                              const avgRating = hasReviews 
+                                ? Number((productReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0) / productReviews.length).toFixed(1))
+                                : 0;
+                              const count = hasReviews ? productReviews.length : 0;
+
+                              return (
+                                <>
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star 
+                                        key={i} 
+                                        className={`h-3 w-3 ${i < Math.round(avgRating) ? 'fill-accent text-accent' : 'text-[#F2EDE4]'}`} 
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-[10px] font-bold text-[#1A2E35]/40 tracking-tighter">
+                                    {count > 0 ? `${avgRating} (${count} reviews)` : 'No reviews yet'}
+                                  </span>
+                                </>
+                              );
+                            })()}
                           </div>
-                        )}
+
+                          {!displayPrice.fromMetafield && variant.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > displayPrice.amount && (
+                            <span className="text-sm text-muted-foreground/50 line-through">
+                              {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
+                            </span>
+                          )}
+                        </div>
                                     {!variant?.availableForSale ? (
                           <button
                             disabled
@@ -639,7 +638,7 @@ const ShopPage = () => {
                               <button
                                 onClick={() => handleAddToCart(product)}
                                 disabled={addingId === product.node.id || buyingId === product.node.id}
-                                className="flex-1 border border-primary/20 text-primary py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all hover:bg-primary/5 active:scale-[0.98] disabled:opacity-50 group/cart"
+                                className="flex-1 border border-primary/40 text-primary py-2.5 rounded-lg font-sans-clean text-xs font-semibold flex items-center justify-center gap-1.5 transition-all hover:bg-primary/5 active:scale-[0.98] disabled:opacity-50 group/cart"
                               >
                                 {addingId === product.node.id ? (
                                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -650,7 +649,7 @@ const ShopPage = () => {
                               <Link
                                 to={`/product/${product.node.handle}`}
                                 aria-label={`View details for ${product.node.title}`}
-                                className="px-4 py-2.5 rounded-lg border border-[#F2EDE4] text-[#1A2E35]/60 font-sans-clean text-xs font-semibold hover:border-[#1A2E35] hover:text-[#1A2E35] transition-all flex items-center justify-center whitespace-nowrap"
+                                className="px-4 py-2.5 rounded-lg border border-[#D9D1C2] text-[#1A2E35]/60 font-sans-clean text-xs font-semibold hover:border-[#1A2E35] hover:text-[#1A2E35] transition-all flex items-center justify-center whitespace-nowrap"
                               >
                                 Details
                               </Link>
@@ -665,7 +664,7 @@ const ShopPage = () => {
                               className="w-full bg-[#1A2E35] text-white py-3 rounded-lg font-sans-clean text-[10px] font-bold uppercase tracking-wider hover:bg-[#1A2E35]/90 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[#1A2E35]/10"
                             >
                               {buyingId === product.node.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-                              {buyingId === product.node.id ? "Redirecting..." : "Buy Now Direct"}
+                              {buyingId === product.node.id ? "Redirecting..." : "Buy now directly"}
                             </button>
                           </div>
                         )}
