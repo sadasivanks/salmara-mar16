@@ -882,17 +882,17 @@ const ProductDetail = () => {
                     {getMetafieldValue('ingredients') && (
                       <div className="pt-12 border-t border-[#F2EDE4]">
                         <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-[#1A2E35]/30 mb-8">Key Ingredients</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-10">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
                           {getMetafieldValue('ingredients').split(/\n+/).map((line: string, i: number) => {
                             const [name, ...descParts] = line.trim().split(/\s*[—–-]\s*/);
                             return (
-                              <div key={i} className="flex gap-4 items-start group">
-                                <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors">
-                                  <Leaf className="h-4 w-4 text-primary" />
+                              <div key={i} className="flex gap-3 md:gap-4 items-start group">
+                                <div className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-primary/10 transition-colors">
+                                  <Leaf className="h-3 w-3 md:h-4 md:w-4 text-primary" />
                                 </div>
                                 <div>
-                                  <p className="text-base font-bold text-[#1A2E35] uppercase tracking-wider mb-2">{name}</p>
-                                  {descParts.length > 0 && <p className="text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed">{descParts.join(' — ')}</p>}
+                                  <p className="text-sm md:text-base font-bold text-[#1A2E35] uppercase tracking-wider mb-2 leading-snug">{name}</p>
+                                  {descParts.length > 0 && <p className="text-[11px] md:text-sm text-[#1A2E35]/80 font-sans-clean leading-relaxed">{descParts.join(' — ')}</p>}
                                 </div>
                               </div>
                             );
