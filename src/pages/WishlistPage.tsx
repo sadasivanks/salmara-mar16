@@ -200,7 +200,7 @@ const WishlistPage = () => {
                           </div>
                         {variant && (
                           <span className="text-lg font-medium text-[#1A2E35] font-[Inter]">
-                            ₹{parseInt(variant.price.amount)}
+                            ₹{parseFloat(variant.price.amount).toFixed(2)}
                           </span>
                         )}
                         </div>
