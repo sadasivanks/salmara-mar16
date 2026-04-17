@@ -118,13 +118,22 @@ const ProductCard = ({
       </Link>
 
       <div className="px-2">
-        <Link to={`/product/${product.node.handle}`} className="block mb-1">
-          <h3 className="font-display font-medium text-[#1A2E35] text-lg hover:text-[#5A7A5C] transition-colors line-clamp-1">
-            {product.node.title}
-          </h3>
-        </Link>
+        <div className="flex justify-between items-start mb-2">
+          <Link to={`/product/${product.node.handle}`} className="block">
+            <h3 className="font-display font-medium text-[#1A2E35] text-lg hover:text-[#5A7A5C] transition-colors line-clamp-1">
+              {product.node.title}
+            </h3>
+          </Link>
+          {price && (
+            <div className="flex items-baseline gap-1.5 whitespace-nowrap ml-2">
+              <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
+                {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
+              </span>
+            </div>
+          )}
+        </div>
 
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center mb-4">
           {/* Rating Display */}
           <div className="flex items-center gap-1.5 min-w-0">
             {(() => {
@@ -154,17 +163,10 @@ const ProductCard = ({
             })()}
           </div>
 
-          {price && (
-            <div className="flex items-baseline gap-1.5 whitespace-nowrap ml-2">
-              <span className="text-[#C5A059] font-sans-clean font-bold text-sm">
-                {price.currencyCode === 'INR' ? '₹' : price.currencyCode} {parseFloat(price.amount).toFixed(2)}
-              </span>
-              {variant?.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > parseFloat(price.amount) && (
-                <span className="text-[10px] text-[#1A2E35]/30 line-through">
-                  {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
-                </span>
-              )}
-            </div>
+          {variant?.compareAtPrice && parseFloat(variant.compareAtPrice.amount) > parseFloat(price?.amount || "0") && (
+            <span className="text-[10px] text-[#1A2E35]/30 line-through">
+              {variant.compareAtPrice.currencyCode === 'INR' ? '₹' : variant.compareAtPrice.currencyCode} {parseFloat(variant.compareAtPrice.amount).toFixed(2)}
+            </span>
           )}
         </div>
         
@@ -180,7 +182,7 @@ const ProductCard = ({
             <button
               onClick={() => onAddToCart(product)}
               disabled={addingId === product.node.id}
-              className="flex-1 border border-[#1A2E35]/25 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] hover:border-[#5A7A5C]/40 transition-all flex items-center justify-center gap-2 group/btn"
+              className="flex-1 border border-[#1A2E35]/40 text-[#1A2E35] py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#FDFBF7] hover:border-[#5A7A5C]/40 transition-all flex items-center justify-center gap-2 group/btn"
             >
               {addingId === product.node.id ? (
                 <Loader2 className="h-3 w-3 animate-spin text-[#5A7A5C]" />
@@ -199,7 +201,7 @@ const ProductCard = ({
               className="flex-1 bg-[#1A2E35] text-white py-3 rounded-xl font-sans-clean text-[10px] font-bold uppercase tracking-widest hover:bg-[#5A7A5C] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-[#1A2E35]/10"
             >
               {buyingId === product.node.id ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-              {buyingId === product.node.id ? "Redirecting..." : "Buy Now"}
+              {buyingId === product.node.id ? "Redirecting..." : "Buy now directly"}
             </button>
           </div>
         )}

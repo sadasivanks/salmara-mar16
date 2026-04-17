@@ -157,14 +157,14 @@ const ContactPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white border-2 border-[#1A2E35]/5 rounded-[2.5rem] p-6 sm:p-10 pt-16 text-center relative group hover:shadow-2xl hover:shadow-[#1A2E35]/10 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
+              className="bg-white border-2 border-[#1A2E35]/5 rounded-[2.5rem] p-10 pt-16 text-center relative group hover:shadow-2xl hover:shadow-[#1A2E35]/10 hover:-translate-y-1 transition-all duration-500 flex flex-col h-full"
             >
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-12 w-12 sm:h-16 sm:w-16 bg-herbal-dark rounded-full flex items-center justify-center text-white shadow-xl z-20 group-hover:scale-110 transition-transform duration-500">
                 <MessageSquare className="h-5 w-5 sm:h-7 sm:w-7" />
               </div>
 
               
-              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Email Support</h2>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mt-8 mb-4">Email Support</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
                 For product questions, order support, website help, or general assistance.
               </p>
@@ -192,7 +192,7 @@ const ContactPage = () => {
               </div>
               
 
-              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Appointment Support</h2>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mt-8 mb-4">Appointment Support</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
                 For clinic appointments, doctor availability, consultation requests, or treatment-related queries.
               </p>
@@ -225,7 +225,7 @@ const ContactPage = () => {
               </div>
   
 
-              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mb-4">Brand and Affiliate</h2>
+              <h2 className="text-2xl font-display font-bold text-[#1A2E35] mt-8 mb-4">Brand and Affiliate</h2>
               <p className="text-sm text-[#1A2E35]/50 leading-relaxed font-sans-clean px-2 mb-8">
                 For affiliate enquiries, brand collaborations, partnership discussions, or campaign opportunities.
               </p>

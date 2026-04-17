@@ -159,7 +159,15 @@ const AboutUsPage = () => {
                 </p>
 
                 <p>
-                  What started as a local practice gradually grew into a wider care network across multiple cities. Today, the journey reflects 26+ products, years of community outreach, and continued recognition for contributions to traditional medicine. Our founder also serves as Jilla Adhyaksha (District President) of Karnataka Parampaarika Vaidya Sangha, reflecting Salmara’s continued connection to traditional Ayurvedic practice and community leadership.
+                  What started as a local practice gradually grew into a wider care network across multiple cities. Today, the journey reflects 26+ products, years of community outreach, and continued recognition for contributions to traditional medicine.
+                </p>
+
+                <p>
+                  Our founder also serves as Jilla Adhyaksha (District President) of Karnataka Parampaarika Vaidya Sangha, reflecting Salmara’s continued connection to traditional Ayurvedic practice and community leadership.
+                </p>
+
+                <p>
+                  At the heart of this growth is a steadfast commitment to the purity of the craft. Salmara doesn't just treat symptoms; we honor the delicate balance between time-tested heritage and the evolving needs of modern life.
                 </p>
               </div>
 
@@ -464,17 +472,11 @@ const AboutUsPage = () => {
               title="A Legacy of Trust" 
               animate={false}
             />
-            <div className="space-y-6 text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg mb-12">
+            <div className="text-[#1A2E35]/70 font-sans-clean leading-relaxed text-lg mb-4">
               <p>
-                From a single humble lab in Karnataka to homes across Bharat, our journey has always been about one thing: the belief that Ayurveda deserves scientific rigor.
-              </p>
-              <p>
-                At Salmara, we are building a space where faith meets evidence and healing meets honesty. Thank you for being a part of our story.
+                Salmara grew from a local Ayurvedic practice into a wider care journey built through products, clinics, and community reach.
               </p>
             </div>
-            <Link to="/shop" className="inline-block px-12 py-5 bg-primary text-white rounded-xl font-bold tracking-widest uppercase text-xs hover:bg-herbal-dark transition-all shadow-2xl shadow-primary/30 transform hover:-translate-y-1">
-              Explore Our Products
-            </Link>
           </div>
         </section>
       </main>

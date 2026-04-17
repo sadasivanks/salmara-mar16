@@ -69,7 +69,7 @@ const ConsultationSection = () => {
               ].map((item) => (
                 <div key={item.label} className="text-center">
                   <div className="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center mx-auto mb-2">
-                    <item.icon className="h-5 w-5 text-[#C5A059]" />
+                    <item.icon className="h-[23px] w-[23px] text-[#C5A059]" />
                   </div>
                   <p className="text-xs font-sans-clean text-[#1A2E35]/70">{item.label}</p>
                 </div>
@@ -93,7 +93,7 @@ const ConsultationSection = () => {
             className="text-center"
           >
             <div className="bg-white/50 backdrop-blur-sm border border-[#1A2E35]/5 rounded-3xl p-12">
-              <Stethoscope className="h-20 w-20 text-[#C5A059] mx-auto mb-6" />
+              <img src="/images/doctor.svg" alt="Doctor" className="h-28 w-28 object-contain mx-auto mb-6" />
               <p className="text-5xl sm:text-6xl font-[Inter] font-semibold tracking-tight text-[#1A2E35] mb-2">
                 <AnimatedCounter target={15000} suffix="+" />
               </p>
